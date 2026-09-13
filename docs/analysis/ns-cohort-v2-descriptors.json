@@ -915,6 +915,40 @@
       ],
       "citations": [
         {
+          "archive_sha256": "b302b81686d13cd7174b25dbd66d8e8e22a16af717171df85ccfdcb2a4d95f64",
+          "archive_url": "https://sparse.tamu.edu/MM/Hohn/fd12.tar.gz",
+          "kind": "public_primary_source",
+          "locator": "Matrix-specific title, confirmed in the original Matrix Market archive",
+          "member": "fd12/fd12.mtx",
+          "url": "https://sparse.tamu.edu/Hohn/fd12"
+        },
+        {
+          "kind": "public_primary_source",
+          "locator": "Author description of the finite-difference crack approximation and common logarithmic grid",
+          "url": "https://sparse.tamu.edu/Hohn"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "confirmed",
+      "discretization_tags": [
+        "finite_difference"
+      ],
+      "evidence_summary": "The matrix-specific title and author group description identify a finite-difference approximation to a single-material crack problem on a logarithmic grid.",
+      "full_name": "Hohn/fd12",
+      "matrix_id": 917,
+      "operator_origin": "source PDE discretization",
+      "provenance_group": "crack-log-grid",
+      "time_discretization_tags": [],
+      "uncertainties": [
+        "This case shares the model and logarithmic grid family of fd15 and remains in the same provenance group."
+      ]
+    },
+    {
+      "application_tags": [
+        "solid_mechanics_fracture"
+      ],
+      "citations": [
+        {
           "archive_sha256": "06bb7875c74b293007bfdc1a838185b8b2d01e05b634ddbefb7de2d0bfcefdbc",
           "archive_url": "https://sparse.tamu.edu/MM/Hohn/fd15.tar.gz",
           "header_sha256": "d9555b4dbc95f11effc4ac1b379aaa5533ab8bd47032ec816dbe79dc56e85921",
@@ -1532,7 +1566,7 @@
       ]
     }
   ],
-  "matrix_count": 48,
+  "matrix_count": 49,
   "policy_notes": [
     "Descriptors use original public operator metadata and author descriptions, without candidate solver outputs or split assignments.",
     "Application tags are coarse physical-model descriptions, not solver difficulty classes.",
@@ -1626,15 +1660,19 @@
     },
     {
       "citations": [
+        "https://sparse.tamu.edu/Hohn",
+        "https://sparse.tamu.edu/Hohn/fd12",
         "https://sparse.tamu.edu/Hohn/fd15"
       ],
       "independence_uncertainties": [
         "Other Hohn variants would share this source lineage and would not add independent support."
       ],
       "known_evidence": [
-        "Original title identifies a single-material crack problem on a logarithmic finite-difference grid."
+        "Original title identifies a single-material crack problem on a logarithmic finite-difference grid.",
+        "The matrix-specific title and author group description identify a finite-difference approximation to a single-material crack problem on a logarithmic grid."
       ],
       "matrix_ids": [
+        917,
         918
       ],
       "provenance_group": "crack-log-grid",
