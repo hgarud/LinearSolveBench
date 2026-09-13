@@ -315,12 +315,18 @@ def _joint_gaps(cases: list[dict], dev_ids: set[int]) -> list[dict]:
 
 
 def _partition_summary(
-    cases: list[dict], groups: list[str], mask: int, components: np.ndarray, policy: dict
+    cases: list[dict],
+    groups: list[str],
+    mask: int,
+    components: np.ndarray,
+    policy: dict,
 ) -> dict:
     dev_groups = {g for i, g in enumerate(groups) if mask & (1 << i)}
     by_split = {
         split: [
-            c for c in cases if (c["provenance_group"] in dev_groups) == (split == "dev")
+            c
+            for c in cases
+            if (c["provenance_group"] in dev_groups) == (split == "dev")
         ]
         for split in ("dev", "ranked")
     }
@@ -402,9 +408,9 @@ def select_cohort(inventory: dict, policy: dict) -> dict:
                 key = (round(float(scores[index]), 12), dev_groups)
                 batch_leaders.append((key, mask, components[index].copy()))
             batch_leaders.sort(key=lambda entry: entry[0])
-            leaders = sorted(
-                leaders + batch_leaders[:6], key=lambda entry: entry[0]
-            )[:6]
+            leaders = sorted(leaders + batch_leaders[:6], key=lambda entry: entry[0])[
+                :6
+            ]
     if not leaders:
         forced = [g for i, g in enumerate(groups) if forced_dev & (1 << i)]
         raise ValueError(
