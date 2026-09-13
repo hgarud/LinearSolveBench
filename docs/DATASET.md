@@ -14,6 +14,14 @@ with one newly qualified manufactured workload:
 | `ns-mesh-pilot-dev` | Development | 11 | 4 | 317–26,068 |
 | `ns-mesh-pilot-ranked` | Ranked | 32 | 17 | 240–1,489,752 |
 
+**This partition is provisional for development-set representativeness.** The
+current development set does not cover several application, discretization,
+size, and numerical structural regimes present in ranking. The
+[NS split review](NS_SPLIT_REVIEW.md) documents the gaps and requirements for a
+replacement. Case counts may change and additional independent groups may be
+needed. Existing numerical qualification, execution results, and frozen
+identities remain valid and reproducible.
+
 Groups do not cross the split boundary. The largest operator has 10,319,760
 nonzeros. Both splits use the same numerical gates and execution contract:
 90 seconds per case, two CPU cores, 4 GiB memory, a 5,000-iteration request, and

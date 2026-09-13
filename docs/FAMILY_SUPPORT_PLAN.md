@@ -1,11 +1,16 @@
 # First pilot: NS mesh coverage and FLASH replay
 
-Status: implemented and validated pilot, updated 13 September 2026. NS has 43
+Status: implementation and execution validated; NS split representativeness
+remains provisional, updated 13 September 2026. NS has 43
 qualified cases split into 11 development and 32 ranked cases, all evaluated in
 the official Modal venue. FLASH has 344 publicly downloadable captures and a
 fixed public reference that passes every case in that venue. Releases, runtime,
 and replay calibration identities are frozen. The checks and scientific scope
-below define this completed pilot; future tracks remain separate work.
+below document completed implementation and validation. The current 11/32 NS
+partition does not yet satisfy representative development coverage. Its
+[split review](NS_SPLIT_REVIEW.md) defines the gaps and replacement requirements;
+counts may change and new independent groups may be added. Existing frozen
+releases remain reproducible. Future tracks remain separate work.
 
 ## Implementation snapshot
 
@@ -13,7 +18,7 @@ below define this completed pilot; future tracks remain separate work.
 | --- | --- | --- |
 | Family and execution contracts | Two explicit pairs; `ns_mesh_pde` alias; schema-v2 identities; one execution per case; registered split digests and fixed venue | Version changed inputs, contracts, and venues |
 | Numerical verification | Fixed NS gates, FLASH residual/backward gates, explicit reference semantics, stable ratios, JSON-safe diagnostics, v1 compatibility | Retain qualification and identity checks for later releases |
-| NS coverage | All 43 qualified SuiteSparse workloads prepare and verify; full Modal execution gives 10/11 development and 14/32 ranked passes for the public GMRES+AMG solver | Requalify new manufactured inputs; preserve failures in coverage scores |
+| NS coverage | All 43 qualified SuiteSparse workloads prepare and verify; full Modal execution gives 10/11 development and 14/32 ranked passes for the public GMRES+AMG solver; current split representativeness is provisional | Review and replace the split with independent support for ranked regimes; acquire groups as needed; freeze and qualify a new release |
 | FLASH inputs | 344 standalone archives published on Hugging Face; commit-pinned manifests; captured arrays verified; fresh installed public download succeeds | Preserve immutable bytes and provenance split boundaries |
 | FLASH reference and scores | Fixed public `gmres_amg.c` passes all 344 Modal cases; registered single-execution timings and weighted scoring | Requalify when reference, inputs, runtime, or venue changes |
 | Execution and distribution | Full Modal split runs; hard resource limits; fresh wheel/sdist builds, isolated installed resources, downloads, offline reuse, and native compilation | Repeat package/content and venue checks for each release |

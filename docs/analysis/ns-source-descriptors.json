@@ -1,0 +1,1342 @@
+{
+  "application_tag_definitions": {
+    "biomedical_systems": "Explicit cardiac, torso, or other biomedical models without unsupported physical subtyping.",
+    "elliptic_diffusion_thermal": "Poisson, diffusion, thermal, or atmospheric elliptic operators; a deliberately broad application/operator category.",
+    "fluid_flow_transport": "Flow, Navier-Stokes, Stokes, Euler, vorticity, and flow-coupled transport.",
+    "reservoir_simulation": "Oil/black-oil/steam reservoir models.",
+    "semiconductor_devices": "Explicit diode/electron-continuity/MOSFET applications.",
+    "solid_mechanics_fracture": "Explicit structural-mechanics or material-crack applications."
+  },
+  "discretization_tag_definitions": {
+    "boundary_element": "Identified in applicable source metadata; may coexist with FD.",
+    "finite_difference": "Identified in applicable source metadata.",
+    "finite_element": "Identified in matrix-specific or applicable source metadata, including a specific method reference.",
+    "finite_volume": "Identified in applicable source metadata.",
+    "unknown": "The reviewed primary metadata does not uniquely establish the broad method family. Candidate interpretations are not confirmed tags."
+  },
+  "kind": "linear-solver-bench-ns-descriptor-review",
+  "matrices": [
+    {
+      "application_tags": [
+        "reservoir_simulation"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "b8a2035bb0c2f538014017d40c4644de49d80c40d5381933a6c615f80eb31897",
+          "archive_url": "https://sparse.tamu.edu/MM/HB/orsirr_1.tar.gz",
+          "header_sha256": "c3c2b8326383d92d2515f0c353a5da2e7d7cfee1d0e21a968af4f1404ee22199",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "orsirr_1/orsirr_1.mtx",
+          "url": "https://sparse.tamu.edu/HB/orsirr_1"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "unknown",
+      "discretization_tags": [
+        "unknown"
+      ],
+      "evidence_summary": "Original titles identify oil-reservoir equations on irregular and full spatial grids. They do not specify the spatial discretization method.",
+      "full_name": "HB/orsirr_1",
+      "matrix_id": 225,
+      "provenance_group": "reservoir-ors",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "reservoir_simulation"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "0f51a31d3a0ae1e6fbbb8d01bef8a2b88d50dfd4f09f8de8c6f55c3788fc4446",
+          "archive_url": "https://sparse.tamu.edu/MM/HB/orsreg_1.tar.gz",
+          "header_sha256": "c5b14295a72d2707ff9c10e4f15435b75b2b38d5576a94df444bbcc115bcc3d5",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "orsreg_1/orsreg_1.mtx",
+          "url": "https://sparse.tamu.edu/HB/orsreg_1"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "unknown",
+      "discretization_tags": [
+        "unknown"
+      ],
+      "evidence_summary": "Original titles identify oil-reservoir equations on irregular and full spatial grids. They do not specify the spatial discretization method.",
+      "full_name": "HB/orsreg_1",
+      "matrix_id": 227,
+      "provenance_group": "reservoir-ors",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "reservoir_simulation"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "d6a023da04e86097bd2ec52ce5008d1c671c5fa66be4ddc7dca505a186400000",
+          "archive_url": "https://sparse.tamu.edu/MM/HB/sherman5.tar.gz",
+          "header_sha256": "c98ed8761d74a2be6a4a9831993127f9dd91b4cde62dd9e28dac0a47ea0c6a58",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "sherman5/sherman5.mtx",
+          "url": "https://sparse.tamu.edu/HB/sherman5"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "unknown",
+      "discretization_tags": [
+        "unknown"
+      ],
+      "evidence_summary": "Original title identifies a fully implicit black-oil simulator on a spatial grid. Fully implicit describes time/nonlinear treatment, not an established spatial discretization.",
+      "full_name": "HB/sherman5",
+      "matrix_id": 246,
+      "provenance_group": "reservoir-sherman",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "reservoir_simulation"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "90007bbd731335e4d721aa1ffba2084571028035219d7ba1d887082bedb4f1dd",
+          "archive_url": "https://sparse.tamu.edu/MM/HB/steam1.tar.gz",
+          "header_sha256": "43773a998cc646a76aecb98bb2422036b0685be072367790b2dd43d162f140bf",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "steam1/steam1.mtx",
+          "url": "https://sparse.tamu.edu/HB/steam1"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "unknown",
+      "discretization_tags": [
+        "unknown"
+      ],
+      "evidence_summary": "Original titles identify three-dimensional steam-injection reservoir models with explicit grid dimensions. Spatial discretization is not specified.",
+      "full_name": "HB/steam1",
+      "matrix_id": 251,
+      "provenance_group": "reservoir-steam",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "reservoir_simulation"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "dde4911dcf2c84e0878afe3da2c2b453733f4b890352b1a66e9f039d850e5220",
+          "archive_url": "https://sparse.tamu.edu/MM/HB/steam2.tar.gz",
+          "header_sha256": "e2acbcbf5daf05c229d4f80fa9d0a14fd16e9e71c834d813b4b6b317eb93d374",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "steam2/steam2.mtx",
+          "url": "https://sparse.tamu.edu/HB/steam2"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "unknown",
+      "discretization_tags": [
+        "unknown"
+      ],
+      "evidence_summary": "Original titles identify three-dimensional steam-injection reservoir models with explicit grid dimensions. Spatial discretization is not specified.",
+      "full_name": "HB/steam2",
+      "matrix_id": 252,
+      "provenance_group": "reservoir-steam",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "elliptic_diffusion_thermal"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "e39b6ff33334db95faf6291451b79d3adfaa35a63b54dc22dc903bb0a8e10edd",
+          "archive_url": "https://sparse.tamu.edu/MM/Brunetiere/thermal.tar.gz",
+          "header_sha256": "172a0773ce8f85ba95c47a4d7626e25db2cc44fc32227b3aa1d590afb298b263",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "thermal/thermal.mtx",
+          "url": "https://sparse.tamu.edu/Brunetiere/thermal"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "evidence_summary": "Original title explicitly identifies a thermal FEM problem.",
+      "full_name": "Brunetiere/thermal",
+      "matrix_id": 377,
+      "provenance_group": "thermal-fem",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "b1481371e07e7997910216f3c395bb7898f96243df8f16a5a46174410b19f41d",
+          "archive_url": "https://sparse.tamu.edu/MM/DRIVCAV/cavity01.tar.gz",
+          "header_sha256": "34d20e0507e2a7c72a61d1ae9dc81b35211e646a656867bca808c9becde2cecc",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "cavity01/cavity01.mtx",
+          "url": "https://sparse.tamu.edu/DRIVCAV/cavity01"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "matrix title and group description",
+          "url": "https://sparse.tamu.edu/DRIVCAV"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "evidence_summary": "Matrix titles identify driven-cavity cases; the collection group explicitly identifies the generating code as finite element.",
+      "full_name": "DRIVCAV/cavity01",
+      "matrix_id": 380,
+      "provenance_group": "driven-cavity-fem",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "b4743b22649dbd23f38e9ecc683b8f709c4d6a01675e279d796e28af35ac1047",
+          "archive_url": "https://sparse.tamu.edu/MM/DRIVCAV/cavity10.tar.gz",
+          "header_sha256": "dc14240bdf3f353ed25613903029f4981207909970d601b4713e2bae68ad7031",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "cavity10/cavity10.mtx",
+          "url": "https://sparse.tamu.edu/DRIVCAV/cavity10"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "matrix title and group description",
+          "url": "https://sparse.tamu.edu/DRIVCAV"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "evidence_summary": "Matrix titles identify driven-cavity cases; the collection group explicitly identifies the generating code as finite element.",
+      "full_name": "DRIVCAV/cavity10",
+      "matrix_id": 389,
+      "provenance_group": "driven-cavity-fem",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "a0a77c23c51a8779e872299c1a6b729b19eb4c598e4712891625dd6947d2c989",
+          "archive_url": "https://sparse.tamu.edu/MM/DRIVCAV/cavity16.tar.gz",
+          "header_sha256": "38095f198ea387eed98bf46d407ebb2aa3bf7e59a05da8506ba0724cf59959a3",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "cavity16/cavity16.mtx",
+          "url": "https://sparse.tamu.edu/DRIVCAV/cavity16"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "matrix title and group description",
+          "url": "https://sparse.tamu.edu/DRIVCAV"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "evidence_summary": "Matrix titles identify driven-cavity cases; the collection group explicitly identifies the generating code as finite element.",
+      "full_name": "DRIVCAV/cavity16",
+      "matrix_id": 395,
+      "provenance_group": "driven-cavity-fem",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "f010d26e7f235ccd574bea82e40fb3f8bfe2ccd4c4ed2964dc004052a88ca519",
+          "archive_url": "https://sparse.tamu.edu/MM/FIDAP/ex31.tar.gz",
+          "header_sha256": "59e9a81d4a5e9386a02e926c5e31379322d6ce9d9ee78049bf9ff66e97c19c4c",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "ex31/ex31.mtx",
+          "url": "https://sparse.tamu.edu/FIDAP/ex31"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "group general discretization description and ex31 entry",
+          "url": "https://sparse.tamu.edu/FIDAP"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "evidence_summary": "The matrix is FIDAP example31; its source describes species deposition on a heated plate and identifies FIDAP matrices as finite element.",
+      "full_name": "FIDAP/ex31",
+      "matrix_id": 428,
+      "provenance_group": "fidap-flow-transport",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "4ba67885bbf806aef034d454a2070960df8ec839b31b1b13a6c4e90079054705",
+          "archive_url": "https://sparse.tamu.edu/MM/FIDAP/ex35.tar.gz",
+          "header_sha256": "408541ab3751ea3a96cef57eb923d4a9800abf74e35acf9b5bdd017c780f58ca",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "ex35/ex35.mtx",
+          "url": "https://sparse.tamu.edu/FIDAP/ex35"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "group general discretization description and ex35 entry",
+          "url": "https://sparse.tamu.edu/FIDAP"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "evidence_summary": "The matrix is FIDAP example35, turbulent flow through a heated channel; the group identifies finite-element discretization.",
+      "full_name": "FIDAP/ex35",
+      "matrix_id": 431,
+      "provenance_group": "fidap-flow-transport",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "d53220fbaf23eef4bdfbf8e8d67554559ad1371dabd4536e823411f7fb9032b9",
+          "archive_url": "https://sparse.tamu.edu/MM/FIDAP/ex40.tar.gz",
+          "header_sha256": "5c49e462c69f510bf4e2f03ae46d34b0d82be6ad9dfc68c7c96af1600c9dce66",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "ex40/ex40.mtx",
+          "url": "https://sparse.tamu.edu/FIDAP/ex40"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "group general discretization description and ex40 entry",
+          "url": "https://sparse.tamu.edu/FIDAP"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "evidence_summary": "The matrix is FIDAP example40; the group identifies the source as finite-element coupled flow equations.",
+      "full_name": "FIDAP/ex40",
+      "matrix_id": 435,
+      "provenance_group": "fidap-flow-transport",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "93b7ebc2e444dbc6fec778ad26e64f4de61e9b45a144164e76163832ccf89ea3",
+          "archive_url": "https://sparse.tamu.edu/MM/Garon/garon1.tar.gz",
+          "header_sha256": "9f4bce706e4ad0e698efb315fdedecd4fcd0d02e84e7672a8dee66e31137b722",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "garon1/garon1.mtx",
+          "url": "https://sparse.tamu.edu/Garon/garon1"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "evidence_summary": "Original titles explicitly identify two-dimensional finite-element Navier-Stokes equations with opposed inlet and outlet.",
+      "full_name": "Garon/garon1",
+      "matrix_id": 444,
+      "provenance_group": "square-inlet-flow",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "926508040e083b702b442701ea3009e5fe3e5d4fe5c17dd94d576c31578d1fd2",
+          "archive_url": "https://sparse.tamu.edu/MM/Garon/garon2.tar.gz",
+          "header_sha256": "05b91fcf47f39576cc3e762684a080c80934da653544b9b95b7c083d857cb253",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "garon2/garon2.mtx",
+          "url": "https://sparse.tamu.edu/Garon/garon2"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "evidence_summary": "Original titles explicitly identify two-dimensional finite-element Navier-Stokes equations with opposed inlet and outlet.",
+      "full_name": "Garon/garon2",
+      "matrix_id": 445,
+      "provenance_group": "square-inlet-flow",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "1d384e54cacfb3d8e3c06226ff7d2c879ee6390ff894fa092df22ae680f29061",
+          "archive_url": "https://sparse.tamu.edu/MM/Goodwin/goodwin.tar.gz",
+          "header_sha256": "71901d98914c340d7245c5c94257bc741ba90b7f38cd4b8c46f23b2e16b4a643",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "goodwin/goodwin.mtx",
+          "url": "https://sparse.tamu.edu/Goodwin/goodwin"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "evidence_summary": "Original title explicitly identifies a finite-element fluid-mechanics problem.",
+      "full_name": "Goodwin/goodwin",
+      "matrix_id": 446,
+      "provenance_group": "goodwin-flow-transport",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "d27a084b932640eb1145673172704eeba02fa476f0903eb53447d56a0cc4f912",
+          "archive_url": "https://sparse.tamu.edu/MM/Simon/venkat01.tar.gz",
+          "header_sha256": "0ef331e0925df7d8cae6bec94496531b7892d1987c6f24e91f483928f4c73d84",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "venkat01/venkat01.mtx",
+          "url": "https://sparse.tamu.edu/Simon/venkat01"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "matrix titles and group description",
+          "url": "https://sparse.tamu.edu/Simon"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "unknown",
+      "discretization_tags": [
+        "unknown"
+      ],
+      "evidence_summary": "Original titles identify an unstructured two-dimensional Euler solver at different time steps. The reviewed metadata does not specify FE, FV, or FD.",
+      "full_name": "Simon/venkat01",
+      "matrix_id": 820,
+      "provenance_group": "unstructured-euler",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "e8190f30d87a056ed7e7f083fcb8d618a26cbeb2c027456401d4171d092ffc5b",
+          "archive_url": "https://sparse.tamu.edu/MM/Simon/venkat25.tar.gz",
+          "header_sha256": "7e9f6a0d95a8424506422ba60f98d73089147424f0b60232bbe2333d80aad810",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "venkat25/venkat25.mtx",
+          "url": "https://sparse.tamu.edu/Simon/venkat25"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "matrix titles and group description",
+          "url": "https://sparse.tamu.edu/Simon"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "unknown",
+      "discretization_tags": [
+        "unknown"
+      ],
+      "evidence_summary": "Original titles identify an unstructured two-dimensional Euler solver at different time steps. The reviewed metadata does not specify FE, FV, or FD.",
+      "full_name": "Simon/venkat25",
+      "matrix_id": 821,
+      "provenance_group": "unstructured-euler",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "39d970cfc833b361ae1844e1393342480a2d9c9f7fe97ff1b3d43e3ec525a207",
+          "archive_url": "https://sparse.tamu.edu/MM/Simon/venkat50.tar.gz",
+          "header_sha256": "65ef0e177c2645db4b3fadcb98fd60ebdb899499821853d34250a22354169367",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "venkat50/venkat50.mtx",
+          "url": "https://sparse.tamu.edu/Simon/venkat50"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "matrix titles and group description",
+          "url": "https://sparse.tamu.edu/Simon"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "unknown",
+      "discretization_tags": [
+        "unknown"
+      ],
+      "evidence_summary": "Original titles identify an unstructured two-dimensional Euler solver at different time steps. The reviewed metadata does not specify FE, FV, or FD.",
+      "full_name": "Simon/venkat50",
+      "matrix_id": 822,
+      "provenance_group": "unstructured-euler",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "73f4c34e07f82b4ab4791eda0ee5dfe6e3d61fc27d0cf8e9daf8027517c14a80",
+          "archive_url": "https://sparse.tamu.edu/MM/Wang/swang1.tar.gz",
+          "header_sha256": "7f27be24d7ea12d6fab4d618e3e303b3aa3e485345396efc3dfa78af8f1f0780",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "swang1/swang1.mtx",
+          "url": "https://sparse.tamu.edu/Wang/swang1"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "swang1/swang2 subsection",
+          "url": "https://sparse.tamu.edu/Wang"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_volume"
+      ],
+      "evidence_summary": "The author description identifies driven-cavity vorticity equations and an exponentially fitted finite-volume scheme.",
+      "full_name": "Wang/swang1",
+      "matrix_id": 828,
+      "provenance_group": "cavity-vorticity",
+      "uncertainties": [
+        "The generic matrix kind field says semiconductor device, but the specific author description identifies incompressible flow; the specific description takes precedence."
+      ]
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "032a57decf567263a6b03753c25d9d26ac31521fc9a73ddf6f684d25d76c96b8",
+          "archive_url": "https://sparse.tamu.edu/MM/Wang/swang2.tar.gz",
+          "header_sha256": "67b3a3dfed59b68463465d3ee300ffbf7086ef6de1c32758a60095db458e3978",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "swang2/swang2.mtx",
+          "url": "https://sparse.tamu.edu/Wang/swang2"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "swang1/swang2 subsection",
+          "url": "https://sparse.tamu.edu/Wang"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_volume"
+      ],
+      "evidence_summary": "The author description identifies driven-cavity vorticity equations and an exponentially fitted finite-volume scheme.",
+      "full_name": "Wang/swang2",
+      "matrix_id": 829,
+      "provenance_group": "cavity-vorticity",
+      "uncertainties": [
+        "The generic matrix kind field says semiconductor device, but the specific author description identifies incompressible flow; the specific description takes precedence."
+      ]
+    },
+    {
+      "application_tags": [
+        "semiconductor_devices"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "08ccb303ab98e91bb941a0eaf080b6ed2c98e323a1c4210f0f5ce021ce14342b",
+          "archive_url": "https://sparse.tamu.edu/MM/Wang/wang1.tar.gz",
+          "header_sha256": "9232c200572ef748c8de55a889b44cdb3d947d634ce59dd9996ffe0fc76e5aa4",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "wang1/wang1.mtx",
+          "url": "https://sparse.tamu.edu/Wang/wang1"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "wang1/wang2 subsection and its method reference",
+          "url": "https://sparse.tamu.edu/Wang"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "evidence_summary": "The author describes electron-continuity equations for a three-dimensional diode and cites the exponentially fitted finite-element discretization.",
+      "full_name": "Wang/wang1",
+      "matrix_id": 830,
+      "provenance_group": "semiconductor-devices",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "semiconductor_devices"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "8c97606ed6fe8c0a77d08c8e50eae1a48e379325a432d917b6f77dd21eccba57",
+          "archive_url": "https://sparse.tamu.edu/MM/Wang/wang3.tar.gz",
+          "header_sha256": "ba2557455a266992b027a6023f9b1eacf49fb4e6aec5845a210910577deea040",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "wang3/wang3.mtx",
+          "url": "https://sparse.tamu.edu/Wang/wang3"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "wang3 subsection and shared wang3/wang4 method references",
+          "url": "https://sparse.tamu.edu/Wang"
+        }
+      ],
+      "discretization_candidates": [
+        "finite_element",
+        "box_method"
+      ],
+      "discretization_status": "ambiguous",
+      "discretization_tags": [
+        "unknown"
+      ],
+      "evidence_summary": "The author describes the higher-resolution diode case, but cites either the earlier finite-element method paper or a Scharfetter-Gummel box-method paper for its scheme.",
+      "full_name": "Wang/wang3",
+      "matrix_id": 832,
+      "provenance_group": "semiconductor-devices",
+      "uncertainties": [
+        "The cited descriptions do not uniquely establish the FE/FV/FD family of this matrix; box methods can have more than one interpretation."
+      ]
+    },
+    {
+      "application_tags": [
+        "semiconductor_devices"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "ac512b095abc646a7075f57203ee0f38ab73262911579fbea247e2d95e7eb43b",
+          "archive_url": "https://sparse.tamu.edu/MM/Wang/wang4.tar.gz",
+          "header_sha256": "f239cedf67e0510ca9eb53b24d866764aca3cc62d1e7f175b79c2a55d99d3276",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "wang4/wang4.mtx",
+          "url": "https://sparse.tamu.edu/Wang/wang4"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "wang4 subsection and shared wang3/wang4 method references",
+          "url": "https://sparse.tamu.edu/Wang"
+        }
+      ],
+      "discretization_candidates": [
+        "finite_element",
+        "box_method"
+      ],
+      "discretization_status": "ambiguous",
+      "discretization_tags": [
+        "unknown"
+      ],
+      "evidence_summary": "The author identifies a MOSFET and gives either a finite-element method reference or a Scharfetter-Gummel box-method reference for discretization.",
+      "full_name": "Wang/wang4",
+      "matrix_id": 833,
+      "provenance_group": "semiconductor-devices",
+      "uncertainties": [
+        "Do not promote the group-level finite-element description for wang1 to an unqualified claim for this matrix."
+      ]
+    },
+    {
+      "application_tags": [
+        "solid_mechanics_fracture"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "d54918651c3891689b78bfc23a6f1f0afec94483d7a718791a93a8b58b8fe8be",
+          "archive_url": "https://sparse.tamu.edu/MM/Langemyr/comsol.tar.gz",
+          "header_sha256": "b2a5bf27038683552c69432bc9e805977b86abd37188b4acca1994fa0e5f9d9e",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "comsol/comsol.mtx",
+          "url": "https://sparse.tamu.edu/Langemyr/comsol"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "evidence_summary": "Original title explicitly identifies finite-element structural mechanics.",
+      "full_name": "Langemyr/comsol",
+      "matrix_id": 864,
+      "provenance_group": "femlab-langemyr",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "biomedical_systems"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "b4d56cc786fc777c73222ac8589974559bdb4ad3706e07c06d51bb3c425ba7c7",
+          "archive_url": "https://sparse.tamu.edu/MM/Norris/heart2.tar.gz",
+          "header_sha256": "c6bfe59053a3526ac0a09de6c809846b6bf0403397452af18a4cbe07d62b6d1e",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "heart2/heart2.mtx",
+          "url": "https://sparse.tamu.edu/Norris/heart2"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "matrix title and heart2 entry",
+          "url": "https://sparse.tamu.edu/Norris"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "evidence_summary": "Original title identifies a quasistatic finite-element heart model.",
+      "full_name": "Norris/heart2",
+      "matrix_id": 891,
+      "provenance_group": "heart-quasistatic",
+      "uncertainties": [
+        "The reviewed description does not specify whether the cardiac model is electrical or mechanical; no narrower claim is made."
+      ]
+    },
+    {
+      "application_tags": [
+        "biomedical_systems"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "983dd757ab32cd67928bf4c603c0836fd2ab5eda87c9762c19885561cf50157b",
+          "archive_url": "https://sparse.tamu.edu/MM/Norris/torso1.tar.gz",
+          "header_sha256": "b26a28c972d6577099d3fb6d57a5c56fb92c50bfc9119ac67378667dfdd7f591",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "torso1/torso1.mtx",
+          "url": "https://sparse.tamu.edu/Norris/torso1"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "matrix title and torso1 entry",
+          "url": "https://sparse.tamu.edu/Norris"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_difference",
+        "boundary_element"
+      ],
+      "evidence_summary": "Original title and the matrix-specific group entry identify a coupled finite-difference/boundary-element torso model.",
+      "full_name": "Norris/torso1",
+      "matrix_id": 896,
+      "provenance_group": "torso-electrophysiology",
+      "uncertainties": [
+        "The group introduction broadly calls the collection finite element; this matrix-specific FD/BEM description takes precedence."
+      ]
+    },
+    {
+      "application_tags": [
+        "biomedical_systems"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "83429e082b043c6728aca53541f5e0a11ce20780b5f7edd0e0c8d8ea23d50ff7",
+          "archive_url": "https://sparse.tamu.edu/MM/Norris/torso2.tar.gz",
+          "header_sha256": "e5c5f0e79552f41c1e63ed3f3f5212a9dd2844472699df951336941a852dcf50",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "torso2/torso2.mtx",
+          "url": "https://sparse.tamu.edu/Norris/torso2"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "matrix title and torso2 entry",
+          "url": "https://sparse.tamu.edu/Norris"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_difference"
+      ],
+      "evidence_summary": "Original title and the matrix-specific group entry identify a finite-difference electrophysiological torso model.",
+      "full_name": "Norris/torso2",
+      "matrix_id": 897,
+      "provenance_group": "torso-electrophysiology",
+      "uncertainties": [
+        "No boundary-element tag is transferred from torso1 to torso2."
+      ]
+    },
+    {
+      "application_tags": [
+        "solid_mechanics_fracture"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "06bb7875c74b293007bfdc1a838185b8b2d01e05b634ddbefb7de2d0bfcefdbc",
+          "archive_url": "https://sparse.tamu.edu/MM/Hohn/fd15.tar.gz",
+          "header_sha256": "d9555b4dbc95f11effc4ac1b379aaa5533ab8bd47032ec816dbe79dc56e85921",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "fd15/fd15.mtx",
+          "url": "https://sparse.tamu.edu/Hohn/fd15"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_difference"
+      ],
+      "evidence_summary": "Original title identifies a single-material crack problem on a logarithmic finite-difference grid.",
+      "full_name": "Hohn/fd15",
+      "matrix_id": 918,
+      "provenance_group": "crack-log-grid",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "c83395a0f4c3a429420f11d7df4a0e62db02f7244b28ed729d7dbdbba19c59a8",
+          "archive_url": "https://sparse.tamu.edu/MM/FEMLAB/ns3Da.tar.gz",
+          "header_sha256": "083405b6f51bc432fbcae456feaf22be3c98c98ebf109d66965b7f6c82ee8750",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "ns3Da/ns3Da.mtx",
+          "url": "https://sparse.tamu.edu/FEMLAB/ns3Da"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "matrix title and group description",
+          "url": "https://sparse.tamu.edu/FEMLAB"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "evidence_summary": "Original title identifies three-dimensional Navier-Stokes equations; the FEMLAB group identifies its source toolbox as finite element.",
+      "full_name": "FEMLAB/ns3Da",
+      "matrix_id": 925,
+      "provenance_group": "femlab-langemyr",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "elliptic_diffusion_thermal"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "c05ee20f6cbfa3003af34f86c51e947456a33fd4c677f3271072fff38b7f6549",
+          "archive_url": "https://sparse.tamu.edu/MM/FEMLAB/poisson2D.tar.gz",
+          "header_sha256": "ea19d0d1404b462808ab5633ef21ba5e80a3f2afbcca95ec6e762c5157c933a5",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "poisson2D/poisson2D.mtx",
+          "url": "https://sparse.tamu.edu/FEMLAB/poisson2D"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "matrix title and group description",
+          "url": "https://sparse.tamu.edu/FEMLAB"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "evidence_summary": "Original titles identify Poisson equations; the FEMLAB group identifies its source toolbox as finite element.",
+      "full_name": "FEMLAB/poisson2D",
+      "matrix_id": 926,
+      "provenance_group": "femlab-langemyr",
+      "uncertainties": [
+        "The generic kind field is CFD, but the matrix-specific title identifies a Poisson operator. No structural-mechanics tag is assigned."
+      ]
+    },
+    {
+      "application_tags": [
+        "elliptic_diffusion_thermal"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "cded545a2947fa67f5b9d5bc3787506eeb6fd9816adcc9b474d5ae7e9033f607",
+          "archive_url": "https://sparse.tamu.edu/MM/FEMLAB/poisson3Da.tar.gz",
+          "header_sha256": "8e48f0ff12b09dec3e867422c2cd9e331554ced6423b085909cb303f0696ec90",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "poisson3Da/poisson3Da.mtx",
+          "url": "https://sparse.tamu.edu/FEMLAB/poisson3Da"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "matrix title and group description",
+          "url": "https://sparse.tamu.edu/FEMLAB"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "evidence_summary": "Original titles identify Poisson equations; the FEMLAB group identifies its source toolbox as finite element.",
+      "full_name": "FEMLAB/poisson3Da",
+      "matrix_id": 927,
+      "provenance_group": "femlab-langemyr",
+      "uncertainties": [
+        "The generic kind field is CFD, but the matrix-specific title identifies a Poisson operator. No structural-mechanics tag is assigned."
+      ]
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "7fa61a8016f59c81ce2176db3c37379557415663868af0a6a8fc26a5ea14d389",
+          "archive_url": "https://sparse.tamu.edu/MM/Engwirda/airfoil_2d.tar.gz",
+          "header_sha256": "6d3a05a53ec6e0463caca02df763a211df10a2ecc5014c9a380833aad8c7b369",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "airfoil_2d/airfoil_2d.mtx",
+          "url": "https://sparse.tamu.edu/Engwirda/airfoil_2d"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "group description",
+          "url": "https://sparse.tamu.edu/Engwirda"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "unknown",
+      "discretization_tags": [
+        "unknown"
+      ],
+      "evidence_summary": "The group documents use in a Navier-Stokes solver on an unstructured airfoil mesh, but does not identify the spatial discretization method.",
+      "full_name": "Engwirda/airfoil_2d",
+      "matrix_id": 1319,
+      "provenance_group": "airfoil-flow",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "fac3c38fab729e88bf52e3c307d1171ad1532ccfb5861f4ec7eb8d93ac96583f",
+          "archive_url": "https://sparse.tamu.edu/MM/Szczerba/Ill_Stokes.tar.gz",
+          "header_sha256": "fe89a21a7660f696ad207d7410cfc071654911288cdbf7f20459271aaeff8593",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "Ill_Stokes/Ill_Stokes.mtx",
+          "url": "https://sparse.tamu.edu/Szczerba/Ill_Stokes"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "matrix notes",
+          "url": "https://sparse.tamu.edu/Szczerba/Ill_Stokes"
+        }
+      ],
+      "discretization_candidates": [
+        "finite_element"
+      ],
+      "discretization_status": "unknown",
+      "discretization_tags": [
+        "unknown"
+      ],
+      "evidence_summary": "Original notes identify unreduced Stokes momentum and continuity equations on a tetrahedral mesh with velocity and pressure variables. They do not explicitly name the discretization method.",
+      "full_name": "Szczerba/Ill_Stokes",
+      "matrix_id": 1862,
+      "provenance_group": "unstructured-stokes",
+      "uncertainties": [
+        "A tetrahedral mesh alone does not establish finite-element discretization; solver-specific comments were not used as descriptor features."
+      ]
+    },
+    {
+      "application_tags": [
+        "elliptic_diffusion_thermal"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "e2c6fbc05f7b6152fb3cb2f325210a733768fa3f56bcd0932d6a607a871d51ca",
+          "archive_url": "https://sparse.tamu.edu/MM/TKK/t2d_q4.tar.gz",
+          "header_sha256": "517e840509be16910eadafe9c805c17677fc676d5693a6fced8be817b1b741a6",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "t2d_q4/t2d_q4.mtx",
+          "url": "https://sparse.tamu.edu/TKK/t2d_q4"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "matrix title and t2d_q4 group entry",
+          "url": "https://sparse.tamu.edu/TKK"
+        }
+      ],
+      "discretization_candidates": [
+        "finite_element"
+      ],
+      "discretization_status": "inferred_candidate_only",
+      "discretization_tags": [
+        "unknown"
+      ],
+      "evidence_summary": "Original title and the group entry identify nonlinear diffusion on a bilinear mesh. They do not explicitly name the spatial discretization method.",
+      "full_name": "TKK/t2d_q4",
+      "matrix_id": 1916,
+      "provenance_group": "nonlinear-diffusion",
+      "uncertainties": [
+        "Bilinear elements suggest FEM, but this is an inference; the confirmed discretization tag remains unknown. The generic structural-problem kind does not justify structural-mechanics application tagging."
+      ]
+    },
+    {
+      "application_tags": [
+        "elliptic_diffusion_thermal"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "a7f31c43a4c0d48e8973ec629a2dcda9de82c70a43de7f1becb168a5fe73d1f8",
+          "archive_url": "https://sparse.tamu.edu/MM/Bourchtein/atmosmodd.tar.gz",
+          "header_sha256": "318d7771376980239449114583ea66223bda3c2cf01d063b436d3ae2df64e761",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "atmosmodd/atmosmodd.mtx",
+          "url": "https://sparse.tamu.edu/Bourchtein/atmosmodd"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "matrix notes and group description",
+          "url": "https://sparse.tamu.edu/Bourchtein"
+        }
+      ],
+      "discretization_candidates": [
+        "finite_difference",
+        "finite_element"
+      ],
+      "discretization_status": "ambiguous",
+      "discretization_tags": [
+        "unknown"
+      ],
+      "evidence_summary": "Original notes describe elliptic subproblems from semi-implicit atmospheric models and discuss both finite differences and finite elements without choosing one for these matrices.",
+      "full_name": "Bourchtein/atmosmodd",
+      "matrix_id": 2265,
+      "provenance_group": "atmospheric-elliptic",
+      "uncertainties": [
+        "Alternative methods mentioned in explanatory context are not proof that either individual matrix uses both methods."
+      ]
+    },
+    {
+      "application_tags": [
+        "elliptic_diffusion_thermal"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "793d75585978fcc6b2d83927a70c84d089c62efa2535adfa92ecdce5fc48ce6a",
+          "archive_url": "https://sparse.tamu.edu/MM/Bourchtein/atmosmodl.tar.gz",
+          "header_sha256": "f1812c641fa66bf5817e4a2de8a9f576f98f9912fa644e69408542f3869231fa",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "atmosmodl/atmosmodl.mtx",
+          "url": "https://sparse.tamu.edu/Bourchtein/atmosmodl"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "matrix notes and group description",
+          "url": "https://sparse.tamu.edu/Bourchtein"
+        }
+      ],
+      "discretization_candidates": [
+        "finite_difference",
+        "finite_element"
+      ],
+      "discretization_status": "ambiguous",
+      "discretization_tags": [
+        "unknown"
+      ],
+      "evidence_summary": "Original notes describe elliptic subproblems from semi-implicit atmospheric models and discuss both finite differences and finite elements without choosing one for these matrices.",
+      "full_name": "Bourchtein/atmosmodl",
+      "matrix_id": 2267,
+      "provenance_group": "atmospheric-elliptic",
+      "uncertainties": [
+        "Alternative methods mentioned in explanatory context are not proof that either individual matrix uses both methods."
+      ]
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "af951bce390f70ad849f2b1b3a503ad2cea57546287f62c80fdda312286648e4",
+          "archive_url": "https://sparse.tamu.edu/MM/Fluorem/DK01R.tar.gz",
+          "header_sha256": "8fd069e95512e93efac121d64867c646106f0561f32bf98235c1572ae05f7e92",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "DK01R/DK01R.mtx",
+          "url": "https://sparse.tamu.edu/Fluorem/DK01R"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "matrix notes and group discretization description",
+          "url": "https://sparse.tamu.edu/Fluorem"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_volume"
+      ],
+      "evidence_summary": "Original notes explicitly identify automatically differentiated steady-flow Jacobians from finite-volume equations.",
+      "full_name": "Fluorem/DK01R",
+      "matrix_id": 2334,
+      "provenance_group": "finite-volume-rans",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "223c7a6a949dd2c4093dc5a8879320d3d3d58002ded8d8bccce1a83f297137d7",
+          "archive_url": "https://sparse.tamu.edu/MM/Fluorem/GT01R.tar.gz",
+          "header_sha256": "99988f83101da272f30f730f59266b349b6f00e1fbad53695e6787bdfe586be5",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "GT01R/GT01R.mtx",
+          "url": "https://sparse.tamu.edu/Fluorem/GT01R"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "matrix notes and group discretization description",
+          "url": "https://sparse.tamu.edu/Fluorem"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_volume"
+      ],
+      "evidence_summary": "Original notes explicitly identify automatically differentiated steady-flow Jacobians from finite-volume equations.",
+      "full_name": "Fluorem/GT01R",
+      "matrix_id": 2335,
+      "provenance_group": "finite-volume-rans",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "elliptic_diffusion_thermal"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "d289d8de11b484867fa00582b5344cb028810e5632326ea0ea45b1c885c7c505",
+          "archive_url": "https://sparse.tamu.edu/MM/CPM/cz1268.tar.gz",
+          "header_sha256": "5ed514a80768fcb0fcc41456ff4e0aae26b4ce88c21dd0e980023e0ce02920fb",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "cz1268/cz1268.mtx",
+          "url": "https://sparse.tamu.edu/CPM/cz1268"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "matrix notes and group method description",
+          "url": "https://sparse.tamu.edu/CPM"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_difference"
+      ],
+      "evidence_summary": "Original notes identify a surface-Poisson embedding on a Cartesian band solved with finite differences, including a source-assembled constraint row.",
+      "full_name": "CPM/cz1268",
+      "matrix_id": 2562,
+      "provenance_group": "circle-surface-poisson",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "elliptic_diffusion_thermal"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "eb7df6302572a0c5077ec0e1061670d7f5f42467408103bc849d4a1257512622",
+          "archive_url": "https://sparse.tamu.edu/MM/CPM/cz10228.tar.gz",
+          "header_sha256": "3f1a45658089ccf2a05f410dea53572741511c0ec90a0ea1984c32b1bcf1410f",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "cz10228/cz10228.mtx",
+          "url": "https://sparse.tamu.edu/CPM/cz10228"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "matrix notes and group method description",
+          "url": "https://sparse.tamu.edu/CPM"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_difference"
+      ],
+      "evidence_summary": "Original notes identify a surface-Poisson embedding on a Cartesian band solved with finite differences, including a source-assembled constraint row.",
+      "full_name": "CPM/cz10228",
+      "matrix_id": 2565,
+      "provenance_group": "circle-surface-poisson",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "elliptic_diffusion_thermal"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "5d809f2cc505a850dc0ce54840c1e7cbf6cd5b46763e1229735e8c19629edff2",
+          "archive_url": "https://sparse.tamu.edu/MM/CPM/cz40948.tar.gz",
+          "header_sha256": "597fe1e30761b93a557130dcb61eab90b72206ac7301f3656ebb5640f2385f7b",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "cz40948/cz40948.mtx",
+          "url": "https://sparse.tamu.edu/CPM/cz40948"
+        },
+        {
+          "kind": "suitesparse_author_description",
+          "locator": "matrix notes and group method description",
+          "url": "https://sparse.tamu.edu/CPM"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_difference"
+      ],
+      "evidence_summary": "Original notes identify a surface-Poisson embedding on a Cartesian band solved with finite differences, including a source-assembled constraint row.",
+      "full_name": "CPM/cz40948",
+      "matrix_id": 2567,
+      "provenance_group": "circle-surface-poisson",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "acc57a48690028ac98cf730b382da0a4df87f188d6b990004cec90a387250e0a",
+          "archive_url": "https://sparse.tamu.edu/MM/Goodwin/Goodwin_010.tar.gz",
+          "header_sha256": "72bc7925dfe2adafa01ec73cd9c178f8f2eb9efea0e6edb3b44396883f50fe87",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "Goodwin_010/Goodwin_010.mtx",
+          "url": "https://sparse.tamu.edu/Goodwin/Goodwin_010"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "evidence_summary": "Original titles explicitly identify finite-element Navier-Stokes and transport equations.",
+      "full_name": "Goodwin/Goodwin_010",
+      "matrix_id": 2817,
+      "provenance_group": "goodwin-flow-transport",
+      "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "af90a684723d9edd3a1d7dfcb9f49d255b5ae466bdfb61c28729dc52842e6082",
+          "archive_url": "https://sparse.tamu.edu/MM/Goodwin/Goodwin_040.tar.gz",
+          "header_sha256": "90338f138ba04d36538bf29c9cbfa4269f400eb26cd8912dffe405b44a6634a9",
+          "kind": "suitesparse_matrix_metadata",
+          "locator": "original Matrix Market title/notes",
+          "member": "Goodwin_040/Goodwin_040.mtx",
+          "url": "https://sparse.tamu.edu/Goodwin/Goodwin_040"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "documented",
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "evidence_summary": "Original titles explicitly identify finite-element Navier-Stokes and transport equations.",
+      "full_name": "Goodwin/Goodwin_040",
+      "matrix_id": 2822,
+      "provenance_group": "goodwin-flow-transport",
+      "uncertainties": []
+    }
+  ],
+  "matrix_count": 43,
+  "policy_notes": [
+    "Descriptors use original public matrix metadata and author descriptions, not benchmark admission prose or solver outcomes.",
+    "A specific matrix title or author subsection takes precedence over a generic collection kind or group introduction.",
+    "Application categories are analyst-assigned coarse descriptions. They are not numerical difficulty classes.",
+    "Discretization candidates are explicitly excluded from confirmed tags. Unknown means unresolved by this bounded primary-source review, not unknowable in principle.",
+    "Existing provenance groups are recorded as identifiers, not independently requalified by this descriptor review.",
+    "No current split assignments, candidate timings, convergence results, matrix numerical traits, or internal source paths are included."
+  ],
+  "schema_version": 1,
+  "status": "draft-for-scientific-review"
+}

@@ -49,6 +49,12 @@ margins. This is a declared pilot corpus, not an exhaustive inventory of NS mesh
 problems. The earlier two-case `ns-mesh-dev-pilot` remains a small integration
 check, separate from the main pilot.
 
+**The current NS development/ranked split is provisional for
+representativeness.** Development lacks several ranked application,
+discretization, and size regimes. Numerical qualification and execution checks
+remain valid; a representative replacement may change the counts and add
+independent matrix groups. See the [NS split review](docs/NS_SPLIT_REVIEW.md).
+
 A complete Modal check of the public GMRES+AMG solver solved 10/11 development
 cases and 14/32 ranked cases. All 43 cases executed once without crashes,
 timeouts, or infrastructure failures; both matrices with over a million unknowns

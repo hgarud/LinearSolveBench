@@ -1,0 +1,1307 @@
+{
+  "audit_sha256": "d3138ba2d67c4a6116bf5bb21a73c215b326fb85c9bcd7c9ad4bf1fcdf3041cd",
+  "cases": [
+    {
+      "application_tags": [
+        "reservoir_simulation"
+      ],
+      "discretization_tags": [
+        "unknown"
+      ],
+      "features": {
+        "log10_n": 3.012837224705172,
+        "log10_nnz_per_row": 0.8233602560737532,
+        "relative_nonsymmetry": 0.4477811395856558,
+        "weakly_diagonally_dominant_row_fraction": 1.0,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 225,
+      "matrix_sha256": "aec4b70e861bc10ba6550ba53b53503048fb35adea4f12a443198d293bc5e367",
+      "n": 1030,
+      "name": "HB/orsirr_1",
+      "nnz": 6858,
+      "provenance_group": "reservoir-ors",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "reservoir_simulation"
+      ],
+      "discretization_tags": [
+        "unknown"
+      ],
+      "features": {
+        "log10_n": 3.3434085938038574,
+        "log10_nnz_per_row": 0.8068257651540388,
+        "relative_nonsymmetry": 0.4454532283473258,
+        "weakly_diagonally_dominant_row_fraction": 1.0,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 227,
+      "matrix_sha256": "f5beabf85ffd3ae229feb9f9d89d1b48275b9afe9ba9e844155a8f90280fa675",
+      "n": 2205,
+      "name": "HB/orsreg_1",
+      "nnz": 14133,
+      "provenance_group": "reservoir-ors",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "reservoir_simulation"
+      ],
+      "discretization_tags": [
+        "unknown"
+      ],
+      "features": {
+        "log10_n": 3.5200903281128424,
+        "log10_nnz_per_row": 0.7978268254539137,
+        "relative_nonsymmetry": 1.1772914283462024,
+        "weakly_diagonally_dominant_row_fraction": 0.5842391304347826,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 246,
+      "matrix_sha256": "7fb94b145dbb2ea41b42c2761216e9297c3d66c499fabcb84290bac301881d0a",
+      "n": 3312,
+      "name": "HB/sherman5",
+      "nnz": 20793,
+      "provenance_group": "reservoir-sherman",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "reservoir_simulation"
+      ],
+      "discretization_tags": [
+        "unknown"
+      ],
+      "features": {
+        "log10_n": 2.380211241711606,
+        "log10_nnz_per_row": 0.9715850651854174,
+        "relative_nonsymmetry": 0.0017866969221675148,
+        "weakly_diagonally_dominant_row_fraction": 0.6666666666666666,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 251,
+      "matrix_sha256": "504eacd3c60536a90c1c0a6fc049526e7957f353de815773c224e37125a72b7f",
+      "n": 240,
+      "name": "HB/steam1",
+      "nnz": 2248,
+      "provenance_group": "reservoir-steam",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "reservoir_simulation"
+      ],
+      "discretization_tags": [
+        "unknown"
+      ],
+      "features": {
+        "log10_n": 2.7781512503836434,
+        "log10_nnz_per_row": 0.9746651808046278,
+        "relative_nonsymmetry": 0.002888104991184433,
+        "weakly_diagonally_dominant_row_fraction": 0.75,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 252,
+      "matrix_sha256": "63ee5b9eafeda515da40b47c3315b6b31618399a0d859f2eda3dc1c6957f2d87",
+      "n": 600,
+      "name": "HB/steam2",
+      "nnz": 5660,
+      "provenance_group": "reservoir-steam",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "elliptic_diffusion_thermal"
+      ],
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "features": {
+        "log10_n": 3.5385737338068557,
+        "log10_nnz_per_row": 1.2844307338445196,
+        "relative_nonsymmetry": 0.01758051442318217,
+        "weakly_diagonally_dominant_row_fraction": 0.6666666666666666,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 377,
+      "matrix_sha256": "a77399dedb7ce757735a1cf67f16fb764376ddc46f6ecf9836c8e2596cf5c401",
+      "n": 3456,
+      "name": "Brunetiere/thermal",
+      "nnz": 66528,
+      "provenance_group": "thermal-fem",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "features": {
+        "log10_n": 2.5010592622177517,
+        "log10_nnz_per_row": 1.3610721170952857,
+        "relative_nonsymmetry": 0.23836981341750113,
+        "weakly_diagonally_dominant_row_fraction": 0.12933753943217666,
+        "zero_diagonal_fraction": 0.2334384858044164
+      },
+      "matrix_id": 380,
+      "matrix_sha256": "d86a1c6215b1e64591c9c801b8d4dc018a6950ba1d37a7e9c9c6d2c49ca185ca",
+      "n": 317,
+      "name": "DRIVCAV/cavity01",
+      "nnz": 7280,
+      "provenance_group": "driven-cavity-fem",
+      "split": "dev"
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "features": {
+        "log10_n": 3.4144719496293026,
+        "log10_nnz_per_row": 1.467317707574048,
+        "relative_nonsymmetry": 0.13245251590414503,
+        "weakly_diagonally_dominant_row_fraction": 0.04659222179437813,
+        "zero_diagonal_fraction": 0.25953022718521374
+      },
+      "matrix_id": 389,
+      "matrix_sha256": "2add303353dcfdfc2a8c6862c61c67ac1a0fb1cad43a1edd69bd1a7b3dcd8c72",
+      "n": 2597,
+      "name": "DRIVCAV/cavity10",
+      "nnz": 76171,
+      "provenance_group": "driven-cavity-fem",
+      "split": "dev"
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "features": {
+        "log10_n": 3.6591552809406296,
+        "log10_nnz_per_row": 1.4803680418385485,
+        "relative_nonsymmetry": 0.11413326333366222,
+        "weakly_diagonally_dominant_row_fraction": 0.03529153879877247,
+        "zero_diagonal_fraction": 0.2628233231039018
+      },
+      "matrix_id": 395,
+      "matrix_sha256": "1cf8bdf8684c4b40aefbedf86d9f92d8e4d2518fc0efb8adfcfc0980c12f6976",
+      "n": 4562,
+      "name": "DRIVCAV/cavity16",
+      "nnz": 137887,
+      "provenance_group": "driven-cavity-fem",
+      "split": "dev"
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "features": {
+        "log10_n": 3.5920656704322473,
+        "log10_nnz_per_row": 1.368038680108299,
+        "relative_nonsymmetry": 1.2430423261602868,
+        "weakly_diagonally_dominant_row_fraction": 0.039652084932207725,
+        "zero_diagonal_fraction": 0.16116653875671527
+      },
+      "matrix_id": 428,
+      "matrix_sha256": "d5c8208d509e0637833b92aa8c02127ac55a12cc0d78fb057d6b42fb1a7dfef6",
+      "n": 3909,
+      "name": "FIDAP/ex31",
+      "nnz": 91223,
+      "provenance_group": "fidap-flow-transport",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "features": {
+        "log10_n": 4.2948188094826865,
+        "log10_nnz_per_row": 1.0628721546070183,
+        "relative_nonsymmetry": 1.597961553288066e-07,
+        "weakly_diagonally_dominant_row_fraction": 0.03677216473929803,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 431,
+      "matrix_sha256": "071b334c17d9b3bc48f2e5e4dec4972af54cac96817cfaefec12d02de7028a5b",
+      "n": 19716,
+      "name": "FIDAP/ex35",
+      "nnz": 227872,
+      "provenance_group": "fidap-flow-transport",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "features": {
+        "log10_n": 3.8887409606828927,
+        "log10_nnz_per_row": 1.770402896315767,
+        "relative_nonsymmetry": 0.007101342097933923,
+        "weakly_diagonally_dominant_row_fraction": 0.00025839793281653745,
+        "zero_diagonal_fraction": 0.23565891472868217
+      },
+      "matrix_id": 435,
+      "matrix_sha256": "ce1697726b5f6305e16e53c10b365c3f0f0ae39292c2c6287b7f72dae46d5316",
+      "n": 7740,
+      "name": "FIDAP/ex40",
+      "nnz": 456188,
+      "provenance_group": "fidap-flow-transport",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "features": {
+        "log10_n": 3.5017437296279943,
+        "log10_nnz_per_row": 1.426257595898939,
+        "relative_nonsymmetry": 3.5554914453472755e-05,
+        "weakly_diagonally_dominant_row_fraction": 0.024881889763779527,
+        "zero_diagonal_fraction": 0.12598425196850394
+      },
+      "matrix_id": 444,
+      "matrix_sha256": "cee47be5c8544b54ae737a0d08a0ea54ba30336e66004c41def06e3949ab7dd2",
+      "n": 3175,
+      "name": "Garon/garon1",
+      "nnz": 84723,
+      "provenance_group": "square-inlet-flow",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "features": {
+        "log10_n": 4.131458260106525,
+        "log10_nnz_per_row": 1.4405241027121554,
+        "relative_nonsymmetry": 1.1574239338078507e-05,
+        "weakly_diagonally_dominant_row_fraction": 0.011968969338751386,
+        "zero_diagonal_fraction": 0.11821204285186554
+      },
+      "matrix_id": 445,
+      "matrix_sha256": "94240b0f6dd2caf2b453b757a78962e5303a6b44b23252471ad3c9eaf36c56a8",
+      "n": 13535,
+      "name": "Garon/garon2",
+      "nnz": 373235,
+      "provenance_group": "square-inlet-flow",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "features": {
+        "log10_n": 3.864511081058392,
+        "log10_nnz_per_row": 1.647067498717421,
+        "relative_nonsymmetry": 1.414162622585879,
+        "weakly_diagonally_dominant_row_fraction": 0.040983606557377046,
+        "zero_diagonal_fraction": 0.14740437158469946
+      },
+      "matrix_id": 446,
+      "matrix_sha256": "d10d21825198855ad0b7fd9ddb1dd1553ced7fba949502475d5c4a24d7941634",
+      "n": 7320,
+      "name": "Goodwin/goodwin",
+      "nnz": 324772,
+      "provenance_group": "goodwin-flow-transport",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "discretization_tags": [
+        "unknown"
+      ],
+      "features": {
+        "log10_n": 4.795351593907479,
+        "log10_nnz_per_row": 1.4396189819317224,
+        "relative_nonsymmetry": 0.945566355075819,
+        "weakly_diagonally_dominant_row_fraction": 0.0,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 820,
+      "matrix_sha256": "2747fb906e57a0c23e0fdd3fc8f2d28b69ad7a98b06a6c1359d1f2d94816923a",
+      "n": 62424,
+      "name": "Simon/venkat01",
+      "nnz": 1717792,
+      "provenance_group": "unstructured-euler",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "discretization_tags": [
+        "unknown"
+      ],
+      "features": {
+        "log10_n": 4.795351593907479,
+        "log10_nnz_per_row": 1.4396116500508616,
+        "relative_nonsymmetry": 1.0110454842235215,
+        "weakly_diagonally_dominant_row_fraction": 0.0,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 821,
+      "matrix_sha256": "b096afa36ef1e0d7d365521ec00a6cd616e4c74942b78f96038a398b746e9f98",
+      "n": 62424,
+      "name": "Simon/venkat25",
+      "nnz": 1717763,
+      "provenance_group": "unstructured-euler",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "discretization_tags": [
+        "unknown"
+      ],
+      "features": {
+        "log10_n": 4.795351593907479,
+        "log10_nnz_per_row": 1.439615189595007,
+        "relative_nonsymmetry": 1.0115582360843887,
+        "weakly_diagonally_dominant_row_fraction": 0.0,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 822,
+      "matrix_sha256": "acd2eb6eb585c5435d5eca985663a2265bb64c4686b5ecf801b8d6068cba50d8",
+      "n": 62424,
+      "name": "Simon/venkat50",
+      "nnz": 1717777,
+      "provenance_group": "unstructured-euler",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "discretization_tags": [
+        "finite_volume"
+      ],
+      "features": {
+        "log10_n": 3.5009222391903005,
+        "log10_nnz_per_row": 0.8179963144037172,
+        "relative_nonsymmetry": 0.08590870873720853,
+        "weakly_diagonally_dominant_row_fraction": 1.0,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 828,
+      "matrix_sha256": "794b6fa71726c8bf2d5102ccfa5ec351de0eddd0a0dd596376c162467a6597f3",
+      "n": 3169,
+      "name": "Wang/swang1",
+      "nnz": 20841,
+      "provenance_group": "cavity-vorticity",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "discretization_tags": [
+        "finite_volume"
+      ],
+      "features": {
+        "log10_n": 3.5009222391903005,
+        "log10_nnz_per_row": 0.8179963144037172,
+        "relative_nonsymmetry": 0.29955706967092627,
+        "weakly_diagonally_dominant_row_fraction": 1.0,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 829,
+      "matrix_sha256": "10c084cb516b27429c50cf52e037462a419bb1cc1b99f3b4bbc4717e0a4923cc",
+      "n": 3169,
+      "name": "Wang/swang2",
+      "nnz": 20841,
+      "provenance_group": "cavity-vorticity",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "semiconductor_devices"
+      ],
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "features": {
+        "log10_n": 3.4628470358316736,
+        "log10_nnz_per_row": 0.8180271367255418,
+        "relative_nonsymmetry": 0.30712013184160597,
+        "weakly_diagonally_dominant_row_fraction": 0.6538064071650017,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 830,
+      "matrix_sha256": "c454dbc4db1d7eeb8cb53f92fea41f13bbfa05ad4aa40c1013f78a3b0513bb23",
+      "n": 2903,
+      "name": "Wang/wang1",
+      "nnz": 19093,
+      "provenance_group": "semiconductor-devices",
+      "split": "dev"
+    },
+    {
+      "application_tags": [
+        "semiconductor_devices"
+      ],
+      "discretization_tags": [
+        "unknown"
+      ],
+      "features": {
+        "log10_n": 4.416041066964434,
+        "log10_nnz_per_row": 0.8323442156068103,
+        "relative_nonsymmetry": 0.22782996215155638,
+        "weakly_diagonally_dominant_row_fraction": 0.8412369551872314,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 832,
+      "matrix_sha256": "7871beffcc8e51d1cc130d3d7f028d50fe40fcea5770357da81c1253ac0afe45",
+      "n": 26064,
+      "name": "Wang/wang3",
+      "nnz": 177168,
+      "provenance_group": "semiconductor-devices",
+      "split": "dev"
+    },
+    {
+      "application_tags": [
+        "semiconductor_devices"
+      ],
+      "discretization_tags": [
+        "unknown"
+      ],
+      "features": {
+        "log10_n": 4.416107712323562,
+        "log10_nnz_per_row": 0.8323462016296435,
+        "relative_nonsymmetry": 0.5158297845389815,
+        "weakly_diagonally_dominant_row_fraction": 0.9545803283719503,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 833,
+      "matrix_sha256": "81bc5eab398f376822ab3eb0a109e3a3b53baeaad15bd966bac7d4e1dc8e34d1",
+      "n": 26068,
+      "name": "Wang/wang4",
+      "nnz": 177196,
+      "provenance_group": "semiconductor-devices",
+      "split": "dev"
+    },
+    {
+      "application_tags": [
+        "solid_mechanics_fracture"
+      ],
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "features": {
+        "log10_n": 3.1760912590556813,
+        "log10_nnz_per_row": 1.8135587506982005,
+        "relative_nonsymmetry": 0.2845526692984847,
+        "weakly_diagonally_dominant_row_fraction": 0.0,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 864,
+      "matrix_sha256": "b57ae1c53f4ff74890fabf8beead908541ec0b75622ca743a427416525dc922a",
+      "n": 1500,
+      "name": "Langemyr/comsol",
+      "nnz": 97645,
+      "provenance_group": "femlab-langemyr",
+      "split": "dev"
+    },
+    {
+      "application_tags": [
+        "biomedical_systems"
+      ],
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "features": {
+        "log10_n": 3.3690302218091532,
+        "log10_nnz_per_row": 2.4636964222180255,
+        "relative_nonsymmetry": 0.006185018406374122,
+        "weakly_diagonally_dominant_row_fraction": 0.0,
+        "zero_diagonal_fraction": 0.06070970500213767
+      },
+      "matrix_id": 891,
+      "matrix_sha256": "47843e6482498c0c888cac0293dbd1023b1b1a62db584f11aafea16df641a5ad",
+      "n": 2339,
+      "name": "Norris/heart2",
+      "nnz": 680341,
+      "provenance_group": "heart-quasistatic",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "biomedical_systems"
+      ],
+      "discretization_tags": [
+        "boundary_element",
+        "finite_difference"
+      ],
+      "features": {
+        "log10_n": 5.065049125769574,
+        "log10_nnz_per_row": 1.8652120249847943,
+        "relative_nonsymmetry": 0.2610532175110611,
+        "weakly_diagonally_dominant_row_fraction": 0.0,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 896,
+      "matrix_sha256": "ea897f22b1a971165b09935504bc5b142c872e66fc49c43a25b937bae9501bac",
+      "n": 116158,
+      "name": "Norris/torso1",
+      "nnz": 8516500,
+      "provenance_group": "torso-electrophysiology",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "biomedical_systems"
+      ],
+      "discretization_tags": [
+        "finite_difference"
+      ],
+      "features": {
+        "log10_n": 5.064334422357497,
+        "log10_nnz_per_row": 0.9499647125930537,
+        "relative_nonsymmetry": 0.08796848674461606,
+        "weakly_diagonally_dominant_row_fraction": 0.9728198539239611,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 897,
+      "matrix_sha256": "c654cd62870b91acddd018ba667fb0a1c3db0be34dd01f37365239af4ec2f7f4",
+      "n": 115967,
+      "name": "Norris/torso2",
+      "nnz": 1033473,
+      "provenance_group": "torso-electrophysiology",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "solid_mechanics_fracture"
+      ],
+      "discretization_tags": [
+        "finite_difference"
+      ],
+      "features": {
+        "log10_n": 4.06190463371617,
+        "log10_nnz_per_row": 0.5835765856339493,
+        "relative_nonsymmetry": 1.414213562373093,
+        "weakly_diagonally_dominant_row_fraction": 0.0,
+        "zero_diagonal_fraction": 1.0
+      },
+      "matrix_id": 918,
+      "matrix_sha256": "c7995ec838ea4663288c9c444f6a28cb429bce95fe0710c58d4d5994a8944c3c",
+      "n": 11532,
+      "name": "Hohn/fd15",
+      "nnz": 44206,
+      "provenance_group": "crack-log-grid",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "features": {
+        "log10_n": 4.309928110434921,
+        "log10_nnz_per_row": 1.9152774969607198,
+        "relative_nonsymmetry": 1.4947550081279821,
+        "weakly_diagonally_dominant_row_fraction": 0.0,
+        "zero_diagonal_fraction": 0.057705496228078766
+      },
+      "matrix_id": 925,
+      "matrix_sha256": "b3dafd041694477465acc8d83d074b0d1ab6d59001bb97c58942d269aa93b90a",
+      "n": 20414,
+      "name": "FEMLAB/ns3Da",
+      "nnz": 1679599,
+      "provenance_group": "femlab-langemyr",
+      "split": "dev"
+    },
+    {
+      "application_tags": [
+        "elliptic_diffusion_thermal"
+      ],
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "features": {
+        "log10_n": 2.5646660642520893,
+        "log10_nnz_per_row": 0.818610586155561,
+        "relative_nonsymmetry": 0.03291946454979404,
+        "weakly_diagonally_dominant_row_fraction": 0.7929155313351499,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 926,
+      "matrix_sha256": "460334f27bccc3064052fae4eff7fc3274a08b96bc3a005319c4d5affc3123a0",
+      "n": 367,
+      "name": "FEMLAB/poisson2D",
+      "nnz": 2417,
+      "provenance_group": "femlab-langemyr",
+      "split": "dev"
+    },
+    {
+      "application_tags": [
+        "elliptic_diffusion_thermal"
+      ],
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "features": {
+        "log10_n": 4.130783914588957,
+        "log10_nnz_per_row": 1.4166978816011166,
+        "relative_nonsymmetry": 0.1500625736228366,
+        "weakly_diagonally_dominant_row_fraction": 0.0673375758472695,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 927,
+      "matrix_sha256": "666ffb5cf73b0b349f0aeb4ed6cd6b7d310d6f56f5f774cc944b2fd1360e70bf",
+      "n": 13514,
+      "name": "FEMLAB/poisson3Da",
+      "nnz": 352762,
+      "provenance_group": "femlab-langemyr",
+      "split": "dev"
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "discretization_tags": [
+        "unknown"
+      ],
+      "features": {
+        "log10_n": 4.152716311106409,
+        "log10_nnz_per_row": 1.2617355705437194,
+        "relative_nonsymmetry": 0.13005508305888072,
+        "weakly_diagonally_dominant_row_fraction": 0.0448149711551991,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 1319,
+      "matrix_sha256": "f72e39e14969ff9cf1882eefedda8ae8ad586b796754f9e8c941ede2b03a15bc",
+      "n": 14214,
+      "name": "Engwirda/airfoil_2d",
+      "nnz": 259688,
+      "provenance_group": "airfoil-flow",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "discretization_tags": [
+        "unknown"
+      ],
+      "features": {
+        "log10_n": 4.32006315959498,
+        "log10_nnz_per_row": 0.9618061584576553,
+        "relative_nonsymmetry": 0.023625455455350556,
+        "weakly_diagonally_dominant_row_fraction": 0.1767802450229709,
+        "zero_diagonal_fraction": 0.25
+      },
+      "matrix_id": 1862,
+      "matrix_sha256": "8bbb090aa24717c9d0cc1fd4d43cac0372976475b652a22fd03c63a1ca4d1fcc",
+      "n": 20896,
+      "name": "Szczerba/Ill_Stokes",
+      "nnz": 191368,
+      "provenance_group": "unstructured-stokes",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "elliptic_diffusion_thermal"
+      ],
+      "discretization_tags": [
+        "unknown"
+      ],
+      "features": {
+        "log10_n": 3.9912703891951,
+        "log10_nnz_per_row": 0.9483736427612262,
+        "relative_nonsymmetry": 0.00018041800344769225,
+        "weakly_diagonally_dominant_row_fraction": 0.8607284970921335,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 1916,
+      "matrix_sha256": "0be56e017d29d2840d4efa7ea21a0b1c7b1e25f3b95cc1f6f9485c25391d44a2",
+      "n": 9801,
+      "name": "TKK/t2d_q4",
+      "nnz": 87025,
+      "provenance_group": "nonlinear-diffusion",
+      "split": "dev"
+    },
+    {
+      "application_tags": [
+        "elliptic_diffusion_thermal"
+      ],
+      "discretization_tags": [
+        "unknown"
+      ],
+      "features": {
+        "log10_n": 6.103951424352852,
+        "log10_nnz_per_row": 0.8412649801222438,
+        "relative_nonsymmetry": 0.007832272218829452,
+        "weakly_diagonally_dominant_row_fraction": 1.0,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 2265,
+      "matrix_sha256": "a3aaac98c8a37ae15815e85025490753e0e95d5c05a35786863a702ae7918d43",
+      "n": 1270432,
+      "name": "Bourchtein/atmosmodd",
+      "nnz": 8814880,
+      "provenance_group": "atmospheric-elliptic",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "elliptic_diffusion_thermal"
+      ],
+      "discretization_tags": [
+        "unknown"
+      ],
+      "features": {
+        "log10_n": 6.173113977139872,
+        "log10_nnz_per_row": 0.8405556201622058,
+        "relative_nonsymmetry": 0.016124289221253012,
+        "weakly_diagonally_dominant_row_fraction": 1.0,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 2267,
+      "matrix_sha256": "6f5731c357f960d35aabdb0375b78e2e44628ab43ba1667d8c0c95c775f6c2b2",
+      "n": 1489752,
+      "name": "Bourchtein/atmosmodl",
+      "nnz": 10319760,
+      "provenance_group": "atmospheric-elliptic",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "discretization_tags": [
+        "finite_volume"
+      ],
+      "features": {
+        "log10_n": 2.9556877503135057,
+        "log10_nnz_per_row": 1.1149410937379218,
+        "relative_nonsymmetry": 1.414262857782468,
+        "weakly_diagonally_dominant_row_fraction": 0.006644518272425249,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 2334,
+      "matrix_sha256": "ce6fd1d2de4e542363e952078f766a788f74c081bb11cbb846eeb91096f34410",
+      "n": 903,
+      "name": "Fluorem/DK01R",
+      "nnz": 11766,
+      "provenance_group": "finite-volume-rans",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "discretization_tags": [
+        "finite_volume"
+      ],
+      "features": {
+        "log10_n": 3.9020028913507296,
+        "log10_nnz_per_row": 1.7323826735418124,
+        "relative_nonsymmetry": 1.4262964430439324,
+        "weakly_diagonally_dominant_row_fraction": 0.037218045112781956,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 2335,
+      "matrix_sha256": "ad2443728acfb5431f1477f961f047e35d7bd2a8895d035709bac06c35d823c0",
+      "n": 7980,
+      "name": "Fluorem/GT01R",
+      "nnz": 430909,
+      "provenance_group": "finite-volume-rans",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "elliptic_diffusion_thermal"
+      ],
+      "discretization_tags": [
+        "finite_difference"
+      ],
+      "features": {
+        "log10_n": 3.1031192535457137,
+        "log10_nnz_per_row": 1.0036154465521319,
+        "relative_nonsymmetry": 0.17606377630936856,
+        "weakly_diagonally_dominant_row_fraction": 0.6435331230283912,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 2562,
+      "matrix_sha256": "05355f21841fa0ef5877cb531ed2c8d7a05eef49e36641a6bbb6cba7104adbb6",
+      "n": 1268,
+      "name": "CPM/cz1268",
+      "nnz": 12786,
+      "provenance_group": "circle-surface-poisson",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "elliptic_diffusion_thermal"
+      ],
+      "discretization_tags": [
+        "finite_difference"
+      ],
+      "features": {
+        "log10_n": 4.009790719354298,
+        "log10_nnz_per_row": 1.0025233504200612,
+        "relative_nonsymmetry": 0.1741712673339842,
+        "weakly_diagonally_dominant_row_fraction": 0.6460696128275323,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 2565,
+      "matrix_sha256": "08cb9f281795bb7c002f241124b8d339e46f2de5677972878dd71382190b5b15",
+      "n": 10228,
+      "name": "CPM/cz10228",
+      "nnz": 102876,
+      "provenance_group": "circle-surface-poisson",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "elliptic_diffusion_thermal"
+      ],
+      "discretization_tags": [
+        "finite_difference"
+      ],
+      "features": {
+        "log10_n": 4.612232694614741,
+        "log10_nnz_per_row": 1.0028205021015053,
+        "relative_nonsymmetry": 0.17410469380113835,
+        "weakly_diagonally_dominant_row_fraction": 0.646283090749243,
+        "zero_diagonal_fraction": 0.0
+      },
+      "matrix_id": 2567,
+      "matrix_sha256": "9ff0b3dafb7a414ed1f0d9d87925ce11058566b0348ff3fed0200f15e19525a9",
+      "n": 40948,
+      "name": "CPM/cz40948",
+      "nnz": 412148,
+      "provenance_group": "circle-surface-poisson",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "features": {
+        "log10_n": 3.0726174765452368,
+        "log10_nnz_per_row": 1.4363429566317156,
+        "relative_nonsymmetry": 0.48849746785819037,
+        "weakly_diagonally_dominant_row_fraction": 0.1362098138747885,
+        "zero_diagonal_fraction": 0.2529610829103215
+      },
+      "matrix_id": 2817,
+      "matrix_sha256": "08655d9ee33a0920bb3a552bcc2b83d7ccffbe5b84d2a5560e002a9c1430824d",
+      "n": 1182,
+      "name": "Goodwin/Goodwin_010",
+      "nnz": 32282,
+      "provenance_group": "goodwin-flow-transport",
+      "split": "ranked"
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "features": {
+        "log10_n": 4.2533864729877715,
+        "log10_nnz_per_row": 1.4961001674139265,
+        "relative_nonsymmetry": 0.597642105073723,
+        "weakly_diagonally_dominant_row_fraction": 0.035766097533757396,
+        "zero_diagonal_fraction": 0.26777145407878583
+      },
+      "matrix_id": 2822,
+      "matrix_sha256": "a19e76b0377fd73d3228fe6ebb83e8f0dd5278baa2b46e443404fdc841dd3581",
+      "n": 17922,
+      "name": "Goodwin/Goodwin_040",
+      "nnz": 561677,
+      "provenance_group": "goodwin-flow-transport",
+      "split": "ranked"
+    }
+  ],
+  "comparison": {
+    "case_counts": {
+      "dev": 11,
+      "ranked": 32
+    },
+    "features": {
+      "log10_n": {
+        "dev": {
+          "max": 4.416107712323562,
+          "median": 3.6591552809406296,
+          "min": 2.5010592622177517
+        },
+        "normalized_wasserstein_distance": 0.09256347337741212,
+        "ranked": {
+          "max": 6.173113977139872,
+          "median": 3.895371926016811,
+          "min": 2.380211241711606
+        }
+      },
+      "log10_nnz_per_row": {
+        "dev": {
+          "max": 1.9152774969607198,
+          "median": 1.3610721170952857,
+          "min": 0.8180271367255418
+        },
+        "normalized_wasserstein_distance": 0.05622691383693794,
+        "ranked": {
+          "max": 2.4636964222180255,
+          "median": 1.08890662417247,
+          "min": 0.5835765856339493
+        }
+      },
+      "relative_nonsymmetry": {
+        "dev": {
+          "max": 1.4947550081279821,
+          "median": 0.22782996215155638,
+          "min": 0.00018041800344769225
+        },
+        "normalized_wasserstein_distance": 0.13795619198223844,
+        "ranked": {
+          "max": 1.4262964430439324,
+          "median": 0.1751175218216764,
+          "min": 1.597961553288066e-07
+        }
+      },
+      "weakly_diagonally_dominant_row_fraction": {
+        "dev": {
+          "max": 0.9545803283719503,
+          "median": 0.12933753943217666,
+          "min": 0.0
+        },
+        "normalized_wasserstein_distance": 0.06347630915427796,
+        "ranked": {
+          "max": 1.0,
+          "median": 0.0905123925149938,
+          "min": 0.0
+        }
+      },
+      "zero_diagonal_fraction": {
+        "dev": {
+          "max": 0.2628233231039018,
+          "median": 0.0,
+          "min": 0.0
+        },
+        "normalized_wasserstein_distance": 0.039685359941836196,
+        "ranked": {
+          "max": 1.0,
+          "median": 0.0,
+          "min": 0.0
+        }
+      }
+    },
+    "group_counts": {
+      "dev": 4,
+      "ranked": 17
+    },
+    "groups": {
+      "dev": {
+        "driven-cavity-fem": 3,
+        "femlab-langemyr": 4,
+        "nonlinear-diffusion": 1,
+        "semiconductor-devices": 3
+      },
+      "ranked": {
+        "airfoil-flow": 1,
+        "atmospheric-elliptic": 2,
+        "cavity-vorticity": 2,
+        "circle-surface-poisson": 3,
+        "crack-log-grid": 1,
+        "fidap-flow-transport": 3,
+        "finite-volume-rans": 2,
+        "goodwin-flow-transport": 3,
+        "heart-quasistatic": 1,
+        "reservoir-ors": 2,
+        "reservoir-sherman": 1,
+        "reservoir-steam": 2,
+        "square-inlet-flow": 2,
+        "thermal-fem": 1,
+        "torso-electrophysiology": 2,
+        "unstructured-euler": 3,
+        "unstructured-stokes": 1
+      }
+    },
+    "mean_normalized_marginal_distance": 0.07798164965854053,
+    "size_bands": [
+      {
+        "can_cover_both_sides_with_distinct_groups": true,
+        "counts": {
+          "dev": 7,
+          "ranked": 17
+        },
+        "maximum_n_exclusive": 10000,
+        "minimum_n_inclusive": 0,
+        "provenance_groups": [
+          "cavity-vorticity",
+          "circle-surface-poisson",
+          "driven-cavity-fem",
+          "femlab-langemyr",
+          "fidap-flow-transport",
+          "finite-volume-rans",
+          "goodwin-flow-transport",
+          "heart-quasistatic",
+          "nonlinear-diffusion",
+          "reservoir-ors",
+          "reservoir-sherman",
+          "reservoir-steam",
+          "semiconductor-devices",
+          "square-inlet-flow",
+          "thermal-fem"
+        ]
+      },
+      {
+        "can_cover_both_sides_with_distinct_groups": true,
+        "counts": {
+          "dev": 4,
+          "ranked": 11
+        },
+        "maximum_n_exclusive": 100000,
+        "minimum_n_inclusive": 10000,
+        "provenance_groups": [
+          "airfoil-flow",
+          "circle-surface-poisson",
+          "crack-log-grid",
+          "femlab-langemyr",
+          "fidap-flow-transport",
+          "goodwin-flow-transport",
+          "semiconductor-devices",
+          "square-inlet-flow",
+          "unstructured-euler",
+          "unstructured-stokes"
+        ]
+      },
+      {
+        "can_cover_both_sides_with_distinct_groups": false,
+        "counts": {
+          "dev": 0,
+          "ranked": 2
+        },
+        "maximum_n_exclusive": 1000000,
+        "minimum_n_inclusive": 100000,
+        "provenance_groups": [
+          "torso-electrophysiology"
+        ]
+      },
+      {
+        "can_cover_both_sides_with_distinct_groups": false,
+        "counts": {
+          "dev": 0,
+          "ranked": 2
+        },
+        "maximum_n_exclusive": null,
+        "minimum_n_inclusive": 1000000,
+        "provenance_groups": [
+          "atmospheric-elliptic"
+        ]
+      }
+    ],
+    "tag_coverage": {
+      "application_tags": {
+        "biomedical_systems": {
+          "at_least_two_source_groups": true,
+          "counts": {
+            "dev": 0,
+            "ranked": 3
+          },
+          "known_regime_present_in_both_splits": false,
+          "provenance_groups": [
+            "heart-quasistatic",
+            "torso-electrophysiology"
+          ]
+        },
+        "elliptic_diffusion_thermal": {
+          "at_least_two_source_groups": true,
+          "counts": {
+            "dev": 3,
+            "ranked": 6
+          },
+          "known_regime_present_in_both_splits": true,
+          "provenance_groups": [
+            "atmospheric-elliptic",
+            "circle-surface-poisson",
+            "femlab-langemyr",
+            "nonlinear-diffusion",
+            "thermal-fem"
+          ]
+        },
+        "fluid_flow_transport": {
+          "at_least_two_source_groups": true,
+          "counts": {
+            "dev": 4,
+            "ranked": 17
+          },
+          "known_regime_present_in_both_splits": true,
+          "provenance_groups": [
+            "airfoil-flow",
+            "cavity-vorticity",
+            "driven-cavity-fem",
+            "femlab-langemyr",
+            "fidap-flow-transport",
+            "finite-volume-rans",
+            "goodwin-flow-transport",
+            "square-inlet-flow",
+            "unstructured-euler",
+            "unstructured-stokes"
+          ]
+        },
+        "reservoir_simulation": {
+          "at_least_two_source_groups": true,
+          "counts": {
+            "dev": 0,
+            "ranked": 5
+          },
+          "known_regime_present_in_both_splits": false,
+          "provenance_groups": [
+            "reservoir-ors",
+            "reservoir-sherman",
+            "reservoir-steam"
+          ]
+        },
+        "semiconductor_devices": {
+          "at_least_two_source_groups": false,
+          "counts": {
+            "dev": 3,
+            "ranked": 0
+          },
+          "known_regime_present_in_both_splits": false,
+          "provenance_groups": [
+            "semiconductor-devices"
+          ]
+        },
+        "solid_mechanics_fracture": {
+          "at_least_two_source_groups": true,
+          "counts": {
+            "dev": 1,
+            "ranked": 1
+          },
+          "known_regime_present_in_both_splits": true,
+          "provenance_groups": [
+            "crack-log-grid",
+            "femlab-langemyr"
+          ]
+        }
+      },
+      "discretization_tags": {
+        "boundary_element": {
+          "at_least_two_source_groups": false,
+          "counts": {
+            "dev": 0,
+            "ranked": 1
+          },
+          "known_regime_present_in_both_splits": false,
+          "provenance_groups": [
+            "torso-electrophysiology"
+          ]
+        },
+        "finite_difference": {
+          "at_least_two_source_groups": true,
+          "counts": {
+            "dev": 0,
+            "ranked": 6
+          },
+          "known_regime_present_in_both_splits": false,
+          "provenance_groups": [
+            "circle-surface-poisson",
+            "crack-log-grid",
+            "torso-electrophysiology"
+          ]
+        },
+        "finite_element": {
+          "at_least_two_source_groups": true,
+          "counts": {
+            "dev": 8,
+            "ranked": 10
+          },
+          "known_regime_present_in_both_splits": true,
+          "provenance_groups": [
+            "driven-cavity-fem",
+            "femlab-langemyr",
+            "fidap-flow-transport",
+            "goodwin-flow-transport",
+            "heart-quasistatic",
+            "semiconductor-devices",
+            "square-inlet-flow",
+            "thermal-fem"
+          ]
+        },
+        "finite_volume": {
+          "at_least_two_source_groups": true,
+          "counts": {
+            "dev": 0,
+            "ranked": 4
+          },
+          "known_regime_present_in_both_splits": false,
+          "provenance_groups": [
+            "cavity-vorticity",
+            "finite-volume-rans"
+          ]
+        },
+        "unknown": {
+          "at_least_two_source_groups": true,
+          "counts": {
+            "dev": 3,
+            "ranked": 12
+          },
+          "known_regime_present_in_both_splits": false,
+          "provenance_groups": [
+            "airfoil-flow",
+            "atmospheric-elliptic",
+            "nonlinear-diffusion",
+            "reservoir-ors",
+            "reservoir-sherman",
+            "reservoir-steam",
+            "semiconductor-devices",
+            "unstructured-euler",
+            "unstructured-stokes"
+          ]
+        }
+      }
+    }
+  },
+  "descriptor_sha256": "651bfdbd5b777dd8d6afdc931dfe7535dc638e5aa16c3a5d9101df3a088b77f7",
+  "kind": "ns-split-descriptive-audit",
+  "limitations": [
+    "Marginal feature similarity does not establish joint similarity or equal solver difficulty.",
+    "No condition-number, nonnormality, or solver-success guarantee is inferred.",
+    "Dominance and nonsymmetry are floating-point descriptive diagnostics, not mathematical certificates.",
+    "Application and discretization tags reflect the cited source review; unknown labels do not establish regime coverage.",
+    "No universal acceptable-distance threshold is specified by this audit."
+  ],
+  "method": "matrix-only-marginal-wasserstein-range-normalized-v1",
+  "schema_version": 1,
+  "source_release_sha256": [
+    "25e79afb724d2f33c2438513f3ea13aeaebfced24fb8c4bba6d5c78e5edfa296",
+    "61fb1ec691400d0e1bc83d8524f5e90f1e6479941e31e4f8e0ccd840163da241"
+  ]
+}
