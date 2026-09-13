@@ -72,7 +72,7 @@ def load_suitesparse(path: pathlib.Path, case: Mapping[str, object]) -> CsrMatri
                             "Matrix Market dimensions disagree with the declared case"
                         )
                     handle.seek(0)
-                    loaded = mmread(handle, spmatrix=True)
+                    loaded = mmread(handle)
                 if not sparse.issparse(loaded) or np.iscomplexobj(loaded.data):
                     raise ValueError("SuiteSparse input must be real and sparse")
                 matrix = CsrMatrix.from_scipy(loaded)

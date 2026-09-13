@@ -280,7 +280,7 @@ def load_matrix_market_archive(
             if source is None:
                 raise ValueError("Matrix Market member is unreadable")
             with source:
-                loaded = mmread(source, spmatrix=True)
+                loaded = mmread(source)
     except (OSError, tarfile.TarError) as exc:
         raise ValueError("SuiteSparse archive is unreadable") from exc
     if not sparse.issparse(loaded) or np.iscomplexobj(loaded.data):
