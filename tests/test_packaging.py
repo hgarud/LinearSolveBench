@@ -126,6 +126,10 @@ def test_archives_include_public_resources_only(distributions):
             "data/catalogue.json",
             "data/dev-v1.json",
             "data/ranked-v1.json",
+            "data/ns-mesh-pilot-dev.json",
+            "data/ns-mesh-pilot-ranked.json",
+            "data/flash-replay-dev-pilot.json",
+            "data/flash-replay-ranked-pilot.json",
             "data/qualification.json",
             "data/qualification-inputs-v1.json",
             "data/NOTICE.md",
@@ -162,11 +166,16 @@ import pathlib
 import sys
 import linear_solver_bench
 from linear_solver_bench.dataset import load_split
+from linear_solver_bench.manifests import load_release
 from linear_solver_bench.paths import data_dir, native_dir, repository_root
 assert linear_solver_bench.__file__.startswith(sys.argv[1])
 assert load_split("dev")["case_count"] > 0
 assert (repository_root() / "benchmark.toml").is_file()
 assert (data_dir() / "NOTICE.md").is_file()
+for name in ("ns-mesh-pilot-dev", "ns-mesh-pilot-ranked",
+             "flash-replay-dev-pilot", "flash-replay-ranked-pilot"):
+    release = load_release(data_dir() / (name + ".json"), official=True)
+    assert release["cases"]
 assert (native_dir() / "src" / "driver.cpp").is_file()
 assert (native_dir() / "include" / "nsl_hypre_solver.h").is_file()
 assert pathlib.Path.cwd() not in repository_root().parents

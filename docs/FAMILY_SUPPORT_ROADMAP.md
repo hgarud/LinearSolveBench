@@ -6,12 +6,14 @@ implementation and launch gates are recorded in
 are implemented in the shared pilot evaluator. SPD, NS performance, and FLASH
 trajectory remain unsupported; their design below is not a pilot launch gate.
 
-The public NS release currently contains two qualified development cases, not a
-complete scientific inventory or ranked corpus. FLASH has 344 validated exports
-for intended 96-case development and 248-case ranked splits; publication and
-full public timing-reference qualification are in progress. Representative
-reference checks do not establish complete-split or official venue readiness.
-The pilot plan tracks these remaining launch requirements explicitly.
+The public NS pilot contains 43 qualified matrices in 11 development and 32
+ranked cases. Its declared scope is not an exhaustive family inventory. All 41
+refined-LU workloads and two strict row-dominance certificates meet the unchanged
+tenfold qualification margins. FLASH has 344 published captures in 96-case
+development and 248-case ranked splits, pinned to an immutable Hugging Face
+commit. Its fixed public reference passes all 344 locally. Full official venue
+qualification, reference registration, and final distribution checks remain
+launch requirements in the pilot plan.
 
 Pilot cases and replay reference qualification each use exactly one fresh
 native process per case. The original v1 benchmark retains three repetitions.
@@ -253,10 +255,11 @@ reproducibility are separate documented procedures.
 
 The benchmark maintainers must publish and maintain this dataset: there is no
 SuiteSparse accession or download endpoint assumed for these captures. The
-publication host is a public, ungated Hugging Face dataset repository owned
-by the benchmark organization. Hugging Face is the only required host; Zenodo
-archival is an optional later addition if needed. No repository or downloadable
-FLASH release has been created by this plan.
+publication host is the public, ungated
+[LinearSolveBench dataset on Hugging Face](https://huggingface.co/datasets/hgarud/LinearSolveBench).
+The replay pilot already publishes 344 per-case archives there. Hugging Face is
+the only required host; Zenodo archival is an optional later addition if needed.
+Complete trajectory manifests and bundles remain future work.
 
 Hugging Face supports individual file downloads pinned to a full commit hash.
 Use that capability for reproducible downloads; never resolve a benchmark
@@ -266,7 +269,9 @@ specific version DOI, and publish its download URLs as optional mirrors.
 Neither a DOI nor mirror support is required for the Hugging Face release.
 [Zenodo DOI versioning](https://zenodo.org/help/versioning).
 
-Publish the following small metadata files with the code release and dataset:
+For a future release including trajectories, publish metadata covering the
+following responsibilities. These proposed files extend the replay format;
+the current required files and manifest IDs are documented in [DATASET.md](DATASET.md).
 
 - `catalogue.json`: stable public matrix and case IDs, dimensions, nonzero
   counts, scientific provenance, license/citations, download URLs, byte sizes,
@@ -279,7 +284,7 @@ Publish the following small metadata files with the code release and dataset:
 - `README.md` and `DATA_LICENSE`: numerical format documentation, a small
   download/load example, capture description, and established data-use terms.
 
-An illustrative public case ID is `flash-magdiff-v1/000123`; its numerical
+An existing replay case ID is `flash-replay-0001`; its numerical
 identity is also bound to hashes of `A`, `b`, and `x0`. Allocate IDs independently
 of acquisition-directory names or private run identifiers. Repeated matrices
 may share a matrix ID while different RHS/warm-start pairs have distinct case
@@ -315,14 +320,14 @@ resuming interrupted downloads. Mirror fallback can be added later if needed.
 An offline cache must be sufficient to repeat preparation. For example:
 
 ```bash
-linear-solver-bench dataset prepare --release mesh-cpu-v2 \
+linear-solver-bench dataset prepare --release flash-replay-dev-pilot \
   --family magnetic_diffusion_flash --track replay \
-  --case flash-magdiff-v1/000123 \
+  --case flash-replay-0001 \
   --output data/prepared/flash-example
 ```
 
-This is a proposed command and illustrative ID. Users should also be able to
-follow a direct catalogue link and load the data without installing the
+This replay command is supported now; trajectory selection remains deferred.
+Users can also follow a direct catalogue link and load the data without installing the
 benchmark or obtaining FLASH. This package contains captured numerical inputs;
 it does not contain FLASH source, raw simulation dumps, private acquisition
 receipts, or evaluator reference solutions.
@@ -657,8 +662,8 @@ do not establish the terms for those outputs. [FLASH license agreement](https://
 
 This retained sequence describes the broader, deferred scope. Several shared
 pieces are already delivered by the pilot, as listed in section 1; extend them
-instead of recreating those changes. The pilot's remaining publication and
-qualification gates are tracked only in the active implementation plan.
+instead of recreating those changes. The pilot's remaining official venue,
+reference registration, and distribution gates are tracked in the active plan.
 Each additional track should be a small, separately reviewable extension.
 
 | Step | Deliverable | Acceptance criteria |

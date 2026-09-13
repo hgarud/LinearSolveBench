@@ -6,18 +6,29 @@ A release manifest fixes its family, track, development or ranked split, ordered
 case inventory, scientific admission, numerical identities, and execution and
 scoring contracts. Names alone do not establish scientific qualification.
 
-The initial NS development manifest is `data/ns-mesh-dev-pilot.json`, also
-available as installed manifest ID `ns-mesh-dev-pilot`:
+The NS pilot release `ns-mesh-pilot` contains 43 real mesh/PDE matrices, each
+with one newly qualified manufactured workload:
 
-| Matrix | SuiteSparse ID | Unknowns | Nonzeros | Scientific source |
-| --- | ---: | ---: | ---: | --- |
-| `DRIVCAV/cavity01` | 380 | 317 | 7,280 | Driven-cavity flow discretization |
-| `FEMLAB/poisson2D` | 926 | 367 | 2,417 | Finite-element Poisson PDE discretization |
+| Installed manifest | Split | Cases | Provenance groups | Unknowns |
+| --- | --- | ---: | ---: | ---: |
+| `ns-mesh-pilot-dev` | Development | 11 | 4 | 317–26,068 |
+| `ns-mesh-pilot-ranked` | Ranked | 32 | 17 | 240–1,489,752 |
 
-These two cases establish a small development pilot. They do not represent a
-complete NS mesh corpus. The word NS means nonsymmetric and is not restricted
-to Navier–Stokes equations. The existing v1 catalogue's generic nonsymmetry
-screen does not establish mesh/PDE provenance.
+Groups do not cross the split boundary. The largest operator has 10,319,760
+nonzeros. Both splits use the same numerical gates and execution contract:
+90 seconds per case, two CPU cores, 4 GiB memory, a 5,000-iteration request, and
+relative stopping tolerance `1e-12`. Every case was freshly qualified against
+its frozen target and RHS; gates and numerical inputs were not relaxed to
+obtain passing qualification.
+
+These 43 cases define the public pilot's scientific scope; they are not an
+exhaustive NS mesh inventory. The word NS means nonsymmetric and is not
+restricted to Navier–Stokes equations. The existing v1 catalogue's generic
+nonsymmetry screen does not establish mesh/PDE provenance.
+
+The earlier `ns-mesh-dev-pilot` is retained separately as a two-case integration
+check using `DRIVCAV/cavity01` (317 unknowns) and `FEMLAB/poisson2D` (367 unknowns).
+It is not the main pilot's development or ranked split.
 
 Preparation obtains original archives from the
 [SuiteSparse Matrix Collection](https://sparse.tamu.edu/), checking both archive
@@ -36,12 +47,27 @@ keys remain with the operator. The target and `b = fl(A x_target)` are frozen
 in trusted prepared archives. A new draw changes the numerical system identity
 and requires new qualification.
 
-NS qualification requires an independently solved reference to satisfy each
-fixed acceptance limit with a tenfold margin. It also records a residual audit
-of floating-point RHS formation. This is empirical feasibility evidence, not a
-certificate that the manufactured target is the exact stored-system solution.
-Sensitive cases need additional uncertainty analysis before publication; see
-[the accuracy contract](SPEC.md#independent-accuracy-checks).
+NS qualification distinguishes two kinds of evidence, both tied to the exact
+stored system and requiring a tenfold margin against the four acceptance gates:
+
+- **41 refined sparse-LU cases.** An independent float64 factorization solution
+  receives exactly one correction using a higher-precision residual and the
+  same factors. Extended precision is used when available, otherwise 80-digit
+  decimal arithmetic. The final metrics and RHS formation audit are empirical
+  numerical evidence, not verified forward-error bounds.
+- **Two strict row-dominance cases.** Exact integer accumulation of binary64
+  coefficients establishes every row's dominance margin and the exact RHS
+  formation residual. Their ratio certifies the exact stored-system solution's
+  relative L2 and Linf distance from the manufactured target. Separately,
+  binary64 verifier metrics at the target are measured as a feasible witness;
+  they are not claimed to be interval bounds or an independent factorization.
+  The certified forward bound must also satisfy the tenfold margin.
+
+The two certified forward bounds are below `1.2e-9`, against a required
+qualification ceiling of `1e-6`. The original unrefined LU method remains
+supported for older frozen development evidence. See
+[the accuracy contract](SPEC.md#independent-accuracy-checks) for the common
+acceptance gates and the distinction between targets and exact solutions.
 
 ## FLASH replay downloads
 
@@ -87,9 +113,11 @@ Cases requiring nonzero absolute tolerance are rejected. This four-file pilot
 format contains no reference solution. The numerical verifier can compute
 diagnostics against a separately supplied numerical reference, without treating
 it as exact truth.
-A captured solution's accuracy and an offline reference's accuracy establish
-case feasibility; official replay timing still requires one public solver to
-qualify on every scored case and control under the benchmark venue.
+Captured and offline numerical solutions establish case feasibility. The
+fixed public reference `submissions/gmres_amg.c` additionally passes all 344
+cases locally, including every correctness control. Full Modal qualification
+and registration remain in progress; local timings are not official venue
+reference times.
 
 Both development and ranked numerical inputs are public. Related source runs,
 refinements, exact duplicates, and documented near-duplicate relationships must
@@ -101,9 +129,9 @@ solves and does not claim complete-trajectory coverage or rerun the simulation.
 
 ```bash
 linear-solver-bench dataset prepare \
-  --release ns-mesh-dev-pilot --output data/prepared/ns-dev
+  --release ns-mesh-pilot-dev --output data/prepared/ns-dev
 linear-solver-bench dataset prepare \
-  --release ns-mesh-dev-pilot --offline --output data/prepared/ns-dev-offline
+  --release ns-mesh-pilot-dev --offline --output data/prepared/ns-dev-offline
 ```
 
 Preparation validates source identity, safely decodes each source archive, and

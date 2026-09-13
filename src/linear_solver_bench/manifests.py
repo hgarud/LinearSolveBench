@@ -21,7 +21,38 @@ from .families import resolve_track
 RELEASE_KIND = "linear-solver-bench-pilot-release"
 RHS_SCHEME = "rademacher-hmac-sha256-v2"
 # A release is added here only after its data and qualification are published.
-PUBLISHED_RELEASES: dict[tuple[str, str, str, str], str] = {}
+PUBLISHED_RELEASES: dict[tuple[str, str, str, str], str] = {
+    (
+        "ns-mesh-dev-pilot",
+        "ns-mesh-pde",
+        "coverage",
+        "dev",
+    ): "93d48d6ef9298752f634e1411d8b21f7e8912e6193b15ece838fe80918c71b5e",
+    (
+        "ns-mesh-pilot",
+        "ns-mesh-pde",
+        "coverage",
+        "dev",
+    ): "25e79afb724d2f33c2438513f3ea13aeaebfced24fb8c4bba6d5c78e5edfa296",
+    (
+        "ns-mesh-pilot",
+        "ns-mesh-pde",
+        "coverage",
+        "ranked",
+    ): "61fb1ec691400d0e1bc83d8524f5e90f1e6479941e31e4f8e0ccd840163da241",
+    (
+        "flash-replay-pilot",
+        "magnetic_diffusion_flash",
+        "replay",
+        "dev",
+    ): "02a8e24e667b96029f0c8db627f87c237549778a63f3342a73010e7278876669",
+    (
+        "flash-replay-pilot",
+        "magnetic_diffusion_flash",
+        "replay",
+        "ranked",
+    ): "1ce0ec20c66123773215543e2d43375104f43113a9416c59fb0e9625a9975b79",
+}
 HEX256 = re.compile(r"[0-9a-f]{64}\Z")
 PUBLIC_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9._:-]{0,159}\Z")
 QUALIFICATION_LIMITS = {

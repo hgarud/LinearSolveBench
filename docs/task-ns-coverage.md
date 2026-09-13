@@ -3,8 +3,9 @@
 Write one C solver that accurately solves as many supplied nonsymmetric mesh/PDE
 linear systems as possible within the release's fixed per-case budgets. NS means
 nonsymmetric; the systems are not restricted to Navier–Stokes equations. The
-initial public development pilot has two matrices and does not define a complete
-family inventory.
+public pilot has 11 development matrices and 32 ranked matrices, separated by
+provenance groups. Develop against `ns-mesh-pilot-dev`; the ranked split is for
+final evaluation. This declared pilot does not exhaust the scientific family.
 
 Submit a single UTF-8 C source file, at most 65,536 bytes. Include exactly
 `HYPRE_parcsr_ls.h` and export only:

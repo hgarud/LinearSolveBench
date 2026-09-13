@@ -8,11 +8,11 @@ candidate code is reused, and each case runs once in a fresh native process.
 
 ## Prepare and run NS coverage
 
-The initial development release has two cases. From a checkout:
+The main NS pilot has 11 development and 32 ranked cases. From a checkout:
 
 ```bash
 linear-solver-bench dataset prepare \
-  --release ns-mesh-dev-pilot --output data/prepared/ns-dev
+  --release ns-mesh-pilot-dev --output data/prepared/ns-dev
 modal run modal_app.py \
   --source submissions/candidate.c --cases data/prepared/ns-dev \
   --output results/ns-coverage.json
@@ -23,17 +23,28 @@ Coverage requires no timing reference or calibration. Partial solver coverage
 is a valid result: every expected case remains in the report and solved counts
 determine ranking. All expected cases must be evaluated, even when some fail.
 
-For a future published ranked NS release, supply its committed operator key
-using `dataset prepare --rhs-key-file`. The key must match the release's key
-commitment. Changing it changes numerical inputs and requires a new release
-and qualification. Store it outside candidate-visible paths and images.
+Prepare `ns-mesh-pilot-ranked` with its operator-held key using
+`dataset prepare --rhs-key-file`. The key must match the release's commitment;
+it is not packaged with the benchmark. Changing it changes numerical inputs
+and requires a new release and qualification. Store it outside candidate-visible
+paths and images. The earlier `ns-mesh-dev-pilot` remains a separate two-case
+integration check.
+
+Frozen NS qualification is reused only after binding it to the exact prepared
+numerical inputs. Normal downloads do not rerun sparse factorizations. The main
+inventory uses 41 empirical refined-LU records and two exact row-dominance
+certificates, each with explicit witness/reference semantics. No candidate
+repetitions are added by offline qualification.
 
 ## Qualify and score FLASH replay
 
 The public FLASH manifests are `flash-replay-dev-pilot` and
 `flash-replay-ranked-pilot`. The fixed reference implementation is
 `submissions/gmres_amg.c`. Dataset publication and qualification of a timing
-reference on the chosen execution environment are separate steps.
+reference on the chosen execution environment are separate steps. The fixed
+reference has passed all 344 cases locally. Full Modal qualification is in
+progress; its complete reports and registered timings are required before
+claiming official replay speedups.
 
 ```bash
 linear-solver-bench dataset prepare \
@@ -84,8 +95,10 @@ release. This checks its exact digest against the packaged release registry
 and requires the complete split. A draft manifest may be evaluated without
 that flag, but hashing a user-authored manifest does not make it an official
 release. The resulting score records whether release trust and venue conditions
-qualify it as official. The development pilot is not a claim that a full ranked
-NS corpus or a public replay timing reference has been qualified.
+qualify it as official. Numerical qualification of the 43-case NS inventory and
+local success of the FLASH reference do not by themselves establish official
+venue capacity or registered replay timings. Check the published release and
+reference registry before publishing official scores.
 
 Candidate failures are recorded without retrying or skipping other cases.
 Malformed inputs, missing expected cases, and infrastructure failures invalidate

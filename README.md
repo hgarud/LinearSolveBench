@@ -28,10 +28,10 @@ From a checkout:
 uv venv --python 3.12
 uv pip install -e '.[dev]'
 linear-solver-bench dataset families
-linear-solver-bench dataset summary --release ns-mesh-dev-pilot
-linear-solver-bench dataset list --release ns-mesh-dev-pilot
+linear-solver-bench dataset summary --release ns-mesh-pilot-dev
+linear-solver-bench dataset list --release ns-mesh-pilot-dev
 linear-solver-bench dataset prepare \
-  --release ns-mesh-dev-pilot --output data/prepared/ns-dev
+  --release ns-mesh-pilot-dev --output data/prepared/ns-dev
 linear-solver-bench runtime build --output build/runtime
 linear-solver-bench candidate validate submissions/starter.c --runtime build/runtime
 linear-solver-bench run submissions/starter.c \
@@ -40,14 +40,17 @@ linear-solver-bench run submissions/starter.c \
 linear-solver-bench score results/ns-dev.json
 ```
 
-The development pilot contains two real mesh/PDE matrices: `DRIVCAV/cavity01`
-(317 unknowns) and `FEMLAB/poisson2D` (367 unknowns). It is an integration and
-solver-development set, not a full NS family inventory. Preparation downloads
-original SuiteSparse matrices and generates one deterministic manufactured
-right-hand side per matrix.
+The NS pilot contains 43 qualified SuiteSparse mesh/PDE matrices: 11 development
+cases and 32 ranked cases, separated by provenance groups. Every matrix has one
+freshly qualified deterministic manufactured right-hand side. Qualification uses 41
+independent sparse-LU solves with one higher-precision refinement each, plus two
+strict row-dominance certificates. All meet the unchanged tenfold qualification
+margins. This is a declared pilot corpus, not an exhaustive inventory of NS mesh
+problems. The earlier two-case `ns-mesh-dev-pilot` remains a small integration
+check, separate from the main pilot.
 
 `--release` accepts an installed manifest name without `.json`, or an existing
-manifest path such as `data/ns-mesh-dev-pilot.json`. Optional `--family` and
+manifest path such as `data/ns-mesh-pilot-dev.json`. Optional `--family` and
 `--track` selectors must agree with that release; `ns_mesh_pde` is an accepted
 alias for `ns-mesh-pde`. The `run` command selects the evaluator from the prepared
 manifest, so it needs no repeated family or track flags.
@@ -71,7 +74,7 @@ for trusted release checks, resource limits, and reference calibration.
 
 FLASH cases are available from the public, ungated
 [LinearSolveBench dataset on Hugging Face](https://huggingface.co/datasets/hgarud/LinearSolveBench).
-The planned release contains 96 development cases and 248 ranked cases, including
+The published release contains 96 development cases and 248 ranked cases, including
 88 correctness controls. Each downloadable case contains `matrix.npz`, `b.npy`,
 `x0.npy`, and `case.json`. The numerical inputs retain their captured values;
 using them requires neither FLASH nor access to its source.
@@ -80,10 +83,11 @@ The manifests `flash-replay-dev-pilot` and `flash-replay-ranked-pilot` pin datas
 commit `3da5eda0ce3e85da1808d4b62d28d9111127e354`. Prepare either split with
 `dataset prepare --release <manifest ID> --output <directory>`.
 
-Publication and qualification of a public timing reference are separate steps.
-Use a published, commit-pinned release manifest once available. A replay report
-without a matching qualified reference has `speedup: null` and reason
-`awaiting_reference`. See [dataset details](docs/DATASET.md) and the
+The fixed public reference `submissions/gmres_amg.c` passes all 344 cases locally.
+Full Modal reference qualification and registration are in progress; local
+timings do not establish official speedups. A replay report without a matching
+qualified reference has `speedup: null` and reason `awaiting_reference`. See
+[dataset details](docs/DATASET.md) and the
 [FLASH task statement](docs/task-flash-replay.md).
 
 ## Submit a solver

@@ -85,10 +85,23 @@ Relative-residual guidance of `1e-8` does not replace the NS backward/forward ga
 
 Manufactured targets are required for NS and cannot be replaced by numerical
 references or omitted. Floating-point RHS formation means a target need not be
-the exact solution of the stored system. Offline qualification checks empirical
-feasibility at one tenth of every required error limit and records RHS formation
-uncertainty. Numerical references are labeled as such; they carry no exact-truth
-claim and do not add forward-error gates to FLASH.
+the exact solution of the stored system. Offline qualification requires one tenth
+of every error limit and records RHS formation uncertainty. Numerical references
+are labeled as such; they carry no exact-truth claim and do not add forward-error
+gates to FLASH.
+
+NS qualification has two explicit evidence paths. Refined sparse LU performs
+one higher-precision residual correction with the same factors and measures the
+result; this remains empirical evidence. Strict row dominance can instead
+certify stored-system forward consistency. For positive
+`d = min_i (|a_ii| - sum_{j != i}|a_ij|)` and exact formation residual
+`e = b - A x_target`, the bound `||A^-1||inf <= 1/d` gives both relative forward
+discrepancies at most `||e||inf/d`, because the target has entries ±1. Coefficient
+sums and formation residuals are computed exactly as integers in binary64 units,
+then reported bounds are rounded outward. This certified bound must be at most
+`1e-6`. Separate binary64 measurements at the target demonstrate a feasible
+output witness and must satisfy all four tenfold limits; they are not claimed
+as rigorous bounds for the verifier's floating-point arithmetic.
 
 Zero divided by zero is defined as zero for these ratios. A nonzero numerator
 over zero is infinity; in particular, a zero RHS passes the residual test only
