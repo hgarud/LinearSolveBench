@@ -57,6 +57,11 @@ including the reference source identity and complete report. It does not adjust
 pilot deadlines or run the reference again. Publish the reference source and
 configuration with its report and calibration artifact.
 
+Register the exact published calibration digest for its release, runtime, and
+venue before accepting official replay scores. An unregistered calibration can
+produce a development score, but reports `reference_status: unregistered` and
+`official: false` even when its solver passes every case.
+
 Candidate runs reuse those timings. Scoring rejects a different numerical
 release, case order, prepared corpus, accuracy/execution/scoring contract,
 runtime, venue, roles, or weights. A failed candidate case or control leaves

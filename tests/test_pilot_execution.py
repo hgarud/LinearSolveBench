@@ -230,6 +230,54 @@ def test_replay_weights_controls_and_all_pass_reference(small_system):
     assert score_pilot_report(candidate)["reason"] == "awaiting_reference"
 
 
+def test_official_replay_requires_the_frozen_reference(small_system, monkeypatch):
+    from linear_solver_bench.manifests import PUBLISHED_RELEASES
+    from linear_solver_bench.pilot_scoring import PUBLISHED_REPLAY_REFERENCES
+
+    prepared, systems = prepared_fixture(small_system, replay=True)
+    release = prepared["source_release"]
+    release_key = tuple(
+        release[name] for name in ("release_id", "family", "track", "split")
+    )
+    monkeypatch.setitem(PUBLISHED_RELEASES, release_key, release["manifest_sha256"])
+
+    def operator_report(elapsed, source_sha256):
+        # Synthetic transport output models trusted operator provenance; the
+        # report hash itself is not a signature or evidence of remote execution.
+        report, _ = evaluate_fixture(prepared, systems, times=[elapsed] * len(systems))
+        report["venue"]["id"] = "modal-sandbox-pilot-cpu-v2"
+        report["venue"]["limits_enforced"] = True
+        report["source_sha256"] = source_sha256
+        resign(report)
+        return report
+
+    candidate = operator_report(4.0, "1" * 64)
+    reference = replay_reference_from_report(operator_report(8.0, "2" * 64))
+    missing = score_pilot_report(candidate)
+    assert missing["reference_status"] == "missing" and not missing["official"]
+    custom = score_pilot_report(candidate, reference)
+    assert custom["eligible"] and custom["speedup"] == pytest.approx(2.0)
+    assert custom["reference_status"] == "unregistered" and not custom["official"]
+
+    reference_key = (
+        candidate["release_manifest_sha256"],
+        candidate["runtime_manifest_sha256"],
+        candidate["venue"]["id"],
+    )
+    monkeypatch.setitem(
+        PUBLISHED_REPLAY_REFERENCES, reference_key, reference["calibration_sha256"]
+    )
+    official = score_pilot_report(candidate, reference)
+    assert official["official"] and official["reference_status"] == "registered"
+    assert official["speedup"] == custom["speedup"]
+
+    slower = replay_reference_from_report(operator_report(16.0, "4" * 64))
+    alternative = score_pilot_report(candidate, slower)
+    assert alternative["eligible"] and alternative["speedup"] == pytest.approx(4.0)
+    assert not alternative["official"]
+    assert alternative["reference_status"] == "unregistered"
+
+
 @pytest.mark.parametrize(
     "field", ["runtime_manifest_sha256", "prepared_manifest_sha256"]
 )

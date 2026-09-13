@@ -9,6 +9,11 @@ from collections.abc import Mapping
 from .dataset import identity_sha256
 from .families import resolve_track
 
+# Add an entry only after the complete reference artifact has been published.
+# One frozen calibration is trusted for each release, runtime, and venue.
+# This registry expresses operator policy; it does not authenticate reports.
+PUBLISHED_REPLAY_REFERENCES: dict[tuple[str, str, str], str] = {}
+
 
 def _hash(value: object) -> bool:
     return isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value) is not None
@@ -265,6 +270,7 @@ def score_pilot_report(report: Mapping, reference: Mapping | None = None) -> dic
         if reference is not None:
             raise ValueError("coverage scoring does not use a timing reference")
         return {**base, "eligible": True, "ranking_key": -report["solved_count"]}
+    base.update(official=False, reference_status="missing")
     if reference is None:
         return {
             **base,
@@ -287,6 +293,19 @@ def score_pilot_report(report: Mapping, reference: Mapping | None = None) -> dic
     ):
         if report[name] != anchor[name]:
             raise ValueError(f"candidate and reference {name} differ")
+    reference_key = (
+        report["release_manifest_sha256"],
+        report["runtime_manifest_sha256"],
+        report["venue"]["id"],
+    )
+    registered = (
+        PUBLISHED_REPLAY_REFERENCES.get(reference_key)
+        == reference["calibration_sha256"]
+    )
+    base.update(
+        official=official and registered,
+        reference_status="registered" if registered else "unregistered",
+    )
     per_case, weighted_logs = [], []
     for case, baseline in zip(report["cases"], anchor["cases"], strict=True):
         for key in (

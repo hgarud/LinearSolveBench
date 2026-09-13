@@ -134,7 +134,9 @@ individually. HYPRE is the pinned sequential float64/int32 build.
 An official score requires the full split, enforced venue limits, and the exact
 release digest in the packaged trusted registry. A self-consistent user-authored
 manifest or report does not establish official release identity. A local timing
-reference cannot be mixed with Modal candidate timings.
+reference cannot be mixed with Modal candidate timings. Official replay also
+requires the registered calibration digest for that release, runtime, and venue;
+a custom passing reference remains useful for development but is not official.
 
 ## Original SuiteSparse v1 compatibility
 
