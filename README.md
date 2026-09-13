@@ -49,6 +49,11 @@ margins. This is a declared pilot corpus, not an exhaustive inventory of NS mesh
 problems. The earlier two-case `ns-mesh-dev-pilot` remains a small integration
 check, separate from the main pilot.
 
+A complete Modal check of the public GMRES+AMG solver solved 10/11 development
+cases and 14/32 ranked cases. All 43 cases executed once without crashes,
+timeouts, or infrastructure failures; both matrices with over a million unknowns
+passed within 4 GiB. Partial coverage is a valid benchmark result.
+
 `--release` accepts an installed manifest name without `.json`, or an existing
 manifest path such as `data/ns-mesh-pilot-dev.json`. Optional `--family` and
 `--track` selectors must agree with that release; `ns_mesh_pde` is an accepted
@@ -83,11 +88,15 @@ The manifests `flash-replay-dev-pilot` and `flash-replay-ranked-pilot` pin datas
 commit `3da5eda0ce3e85da1808d4b62d28d9111127e354`. Prepare either split with
 `dataset prepare --release <manifest ID> --output <directory>`.
 
-The fixed public reference `submissions/gmres_amg.c` passes all 344 cases locally.
-Full Modal reference qualification and registration are in progress; local
-timings do not establish official speedups. A replay report without a matching
-qualified reference has `speedup: null` and reason `awaiting_reference`. See
-[dataset details](docs/DATASET.md) and the
+The fixed public reference `submissions/gmres_amg.c` passes all 344 cases in the
+official Modal venue, including every correctness control. Candidate runs reuse
+the frozen [development](data/releases/flash-replay-dev-reference.json) or
+[ranked](data/releases/flash-replay-ranked-reference.json) reference timings;
+there is no reference rerun for each submission. Follow the
+[replay instructions](docs/OPERATIONS.md#run-and-score-flash-replay) to evaluate
+and score a candidate with the matching calibration. Local timings remain
+development results. See [validation evidence](docs/PILOT_VALIDATION.md),
+[dataset details](docs/DATASET.md), and the
 [FLASH task statement](docs/task-flash-replay.md).
 
 ## Submit a solver

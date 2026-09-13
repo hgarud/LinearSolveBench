@@ -15,7 +15,7 @@ linear-solver-bench dataset prepare \
   --release ns-mesh-pilot-dev --output data/prepared/ns-dev
 modal run modal_app.py \
   --source submissions/candidate.c --cases data/prepared/ns-dev \
-  --output results/ns-coverage.json
+  --official --output results/ns-coverage.json
 linear-solver-bench score results/ns-coverage.json --output results/ns-score.json
 ```
 
@@ -36,30 +36,62 @@ inventory uses 41 empirical refined-LU records and two exact row-dominance
 certificates, each with explicit witness/reference semantics. No candidate
 repetitions are added by offline qualification.
 
-## Qualify and score FLASH replay
+The full Modal check completed all 43 cases once without crashes, timeouts,
+infrastructure failures, or retries. The public GMRES+AMG solver passed 10/11
+development and 14/32 ranked cases, including both matrices with over a million
+unknowns within 4 GiB. A solver need not pass every NS case to obtain a valid
+official coverage score.
+
+## Run and score FLASH replay
 
 The public FLASH manifests are `flash-replay-dev-pilot` and
 `flash-replay-ranked-pilot`. The fixed reference implementation is
-`submissions/gmres_amg.c`. Dataset publication and qualification of a timing
-reference on the chosen execution environment are separate steps. The fixed
-reference has passed all 344 cases locally. Full Modal qualification is in
-progress; its complete reports and registered timings are required before
-claiming official replay speedups.
+`submissions/gmres_amg.c`. Use the frozen calibration for the selected split
+when evaluating candidates. It contains the measured reference time for every
+case and binds those timings to the released numerical inputs, runtime, and
+Modal venue. The reference is evaluated once when freezing a release; ordinary
+candidate evaluation reuses its timings.
+
+The fixed reference passed all 96 development and 248 ranked cases, including
+88 correctness controls, in the official Modal venue. Its registered calibration
+artifacts are bundled with the release. From a checkout:
 
 ```bash
 linear-solver-bench dataset prepare \
   --release flash-replay-ranked-pilot --output data/prepared/flash-ranked
 modal run modal_app.py \
+  --source submissions/candidate.c --cases data/prepared/flash-ranked \
+  --calibration data/releases/flash-replay-ranked-reference.json \
+  --official --output results/flash-candidate.json
+linear-solver-bench score results/flash-candidate.json \
+  data/releases/flash-replay-ranked-reference.json \
+  --output results/flash-score.json
+```
+
+For development, select `flash-replay-dev-pilot` and use
+`data/releases/flash-replay-dev-reference.json`. Calibration files are trusted
+operator inputs and stay outside the candidate sandbox.
+
+Scoring rejects a different numerical release, case order, prepared corpus,
+accuracy/execution/scoring contract, runtime, venue, roles, or weights. A failed
+candidate case or control leaves aggregate speedup null. Without a reference,
+a replay report remains useful for accuracy diagnostics but scores as
+`awaiting_reference`.
+
+Local runs can provide development references, but their `local-uncontrolled`
+timings cannot be mixed with Modal results or treated as official venue timings.
+
+## Regenerate a reference for development or a new release
+
+Requalify a reference when intentionally changing its source, numerical release,
+runtime, or venue. For a complete prepared split:
+
+```bash
+modal run modal_app.py \
   --source submissions/gmres_amg.c --cases data/prepared/flash-ranked \
   --output results/flash-reference.json
 linear-solver-bench calibrate results/flash-reference.json \
   --output operator/flash-calibration.json
-modal run modal_app.py \
-  --source submissions/candidate.c --cases data/prepared/flash-ranked \
-  --calibration operator/flash-calibration.json \
-  --output results/flash-candidate.json
-linear-solver-bench score results/flash-candidate.json \
-  operator/flash-calibration.json --output results/flash-score.json
 ```
 
 `calibrate` accepts only a complete replay report with every scored case and
@@ -73,15 +105,6 @@ venue before accepting official replay scores. An unregistered calibration can
 produce a development score, but reports `reference_status: unregistered` and
 `official: false` even when its solver passes every case.
 
-Candidate runs reuse those timings. Scoring rejects a different numerical
-release, case order, prepared corpus, accuracy/execution/scoring contract,
-runtime, venue, roles, or weights. A failed candidate case or control leaves
-aggregate speedup null. Without a reference, a replay report remains useful for
-accuracy diagnostics but scores as `awaiting_reference`.
-
-Local runs can provide development references, but their `local-uncontrolled`
-timings cannot be mixed with Modal results or treated as official venue timings.
-
 ## Frozen settings and official evaluation
 
 Pilot execution takes deadlines, maximum iteration requests, CPU cores, and
@@ -89,16 +112,19 @@ memory from the release manifest. Modal applies matching CPU and memory
 requests and hard limits. Networking is disabled. Local evaluation reports the
 same requested settings but does not claim those resource limits are enforced.
 The candidate factory receives the frozen iteration request and tolerance.
+Both pilot releases use two CPU cores, 4 GiB, a 90-second case deadline, and a
+5,000-iteration request. The published
+[runtime manifest](../data/releases/cpu-runtime-v2.json) fixes the runtime used
+for official replay timings in `modal-sandbox-pilot-cpu-v2`.
 
 Add `--official` to `modal run modal_app.py` when evaluating a trusted published
 release. This checks its exact digest against the packaged release registry
 and requires the complete split. A draft manifest may be evaluated without
 that flag, but hashing a user-authored manifest does not make it an official
 release. The resulting score records whether release trust and venue conditions
-qualify it as official. Numerical qualification of the 43-case NS inventory and
-local success of the FLASH reference do not by themselves establish official
-venue capacity or registered replay timings. Check the published release and
-reference registry before publishing official scores.
+qualify it as official. Official replay also requires the registered calibration
+digest for that exact release, runtime, and venue. Hashing or copying a custom
+passing reference cannot make it the registered benchmark reference.
 
 Candidate failures are recorded without retrying or skipping other cases.
 Malformed inputs, missing expected cases, and infrastructure failures invalidate
@@ -122,6 +148,9 @@ configuration, and dataset manifests. Installed release IDs work outside a
 checkout. A writable cache is separate from installed resources; use
 `LINEAR_SOLVER_BENCH_CACHE` or `dataset prepare --cache` when needed. Modal
 examples use the checkout's `modal_app.py` and the optional Modal dependency.
+Fresh wheel installation, installed manifest discovery, public single-case
+downloads, offline reuse, and installed native compilation have been checked;
+see [pilot validation](PILOT_VALIDATION.md).
 
 ## Existing v1 operations
 

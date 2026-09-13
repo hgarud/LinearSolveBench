@@ -1,21 +1,22 @@
 # First pilot: NS mesh coverage and FLASH replay
 
-Status: implementation and release plan, updated 13 September 2026. The shared
-pilot code is implemented. NS has 43 qualified cases split into 11 development
-and 32 ranked cases. FLASH has 344 publicly downloadable captures and a fixed
-public reference that passes every case locally. Full official venue validation,
-reference registration, and the final distribution audit remain launch gates.
+Status: implemented and validated pilot, updated 13 September 2026. NS has 43
+qualified cases split into 11 development and 32 ranked cases, all evaluated in
+the official Modal venue. FLASH has 344 publicly downloadable captures and a
+fixed public reference that passes every case in that venue. Releases, runtime,
+and replay calibration identities are frozen. The checks and scientific scope
+below define this completed pilot; future tracks remain separate work.
 
 ## Implementation snapshot
 
-| Area | Current evidence | Remaining work |
+| Area | Verified pilot evidence | Requirement for later changes |
 | --- | --- | --- |
-| Family and execution contracts | Two explicit pairs; `ns_mesh_pde` alias; schema-v2 release/prepared/report identities; one native execution per pilot case | Freeze each published split's exact manifest and venue |
+| Family and execution contracts | Two explicit pairs; `ns_mesh_pde` alias; schema-v2 identities; one execution per case; registered split digests and fixed venue | Version changed inputs, contracts, and venues |
 | Numerical verification | Fixed NS gates, FLASH residual/backward gates, explicit reference semantics, stable ratios, JSON-safe diagnostics, v1 compatibility | Retain qualification and identity checks for later releases |
-| NS coverage | 43 SuiteSparse matrices in 11 development and 32 ranked cases; all freshly qualified; all public archives prepared and verified | Complete the declared split checks in the official venue |
-| FLASH inputs | 344 standalone archives published on Hugging Face; commit-pinned manifests; original CSR, RHS, and initial-guess bytes verified by the public loader | Complete the final clean-install download audit |
-| FLASH reference and scores | Fixed public `gmres_amg.c` passes all 344 cases locally; all-pass qualification and weighted scoring implemented | Complete full Modal qualification and freeze registered venue-matched timings |
-| Execution and distribution | Local and Modal case streaming, release settings propagation, hard Modal resource configuration, package resources, CLI/task documentation and regression tests | Complete full-split official venue runs and final checkout/wheel/container/release audit |
+| NS coverage | All 43 qualified SuiteSparse workloads prepare and verify; full Modal execution gives 10/11 development and 14/32 ranked passes for the public GMRES+AMG solver | Requalify new manufactured inputs; preserve failures in coverage scores |
+| FLASH inputs | 344 standalone archives published on Hugging Face; commit-pinned manifests; captured arrays verified; fresh installed public download succeeds | Preserve immutable bytes and provenance split boundaries |
+| FLASH reference and scores | Fixed public `gmres_amg.c` passes all 344 Modal cases; registered single-execution timings and weighted scoring | Requalify when reference, inputs, runtime, or venue changes |
+| Execution and distribution | Full Modal split runs; hard resource limits; fresh wheel/sdist builds, isolated installed resources, downloads, offline reuse, and native compilation | Repeat package/content and venue checks for each release |
 
 The NS release `ns-mesh-pilot` contains 43 matrices in 21 provenance groups,
 with 11 development cases in four groups and 32 ranked cases in 17 groups.
@@ -27,11 +28,17 @@ corpus, not an exhaustive scientific family inventory. The earlier two-case
 `ns-mesh-dev-pilot` remains a separate integration check; the generic v1
 inventory remains a separate benchmark.
 
+The full NS Modal check completed every case once without crashes, timeouts,
+infrastructure failures, or retries. Both matrices with over a million unknowns
+passed within 4 GiB. A partial solved-case count is a valid coverage result;
+NS coverage does not require discovery of an all-case performance reference.
+
 The published FLASH splits are 96 development scored cases and 248 ranked cases
 (160 scored, 88 correctness controls). Public inputs cover 13 source runs in 10
 provenance groups. Captured solutions and stored independent numerical references
 pass the public accuracy gates for all 344 cases. The fixed public reference
-also passes all 344 locally; official Modal qualification remains in progress.
+also passes all 344 in the official Modal venue. Complete reports and reference
+timings are frozen in the [release artifacts](../data/releases/README.md).
 The ungated
 [Hugging Face dataset](https://huggingface.co/datasets/hgarud/LinearSolveBench)
 is pinned by both manifests to commit
@@ -183,7 +190,7 @@ replay split, including correctness controls, under the same runtime, accuracy,
 single-execution lifecycle, and venue as candidates. A stock GMRES+AMG
 configuration requires measured passing evidence. The current public
 `submissions/gmres_amg.c` implementation passes the full 344-case inventory
-locally; its full official venue qualification is still in progress.
+in the official Modal venue, including every correctness control.
 Publish its source/configuration, complete qualification report, and timing
 artifact. Reference qualification runs each case once and freezes that measured
 time. Reuse the frozen reference timings for subsequent submissions rather than
@@ -226,7 +233,7 @@ behavior. No generic plugin framework or future-family runtime is introduced.
 | `pilot_runner.py`, `runner.py`, `modal_app.py` | One execution per case, shared verification/report construction, release budgets and streamed numerical inputs |
 | `pilot_scoring.py` | Reference-free coverage and all-pass qualified-reference replay speedup with frozen group/run/case weights |
 | `cli.py`, `paths.py`, packaging | Release selection, automatic prepared-schema dispatch, installed resources, public cache locations and CLI documentation |
-| `submissions/gmres_amg.c` | Fixed public reference passes all 344 FLASH cases locally; official venue qualification remains pending |
+| `submissions/gmres_amg.c` | Fixed public reference passes all 344 FLASH cases in the official venue; timings are frozen for reuse |
 
 Load prepared cases one at a time in local and trusted operator execution.
 Retain a small case specification, family/track contract, optional reference
@@ -312,14 +319,14 @@ are redistributable. [FLASH license agreement](https://flash.rochester.edu/site/
 
 ## Pilot sequence and acceptance criteria
 
-| Step | Status | Evidence and remaining acceptance criteria |
+| Step | Status | Completed evidence |
 | --- | --- | --- |
 | 1. Freeze contracts and inventory | Implemented; declared inventories qualified | Two pairs and public schemas are explicit. NS has 43 qualified cases in disjoint 11/32 splits. FLASH has 344 cases in published 96/248 splits. |
 | 2. Deliver NS coverage end to end | Implemented for the full pilot | All 43 public sources prepare and verify; bound qualification evidence, one fresh process per case, failure-preserving reports, and calibration-free scoring are available. |
 | 3. Deliver FLASH replay end to end | Implemented; public assets published | Captured arrays round-trip unchanged across 344 archives; both manifests pin an immutable Hugging Face commit. |
-| 4. Complete replay qualification and scoring | Full local reference passes; Modal qualification pending | One fixed public solver passes every case and control locally. The official comparison venue still needs complete passing reports and registered timings. |
-| 5. Validate corpus and venue | Scientific qualification complete; official venue checks pending | Measure resource needs and establish local/official verdict agreement on every declared split. |
-| 6. Validate distribution and publish | Resources, CI paths, and user/task documentation implemented; final release audit pending | Verify downloads from a clean installation and freeze trusted release digests, source/configuration, calibration, packaging, and content audit. |
+| 4. Complete replay qualification and scoring | Complete | One fixed public solver passes every case and control in both Modal splits; complete reports and registered timings are frozen. |
+| 5. Validate corpus and venue | Complete | All 43 NS and 344 FLASH cases execute in the declared venue; the largest NS cases fit 4 GiB. |
+| 6. Validate distribution and publish | Implemented and checked | Fresh wheel/sdist builds, isolated installation, installed trusted manifests, public downloads, offline reuse, and native compilation pass; public data and reference artifacts have frozen identities. |
 
 Begin with NS coverage, then FLASH replay. Keep numerical-reference quality
 separate from performance-reference qualification. Do not wait for an NS
@@ -355,10 +362,10 @@ linear-solver-bench score results/ns-coverage.json
 ```
 
 The same CLI accepts `flash-replay-dev-pilot` and `flash-replay-ranked-pilot`
-by installed name or file path. Prepare the complete split, evaluate the fixed
-public reference, and run `calibrate` on its passing report. Evaluate
-other candidates under the same runtime and venue, then `score` their reports
-with that calibration. Concrete operator commands are in
+by installed name or file path. Prepare the complete split and evaluate the
+candidate using the bundled calibration for that split. Reuse those reference
+times when scoring; reference regeneration is an optional operation for
+development or a new release. Concrete operator commands are in
 [OPERATIONS.md](OPERATIONS.md). No invented commit or placeholder release ID is
 an official data source.
 
@@ -375,18 +382,19 @@ report/weight/reference identity binding, and Modal transport using a test
 sandbox. Native development checks and public-array round trips complement
 those tests. A mocked sandbox is not evidence of a full official venue run.
 
-The following remain required before claiming a complete public benchmark:
+Completed pilot validation includes:
 
-1. Complete official venue resource and correctness checks for the 11-case NS
-   development and 32-case ranked splits. Coverage does not require a solver
-   that passes every case; numerical feasibility is already qualified.
-2. Qualify the fixed public replay reference on all 96 development and all 248
-   ranked cases, including controls, under the declared comparison venue.
-   Freeze complete reports and single-execution timings; register those exact
-   reference artifacts and published split digests.
-3. Verify public downloads from a clean installation and audit the final
-   checkout, wheel, source distribution, container context, and documentation
-   against the frozen release identities.
+1. All 43 qualified NS workloads prepared from public sources and executed once
+   in the official venue. The public GMRES+AMG solver passes 10/11 development
+   and 14/32 ranked cases, with both large atmospheric matrices fitting 4 GiB.
+2. The fixed public replay reference passes all 96 development and all 248
+   ranked cases, including controls. Complete reports, single-execution timings,
+   published split digests, and the runtime identity are frozen and registered.
+3. Fresh wheel and source-distribution builds, isolated wheel installation,
+   all four installed release IDs, public NS/FLASH single-case downloads,
+   identical offline preparation, and installed native compilation pass.
+   Archive scans detect no private identifiers, credential patterns, prepared
+   data, or raw matrix payloads. See [PILOT_VALIDATION.md](PILOT_VALIDATION.md).
 
 The acceptance coverage to retain as implementation evolves is:
 

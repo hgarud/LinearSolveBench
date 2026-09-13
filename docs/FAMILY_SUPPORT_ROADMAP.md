@@ -1,7 +1,7 @@
 # Matrix-family roadmap beyond the first pilot
 
 Status: future-track design roadmap, updated 13 September 2026. The active
-implementation and launch gates are recorded in
+implementation and validation evidence are recorded in
 [FAMILY_SUPPORT_PLAN.md](FAMILY_SUPPORT_PLAN.md). NS coverage and FLASH replay
 are implemented in the shared pilot evaluator. SPD, NS performance, and FLASH
 trajectory remain unsupported; their design below is not a pilot launch gate.
@@ -11,9 +11,12 @@ ranked cases. Its declared scope is not an exhaustive family inventory. All 41
 refined-LU workloads and two strict row-dominance certificates meet the unchanged
 tenfold qualification margins. FLASH has 344 published captures in 96-case
 development and 248-case ranked splits, pinned to an immutable Hugging Face
-commit. Its fixed public reference passes all 344 locally. Full official venue
-qualification, reference registration, and final distribution checks remain
-launch requirements in the pilot plan.
+commit. Its fixed public reference passes all 344 in the official Modal venue,
+with registered timings for both splits. Full NS venue execution produces valid
+10/11 development and 14/32 ranked coverage for the public GMRES+AMG solver,
+including successful solves for both matrices with over a million unknowns
+within 4 GiB. The pilot plan and [validation record](PILOT_VALIDATION.md) document
+the completed data, execution, and distribution checks.
 
 Pilot cases and replay reference qualification each use exactly one fresh
 native process per case. The original v1 benchmark retains three repetitions.
@@ -600,8 +603,8 @@ deadline divided by that normalization. This SPD cost diagnostic is not the NS
 performance or FLASH speedup formula, and budget normalization must never be
 accepted by those speedup tracks.
 
-Do a venue feasibility sweep before choosing final v2 limits. The current
-4 GiB, 120-second venue is not evidence that all new workloads fit. Measure
+Do a venue feasibility sweep before choosing limits for additional tracks. The
+pilot's 4 GiB, 90-second venue does not establish that new workloads fit. Measure
 peak memory, wall time, initialization overhead, and retained-state growth.
 Start independent-solve feasibility runs with memory headroom up to 32 GiB and
 cases up to 300 seconds; these are experiment allowances, not leaderboard
@@ -662,8 +665,8 @@ do not establish the terms for those outputs. [FLASH license agreement](https://
 
 This retained sequence describes the broader, deferred scope. Several shared
 pieces are already delivered by the pilot, as listed in section 1; extend them
-instead of recreating those changes. The pilot's remaining official venue,
-reference registration, and distribution gates are tracked in the active plan.
+instead of recreating those changes. The completed pilot's official venue,
+reference registration, and distribution evidence are recorded in its plan.
 Each additional track should be a small, separately reviewable extension.
 
 | Step | Deliverable | Acceptance criteria |

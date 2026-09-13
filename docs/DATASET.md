@@ -21,6 +21,13 @@ relative stopping tolerance `1e-12`. Every case was freshly qualified against
 its frozen target and RHS; gates and numerical inputs were not relaxed to
 obtain passing qualification.
 
+The full inventory has also run in the Modal venue. The public GMRES+AMG solver
+passed 10/11 development and 14/32 ranked cases; every case completed its single
+execution without a crash, timeout, infrastructure failure, or retry. Both
+matrices with over a million unknowns passed within 4 GiB. These results validate
+the execution path and its coverage semantics; they do not turn NS coverage
+into a performance-reference track.
+
 These 43 cases define the public pilot's scientific scope; they are not an
 exhaustive NS mesh inventory. The word NS means nonsymmetric and is not
 restricted to Navier–Stokes equations. The existing v1 catalogue's generic
@@ -115,9 +122,16 @@ diagnostics against a separately supplied numerical reference, without treating
 it as exact truth.
 Captured and offline numerical solutions establish case feasibility. The
 fixed public reference `submissions/gmres_amg.c` additionally passes all 344
-cases locally, including every correctness control. Full Modal qualification
-and registration remain in progress; local timings are not official venue
-reference times.
+cases in the official Modal venue, including every correctness control. Its
+complete reports and single-execution timings are frozen in the
+[development](../data/releases/flash-replay-dev-reference.json) and
+[ranked](../data/releases/flash-replay-ranked-reference.json) calibration
+artifacts. Candidates reuse the artifact for their split and must match its
+runtime and venue. Local timings are development results.
+The same reference artifacts are downloadable from the
+[frozen Hugging Face reference release](https://huggingface.co/datasets/hgarud/LinearSolveBench/tree/cbb06d2735b38d4078182d9db92fbc63790fe87b/references).
+This reference publication has its own immutable commit; numerical case
+downloads remain pinned to the original data commit above.
 
 Both development and ranked numerical inputs are public. Related source runs,
 refinements, exact duplicates, and documented near-duplicate relationships must

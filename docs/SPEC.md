@@ -151,6 +151,16 @@ reference cannot be mixed with Modal candidate timings. Official replay also
 requires the registered calibration digest for that release, runtime, and venue;
 a custom passing reference remains useful for development but is not official.
 
+The pilot freezes two CPU cores, 4 GiB, 90 seconds per case, and a
+5,000-iteration request. Its published
+[runtime manifest](../data/releases/cpu-runtime-v2.json) has identity
+`4b09e68ce2fc17261c1d776bb01d63ec40f8f92388b9aff95c046f7c1f8bb076`.
+The fixed replay reference passes every case in both splits under that runtime
+and `modal-sandbox-pilot-cpu-v2`. Reuse the registered
+[development](../data/releases/flash-replay-dev-reference.json) or
+[ranked](../data/releases/flash-replay-ranked-reference.json) calibration;
+candidate evaluation adds no reference executions.
+
 ## Original SuiteSparse v1 compatibility
 
 V1 retains benchmark identity `linear-solver-bench-cpu-v1` and accuracy contract
