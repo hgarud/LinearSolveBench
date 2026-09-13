@@ -7,7 +7,7 @@ include SECURITY.md
 include data/*.json
 include data/*.md
 recursive-include data/releases *.json *.md
-recursive-include docs *.md
+recursive-include docs *.md *.json
 include native/CMakeLists.txt
 include native/include/*.h
 include native/include/NOTICE-*

@@ -74,6 +74,13 @@ def test_archives_include_public_resources_only(distributions):
             for member in archive.getmembers()
             if member.isfile()
         }
+    # The selector shipped in the source distribution must retain the frozen
+    # public evidence required to reproduce the cohort without solver runs.
+    assert {
+        pathlib.PurePosixPath("docs/analysis/ns-cohort-v2-policy.json"),
+        pathlib.PurePosixPath("docs/analysis/ns-cohort-v2-inventory.json"),
+        pathlib.PurePosixPath("docs/analysis/ns-cohort-v2-descriptors.json"),
+    } <= source_files.keys()
     allowed_source_roots = {
         "CITATION.cff",
         "CONTRIBUTING.md",
