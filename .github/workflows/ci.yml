@@ -17,7 +17,7 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: python -m pip install --upgrade pip
-      - run: python -m pip install -e '.[test]' ruff
+      - run: python -m pip install -e '.[test,qualification]' ruff
       - run: ruff format --check src tests tools setup.py modal_app.py qualification_modal.py
       - run: ruff check src tests tools setup.py modal_app.py qualification_modal.py
       - run: pytest

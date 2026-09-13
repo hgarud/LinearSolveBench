@@ -83,6 +83,35 @@ ITERATIVE_QUALIFICATION_CONFIG = {
 }
 
 
+PYAMG_QUALIFICATION_METHOD = "independent-pyamg-sa-gmres-refined-v1"
+PYAMG_QUALIFICATION_CONFIG = {
+    "pyamg_version": "5.3.0",
+    "operator": "original-float64-csr",
+    "symmetry": "nonsymmetric",
+    "right_near_nullspace": "ones",
+    "left_near_nullspace": "ones",
+    "strength": ["symmetric", {"theta": 0.0}],
+    "aggregate": "standard",
+    "smooth": ["jacobi", {"omega": 4.0 / 3.0, "degree": 1, "weighting": "local"}],
+    "presmoother": ["gauss_seidel", {"sweep": "symmetric", "iterations": 2}],
+    "postsmoother": ["gauss_seidel", {"sweep": "symmetric", "iterations": 2}],
+    "improve_candidates": None,
+    "diagonal_dominance": False,
+    "max_levels": 25,
+    "max_coarse": 500,
+    "coarse_solver": "splu",
+    "keep": False,
+    "preconditioner_cycle": "V",
+    "initial_guess": "zero",
+    "restart": 50,
+    "max_restart_cycles": 250,
+    "rtol": 1e-13,
+    "atol": 0.0,
+    "refinement_steps": 2,
+    "refinement_residual": "extended-precision-residual-v1",
+}
+
+
 def strict_object(value: object, keys: set[str], label: str) -> dict:
     if not isinstance(value, dict) or set(value) != keys:
         raise ValueError(f"{label} fields do not match the public schema")
@@ -181,10 +210,10 @@ def validate_qualification(value: object, system_sha256: str | None = None) -> N
         isinstance(value, dict)
         and value.get("method") == "strict-row-diagonal-dominance-v1"
     )
-    iterative = (
-        isinstance(value, dict)
-        and value.get("method") == ITERATIVE_QUALIFICATION_METHOD
-    )
+    iterative = isinstance(value, dict) and value.get("method") in {
+        ITERATIVE_QUALIFICATION_METHOD,
+        PYAMG_QUALIFICATION_METHOD,
+    }
     keys = {
         "method",
         "qualified",
@@ -209,6 +238,7 @@ def validate_qualification(value: object, system_sha256: str | None = None) -> N
             "independent-sparse-lu-refined-v1",
             "strict-row-diagonal-dominance-v1",
             ITERATIVE_QUALIFICATION_METHOD,
+            PYAMG_QUALIFICATION_METHOD,
         }
         or evidence["qualified"] is not True
     ):
@@ -246,35 +276,50 @@ def validate_qualification(value: object, system_sha256: str | None = None) -> N
     if not dominance and evidence["uncertainty"] != "empirical-feasibility-only":
         raise ValueError("qualification must state its empirical uncertainty")
     if iterative:
-        _validate_iterative_reference(evidence["reference_solver"])
+        _validate_iterative_reference(evidence["reference_solver"], evidence["method"])
 
 
-def _validate_iterative_reference(value: object) -> None:
-    reference = strict_object(
-        value, {"configuration", "implementation", "solves"}, "iterative reference"
+def _same_typed_value(value: object, expected: object) -> bool:
+    if type(value) is not type(expected):
+        return False
+    if isinstance(expected, dict):
+        return set(value) == set(expected) and all(
+            _same_typed_value(value[key], item) for key, item in expected.items()
+        )
+    if isinstance(expected, list):
+        return len(value) == len(expected) and all(
+            _same_typed_value(actual, wanted)
+            for actual, wanted in zip(value, expected, strict=True)
+        )
+    return value == expected
+
+
+def _validate_iterative_reference(value: object, method: str) -> None:
+    multigrid = method == PYAMG_QUALIFICATION_METHOD
+    expected = (
+        PYAMG_QUALIFICATION_CONFIG if multigrid else ITERATIVE_QUALIFICATION_CONFIG
     )
-    config = strict_object(
-        reference["configuration"],
-        set(ITERATIVE_QUALIFICATION_CONFIG),
-        "iterative reference configuration",
-    )
-    for name, expected in ITERATIVE_QUALIFICATION_CONFIG.items():
-        if type(config[name]) is not type(expected) or config[name] != expected:
-            raise ValueError(
-                "iterative reference configuration does not match its version"
-            )
+    keys = {"configuration", "implementation", "solves"}
+    if multigrid:
+        keys.add("hierarchy")
+    reference = strict_object(value, keys, "iterative reference")
+    if not _same_typed_value(reference["configuration"], expected):
+        raise ValueError("iterative reference configuration does not match its version")
+    version_keys = {"numpy", "scipy"} | ({"pyamg"} if multigrid else set())
     versions = strict_object(
-        reference["implementation"], {"numpy", "scipy"}, "reference implementation"
+        reference["implementation"], version_keys, "reference implementation"
     )
     for version in versions.values():
         if not isinstance(version, str) or not re.fullmatch(
             r"[0-9][A-Za-z0-9.+_-]{0,79}", version
         ):
             raise ValueError("reference library version must be a short version string")
+    if multigrid and versions["pyamg"] != expected["pyamg_version"]:
+        raise ValueError("PyAMG implementation does not match its frozen version")
     solves = reference["solves"]
     if not isinstance(solves, list) or len(solves) != 3:
         raise ValueError("iterative reference requires one solve and two corrections")
-    limit = config["restart"] * config["max_restart_cycles"]
+    limit = expected["restart"] * expected["max_restart_cycles"]
     for solve in solves:
         strict_object(solve, {"info", "inner_iterations"}, "reference solve")
         if type(solve["info"]) is not int or solve["info"] != 0:
@@ -282,6 +327,25 @@ def _validate_iterative_reference(value: object) -> None:
         iterations = solve["inner_iterations"]
         if type(iterations) is not int or not 0 <= iterations <= limit:
             raise ValueError("reference iteration count exceeds the fixed budget")
+    if multigrid:
+        levels = reference["hierarchy"]
+        if (
+            not isinstance(levels, list)
+            or not 1 <= len(levels) <= expected["max_levels"]
+        ):
+            raise ValueError("invalid multigrid hierarchy length")
+        previous = None
+        for level in levels:
+            strict_object(level, {"n", "nnz"}, "multigrid level")
+            size = positive_int(level["n"], "level n")
+            nnz = positive_int(level["nnz"], "level nnz")
+            if nnz > size * size or (previous is not None and size >= previous):
+                raise ValueError(
+                    "multigrid hierarchy must have valid, decreasing dimensions"
+                )
+            previous = size
+        if len(levels) < expected["max_levels"] and previous > expected["max_coarse"]:
+            raise ValueError("multigrid hierarchy stopped above its coarse-size limit")
 
 
 def _validate_dominance_certificate(evidence: dict) -> None:

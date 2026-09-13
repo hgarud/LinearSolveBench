@@ -385,6 +385,13 @@ def qualify_ns_iterative(system: EvaluationSystem) -> dict:
     return evidence
 
 
+def qualify_ns_pyamg(system: EvaluationSystem) -> dict:
+    """Run the optional fixed multigrid offline reference without eager imports."""
+    from .reference_pyamg import qualify_ns_pyamg as qualify
+
+    return qualify(system)
+
+
 def _binary64_units(value: float) -> int:
     """Represent a finite binary64 number exactly in units of 2**-1074."""
     numerator, denominator = float(value).as_integer_ratio()

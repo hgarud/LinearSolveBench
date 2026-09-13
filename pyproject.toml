@@ -17,6 +17,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+qualification = ["pyamg==5.3.0"]
 modal = ["modal==1.5.5"]
 test = ["pytest>=8.3", "pytest-cov>=6.0", "build>=1.2", "setuptools>=77"]
 dev = ["linear-solver-bench[modal,test]", "ruff>=0.9"]
