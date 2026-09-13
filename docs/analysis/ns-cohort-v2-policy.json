@@ -1,0 +1,69 @@
+{
+  "budget": {
+    "maximum_dev_fraction": 0.5,
+    "minimum_dev_fraction": 0.25,
+    "minimum_ranked_groups": 8,
+    "target_dev_fraction": 0.3333333333333333
+  },
+  "coverage": {
+    "endpoint_features": [
+      "zero_diagonal_fraction",
+      "weakly_diagonally_dominant_row_fraction"
+    ],
+    "excluded_tags": [
+      "unknown"
+    ],
+    "known_tag_fields": [
+      "application_tags",
+      "discretization_tags"
+    ],
+    "multiple_group_strata": "both-splits",
+    "single_group_strata": "dev-only",
+    "size_boundaries": [
+      10000,
+      100000,
+      1000000
+    ]
+  },
+  "grouping": "indivisible-reviewed-provenance-groups",
+  "kind": "ns-group-cohort-selection-policy",
+  "limitations": [
+    "Coverage is conditional on the reviewed input pool, taxonomy and provenance groups, not a claim about all nonsymmetric PDE systems.",
+    "Unknown spatial methods never establish coverage of a known method.",
+    "Weak row dominance is a floating-point diagnostic, not a certificate.",
+    "Marginal regime coverage and distribution balance do not guarantee matching every joint regime or equal solver difficulty.",
+    "The development budget and equal objective weights are explicit benchmark design choices, not statistically estimated optimal values.",
+    "All input operators are retained. Numerical qualification uses fixed fresh targets after selection; failed qualification is reported and requires a versioned inventory revision, never a replacement draw chosen to pass."
+  ],
+  "objective": {
+    "components": [
+      "mean-marginal-wasserstein",
+      "normalized-energy-distance",
+      "mean-known-tag-incidence-gap",
+      "absolute-dev-fraction-gap"
+    ],
+    "energy_normalization": "twice-maximum-pooled-pair-distance",
+    "features": [
+      "log10_n",
+      "log10_nnz_per_row",
+      "relative_nonsymmetry",
+      "zero_diagonal_fraction",
+      "weakly_diagonally_dominant_row_fraction"
+    ],
+    "normalization": "pooled-feature-range",
+    "tie_break": "lexicographic-sorted-dev-group-tuple",
+    "tie_round_decimals": 12,
+    "weights": [
+      0.25,
+      0.25,
+      0.25,
+      0.25
+    ]
+  },
+  "policy_id": "ns-cohort-v2-selection-v1",
+  "schema_version": 1,
+  "search": {
+    "algorithm": "exhaustive-group-partitions",
+    "maximum_groups": 26
+  }
+}
