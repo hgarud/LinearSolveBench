@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=75"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -18,7 +18,7 @@ dependencies = [
 
 [project.optional-dependencies]
 modal = ["modal==1.5.5"]
-test = ["pytest>=8.3", "pytest-cov>=6.0"]
+test = ["pytest>=8.3", "pytest-cov>=6.0", "build>=1.2", "setuptools>=77"]
 dev = ["linear-solver-bench[modal,test]", "ruff>=0.9"]
 
 [project.scripts]

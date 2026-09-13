@@ -18,11 +18,30 @@ jobs:
           cache: pip
       - run: python -m pip install --upgrade pip
       - run: python -m pip install -e '.[test]' ruff
-      - run: ruff format --check .
-      - run: ruff check .
+      - run: ruff format --check src tests tools setup.py modal_app.py qualification_modal.py
+      - run: ruff check src tests tools setup.py modal_app.py qualification_modal.py
       - run: pytest
       - run: python tools/freeze_manifests.py
       - run: git diff --exit-code -- data/dev-v1.json data/ranked-v1.json
+
+  installed-wheel:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install build
+      - run: python -m build
+      - name: Exercise installed resources outside the checkout
+        shell: bash
+        run: |
+          python -m venv "$RUNNER_TEMP/wheel-venv"
+          "$RUNNER_TEMP/wheel-venv/bin/python" -m pip install dist/*.whl
+          cd "$RUNNER_TEMP"
+          "$RUNNER_TEMP/wheel-venv/bin/linear-solver-bench" dataset summary
+          "$RUNNER_TEMP/wheel-venv/bin/python" -c 'from linear_solver_bench.paths import native_dir; assert (native_dir() / "src/driver.cpp").is_file(); assert (native_dir() / "include/nsl_hypre_solver.h").is_file()'
 
   native-smoke:
     runs-on: ubuntu-24.04
@@ -34,6 +53,12 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: sudo apt-get update && sudo apt-get install -y ninja-build
-      - run: python -m pip install -e .
-      - run: linear-solver-bench runtime build --output build/runtime --jobs 2
-      - run: linear-solver-bench candidate validate submissions/starter.c --runtime build/runtime
+      - run: python -m pip install build
+      - run: python -m build --wheel
+      - run: python -m pip install dist/*.whl
+      - name: Build and validate the native runtime from the installed wheel
+        shell: bash
+        run: |
+          cd "$RUNNER_TEMP"
+          linear-solver-bench runtime build --output runtime --jobs 2
+          linear-solver-bench candidate validate "$GITHUB_WORKSPACE/submissions/starter.c" --runtime runtime

@@ -4,10 +4,22 @@ include qualification_modal.py
 include CITATION.cff
 include CONTRIBUTING.md
 include SECURITY.md
-recursive-include data *.json *.md
-prune data/prepared
-prune data/downloads
+include data/*.json
+include data/*.md
+recursive-include data/releases *.json *.md
 recursive-include docs *.md
-recursive-include native *
+include native/CMakeLists.txt
+include native/include/*.h
+include native/include/NOTICE-*
+include native/include/LICENSE-*
+include native/src/*.cpp
 recursive-include submissions *.c
 recursive-include tools *.py
+prune build
+prune dist
+prune reports
+prune report_notes
+prune research
+prune data/prepared
+prune data/downloads
+global-exclude .DS_Store *.py[cod] __pycache__
