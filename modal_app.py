@@ -16,10 +16,12 @@ import json
 import math
 import pathlib
 import time
+from collections.abc import Iterable, Mapping
 
 import modal
 
 from linear_solver_bench.dataset import load_prepared, load_prepared_manifest
+from linear_solver_bench.models import EvaluationSystem
 from linear_solver_bench.protocol import decode_output, encode_input
 from linear_solver_bench.runner import (
     PROCESS_OVERHEAD_ALLOWANCE_S,
@@ -53,6 +55,8 @@ image = (
         ROOT / "pyproject.toml", f"{REMOTE_BENCHMARK}/pyproject.toml", copy=True
     )
     .add_local_file(ROOT / "README.md", f"{REMOTE_BENCHMARK}/README.md", copy=True)
+    .add_local_file(ROOT / "LICENSE", f"{REMOTE_BENCHMARK}/LICENSE", copy=True)
+    .add_local_file(ROOT / "setup.py", f"{REMOTE_BENCHMARK}/setup.py", copy=True)
     .add_local_file(
         ROOT / "benchmark.toml", f"{REMOTE_BENCHMARK}/benchmark.toml", copy=True
     )
@@ -62,6 +66,299 @@ image = (
         f"linear-solver-bench runtime build --output {REMOTE_RUNTIME} --jobs 2"
     )
 )
+
+
+def _stream_tail(stream, limit: int = 8000) -> str:
+    tail = ""
+    for chunk in stream:
+        tail = (tail + chunk)[-limit:]
+    return tail
+
+
+def _pilot_case_executor(sandbox):
+    """Transfer one public system and verify its single execution on the client."""
+    case_number = 0
+
+    def execute(
+        executable: pathlib.Path,
+        system: EvaluationSystem,
+        *,
+        index: int = 0,
+        deadline_s: float,
+        maximum_iterations: int,
+        accuracy_contract_id: str,
+    ) -> RepeatResult:
+        nonlocal case_number
+        case_root = f"/work/cases/{case_number:04d}"
+        case_number += 1
+        input_path = f"{case_root}/input.bin"
+        output_path = f"{case_root}/output.bin"
+        # write_bytes creates parents. Targets and evaluator archives stay local.
+        sandbox.filesystem.write_bytes(encode_input(system.public), input_path)
+        started = time.monotonic()
+        try:
+            try:
+                process = sandbox.exec(
+                    str(executable),
+                    input_path,
+                    output_path,
+                    str(maximum_iterations),
+                    format(deadline_s, ".17g"),
+                    env={
+                        "OMP_NUM_THREADS": "1",
+                        "OPENBLAS_NUM_THREADS": "1",
+                        "MKL_NUM_THREADS": "1",
+                    },
+                    timeout=math.ceil(deadline_s + PROCESS_OVERHEAD_ALLOWANCE_S),
+                )
+                diagnostics = (
+                    _stream_tail(process.stdout) + _stream_tail(process.stderr)
+                )[-8000:]
+                returncode = process.wait()
+            except modal.exception.ExecTimeoutError:
+                return RepeatResult(
+                    index,
+                    "timeout",
+                    None,
+                    time.monotonic() - started,
+                    "sandbox execution timeout",
+                    None,
+                    None,
+                )
+            wall_s = time.monotonic() - started
+            # Modal's process.wait() also represents an exec timeout as -1.
+            if returncode in {124, -1}:
+                return RepeatResult(
+                    index, "timeout", returncode, wall_s, diagnostics, None, None
+                )
+            if returncode != 0:
+                return RepeatResult(
+                    index, "crash", returncode, wall_s, diagnostics, None, None
+                )
+            try:
+                payload = sandbox.filesystem.read_bytes(output_path)
+            except modal.exception.SandboxFilesystemNotFoundError:
+                return RepeatResult(
+                    index,
+                    "invalid_output",
+                    returncode,
+                    wall_s,
+                    f"{diagnostics}\nmissing driver output".strip(),
+                    None,
+                    None,
+                )
+            try:
+                driver = decode_output(payload, expected_n=system.public.matrix.n)
+            except ValueError as exc:
+                return RepeatResult(
+                    index,
+                    "invalid_output",
+                    returncode,
+                    wall_s,
+                    f"{diagnostics}\n{exc}".strip(),
+                    None,
+                    None,
+                )
+            verification = verify_solution(
+                system,
+                driver.solution,
+                status=driver.status,
+                input_mutated=driver.input_mutated,
+                contract_id=accuracy_contract_id,
+            )
+            return RepeatResult(
+                index,
+                "completed",
+                returncode,
+                wall_s,
+                diagnostics,
+                driver,
+                verification,
+            )
+        finally:
+            # Retain only the current public case in the sandbox filesystem.
+            # Filesystem or sandbox failures propagate and invalidate the run.
+            sandbox.filesystem.remove(case_root, recursive=True)
+
+    return execute
+
+
+def _evaluate_pilot_sandbox(
+    source: pathlib.Path,
+    systems: Iterable[EvaluationSystem],
+    prepared: Mapping,
+    *,
+    official: bool = False,
+    reference: Mapping | None = None,
+) -> dict:
+    from linear_solver_bench.manifests import validate_release
+    from linear_solver_bench.pilot_dataset import validate_pilot_prepared_manifest
+    from linear_solver_bench.pilot_runner import evaluate_pilot
+    from linear_solver_bench.pilot_scoring import validate_replay_reference
+
+    validate_pilot_prepared_manifest(prepared, official=official)
+    release = validate_release(prepared["source_release"], official=official)
+    execution = release["execution"]
+    memory_mib, remainder = divmod(execution["memory_bytes"], 1024**2)
+    if remainder or memory_mib < 1:
+        raise ValueError("Modal memory_bytes must be an exact positive number of MiB")
+    timeout = math.ceil(
+        300
+        + len(prepared["cases"])
+        * (execution["case_timeout_seconds"] + PROCESS_OVERHEAD_ALLOWANCE_S + 5)
+    )
+    if timeout > MAXIMUM_SANDBOX_LIFETIME_S:
+        raise ValueError("selected cases exceed Modal's 24-hour Sandbox lifetime")
+    venue = {
+        "id": "modal-sandbox-pilot-cpu-v2",
+        "cpus": execution["cpus"],
+        "memory_bytes": execution["memory_bytes"],
+        "limits_enforced": True,
+    }
+    if reference is not None:
+        if release["track"] != "replay":
+            raise ValueError("coverage scoring does not use a timing reference")
+        validate_replay_reference(reference)
+        anchor = reference["reference_report"]
+        expected = {
+            "family": release["family"],
+            "track": release["track"],
+            "release_manifest_sha256": release["manifest_sha256"],
+            "prepared_manifest_sha256": prepared["manifest_sha256"],
+            "contracts": release["contracts"],
+            "repetitions": 1,
+            "venue": venue,
+            "split": release["split"],
+        }
+        for name, value in expected.items():
+            if anchor[name] != value:
+                raise ValueError(f"candidate and reference {name} differ")
+        if len(anchor["cases"]) != len(prepared["cases"]):
+            raise ValueError("candidate and reference case sets differ")
+        for entry, baseline in zip(prepared["cases"], anchor["cases"], strict=True):
+            if (
+                entry["case_id"] != baseline["case_id"]
+                or entry["system_sha256"] != baseline["system_sha256"]
+                or entry["sha256"] != baseline["archive_sha256"]
+            ):
+                raise ValueError("candidate and reference numerical inputs differ")
+    sandbox = modal.Sandbox.create(
+        app=app,
+        image=image,
+        cpu=(float(execution["cpus"]), float(execution["cpus"])),
+        memory=(memory_mib, memory_mib),
+        timeout=timeout,
+        block_network=True,
+    )
+    try:
+        if sandbox.exec("mkdir", "-p", "/work").wait() != 0:
+            raise RuntimeError("cannot initialize sandbox working directory")
+        sandbox.filesystem.copy_from_local(source, "/work/policy.c")
+        compile_process = sandbox.exec(
+            "linear-solver-bench",
+            "candidate",
+            "build",
+            "/work/policy.c",
+            "--runtime",
+            REMOTE_RUNTIME,
+            "--output",
+            "/work/candidate",
+            timeout=120,
+        )
+        compile_stdout = _stream_tail(compile_process.stdout, 256 * 1024)
+        compile_stderr = _stream_tail(compile_process.stderr)
+        if compile_process.wait() != 0:
+            raise RuntimeError(
+                "candidate build failed:\n" + compile_stdout + compile_stderr
+            )
+        build = json.loads(compile_stdout)
+        runtime = json.loads(
+            sandbox.filesystem.read_text(f"{REMOTE_RUNTIME}/manifest.json")
+        )
+        if (
+            reference is not None
+            and reference["reference_report"]["runtime_manifest_sha256"]
+            != runtime["manifest_sha256"]
+        ):
+            raise ValueError("candidate and reference runtime_manifest_sha256 differ")
+        return evaluate_pilot(
+            pathlib.Path(build["executable"]),
+            systems,
+            prepared,
+            source_sha256=build["source_sha256"],
+            executable_sha256=build["executable_sha256"],
+            runtime_manifest_sha256=runtime["manifest_sha256"],
+            venue=venue,
+            execute=_pilot_case_executor(sandbox),
+        )
+    finally:
+        sandbox.terminate()
+
+
+def _run_pilot(
+    source: pathlib.Path,
+    cases: pathlib.Path,
+    output: pathlib.Path,
+    *,
+    family: str,
+    track: str,
+    official: bool,
+    calibration: str,
+    score_output: str,
+) -> None:
+    from linear_solver_bench.families import resolve_track
+    from linear_solver_bench.pilot_dataset import (
+        iter_pilot_prepared,
+        load_pilot_prepared_manifest,
+    )
+    from linear_solver_bench.pilot_scoring import score_pilot_report
+
+    prepared = load_pilot_prepared_manifest(cases, official=official)
+    release = prepared["source_release"]
+    if bool(family) != bool(track):
+        raise ValueError("provide both family and track selectors")
+    if family:
+        contract = resolve_track(family, track)
+        if (contract.family, contract.track) != (release["family"], release["track"]):
+            raise ValueError("family/track differs from the prepared release")
+    if score_output and [case["case_id"] for case in prepared["cases"]] != [
+        case["case_id"] for case in release["cases"]
+    ]:
+        raise ValueError("scoring requires the complete frozen split")
+    if score_output and pathlib.Path(score_output).expanduser().resolve() == output:
+        raise ValueError("report and score output paths must differ")
+    reference = None
+    if calibration:
+        reference = json.loads(
+            pathlib.Path(calibration).expanduser().read_text(encoding="utf-8")
+        )
+    report = _evaluate_pilot_sandbox(
+        source,
+        iter_pilot_prepared(cases),
+        prepared,
+        official=official,
+        reference=reference,
+    )
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(
+        json.dumps(report, indent=2, sort_keys=True, allow_nan=False) + "\n",
+        encoding="utf-8",
+    )
+    print(output)
+    if score_output:
+        score_path = pathlib.Path(score_output).expanduser().resolve()
+        score_path.parent.mkdir(parents=True, exist_ok=True)
+        score_path.write_text(
+            json.dumps(
+                score_pilot_report(report, reference),
+                indent=2,
+                sort_keys=True,
+                allow_nan=False,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        print(score_path)
 
 
 def _calibration(calibration_path: pathlib.Path | None) -> dict[str, object] | None:
@@ -79,7 +376,31 @@ def main(
     output: str,
     calibration: str = "",
     deadline: float = 120.0,
+    family: str = "",
+    track: str = "",
+    official: bool = False,
+    score_output: str = "",
 ) -> None:
+    cases_path = pathlib.Path(cases).expanduser().resolve()
+    schema = json.loads((cases_path / "manifest.json").read_text(encoding="utf-8")).get(
+        "schema_version"
+    )
+    if schema == 2:
+        _run_pilot(
+            pathlib.Path(source).expanduser().resolve(),
+            cases_path,
+            pathlib.Path(output).expanduser().resolve(),
+            family=family,
+            track=track,
+            official=official,
+            calibration=calibration,
+            score_output=score_output,
+        )
+        return
+    if family or track or official or score_output:
+        raise ValueError(
+            "family, track, official, and score-output options require pilot cases"
+        )
     if not math.isfinite(deadline) or not 0.0 < deadline <= 120.0:
         raise ValueError("case deadline must lie in (0, 120]")
     source_path = pathlib.Path(source).expanduser().resolve()
