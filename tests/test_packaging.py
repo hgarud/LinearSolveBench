@@ -80,6 +80,7 @@ def test_archives_include_public_resources_only(distributions):
         pathlib.PurePosixPath("docs/analysis/ns-cohort-v2-policy.json"),
         pathlib.PurePosixPath("docs/analysis/ns-cohort-v2-inventory.json"),
         pathlib.PurePosixPath("docs/analysis/ns-cohort-v2-descriptors.json"),
+        pathlib.PurePosixPath("docs/analysis/ns-cohort-v2-selection.json"),
     } <= source_files.keys()
     allowed_source_roots = {
         "CITATION.cff",
@@ -135,6 +136,12 @@ def test_archives_include_public_resources_only(distributions):
             "data/ranked-v1.json",
             "data/ns-mesh-pilot-dev.json",
             "data/ns-mesh-pilot-ranked.json",
+            "data/ns-mesh-cohort-v2-dev.json",
+            "data/ns-mesh-cohort-v2-ranked.json",
+            "data/releases/ns-cohort-v2-dev-validation.json",
+            "data/releases/ns-cohort-v2-ranked-validation.json",
+            "data/releases/ns-cohort-v2-preparation-reproduction.json",
+            "data/releases/ns-cohort-v2-offline-reference-attempts.json",
             "data/flash-replay-dev-pilot.json",
             "data/flash-replay-ranked-pilot.json",
             "data/releases/flash-replay-dev-reference.json",
@@ -186,10 +193,16 @@ assert load_split("dev")["case_count"] > 0
 assert (repository_root() / "benchmark.toml").is_file()
 assert (data_dir() / "NOTICE.md").is_file()
 for name in ("ns-mesh-pilot-dev", "ns-mesh-pilot-ranked",
+             "ns-mesh-cohort-v2-dev", "ns-mesh-cohort-v2-ranked",
              "flash-replay-dev-pilot", "flash-replay-ranked-pilot"):
     release = load_release(data_dir() / (name + ".json"), official=True)
     assert release["cases"]
 for split in ("dev", "ranked"):
+    report = json.loads((data_dir() / "releases" /
+        ("ns-cohort-v2-" + split + "-validation.json")).read_text())
+    score = score_pilot_report(report)
+    assert score["official"] and score["case_count"] == report["case_count"]
+    assert score["solved_count"] == report["solved_count"]
     reference = json.loads((data_dir() / "releases" /
         ("flash-replay-" + split + "-reference.json")).read_text())
     score = score_pilot_report(reference["reference_report"], reference)

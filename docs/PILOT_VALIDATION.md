@@ -1,7 +1,6 @@
 # Pilot validation
 
-The pilot was exercised on the complete declared NS coverage corpus and the
-FLASH replay captures using the fixed public candidate
+The coverage and replay evaluations use the fixed public candidate
 [`gmres_amg.c`](../submissions/gmres_amg.c). Each split compiled the candidate
 once, then evaluated each case once in a fresh native process. The Modal venue
 enforced 2 CPUs, 4 GiB RAM, a 90-second case budget, and 5,000 iterations. Creation,
@@ -10,18 +9,38 @@ unchanged throughout validation.
 
 | Track and split | Cases | Accurate solves |
 | --- | ---: | ---: |
-| NS coverage, development | 11 | 10 |
-| NS coverage, ranked | 32 | 14 |
+| NS cohort v2 coverage, development | 19 | 11 |
+| NS cohort v2 coverage, ranked | 30 | 14 |
 | FLASH replay, development | 96 | 96 |
 | FLASH replay, ranked | 248 | 248 |
 
-All 43 NS executions completed, with no crashes, timeouts, infrastructure
-failures, or retries. The 19 unsuccessful solves returned nonzero solver
-statuses and count as coverage failures. Both atmospheric operators with more
-than one million rows passed under the same 4 GiB limit: 1,270,432 rows in
-3.47 seconds and 1,489,752 rows in 4.58 seconds of native elapsed time.
-These results demonstrate a working coverage evaluation; this candidate is not
-a universal NS reference. The NS performance track remains unsupported.
+The [NS cohort review](NS_COHORT_V2.md) records the new 49-case inventory,
+source evidence, selection policy, and remaining representation gaps. All
+49 cases received one execution, with no crashes or infrastructure failures.
+Janna/CoupCons3D in development and Goodwin/Goodwin_095 in ranking reached the
+90-second limit and count as unsuccessful solves; neither was retried or
+removed. The other 22 unsuccessful solver outcomes also remain in the coverage
+count. The 1,602,111-row Transport case passed in 5.81 seconds of native elapsed
+time under the same 4 GiB limit.
+The full scalar reports preserve every outcome, resource limit, release
+identity, and prepared-system identity:
+[`development`](../data/releases/ns-cohort-v2-dev-validation.json) and
+[`ranked`](../data/releases/ns-cohort-v2-ranked-validation.json).
+
+All 49 fresh workloads independently passed the unchanged tenfold
+qualification margins: 46 refined sparse-LU witnesses, one refined PyAMG/GMRES
+witness, and two exact row-dominance certificates. The
+[offline attempt history](../data/releases/ns-cohort-v2-offline-reference-attempts.json)
+preserves earlier unsuccessful reference attempts and their separate resource
+budgets. Those offline timings do not define a candidate performance baseline.
+
+These are examples of coverage evaluation. This candidate is not a universal
+NS reference, and the NS performance track remains unsupported. The older
+`ns-mesh-pilot` release remains frozen with its historical 10/11 development
+and 14/32 ranked results; those runs had no crashes, timeouts, infrastructure
+failures, or retries. The replacement release uses fresh manufactured targets,
+so results from the two releases should not be treated as a paired solver
+comparison.
 
 The FLASH reference passed all 344 cases: 96 development cases and 248 ranked
 cases, including all 88 correctness controls. Each case ran once, with one
@@ -64,21 +83,29 @@ Two independent clean Linux runtime builds produced identical complete
 manifests, including the HYPRE library, trusted driver, and header tree. Two
 clean macOS builds also matched each other. This is reproducibility within each
 platform and toolchain; it does not require Linux and macOS binaries to match.
-Preparing all 43 NS cases with the minimum supported NumPy 2.0.2 and SciPy
-1.14.1 reproduced the exact prepared manifest identities obtained with the
-newer validation environment.
+Preparing all 49 fresh NS workloads with the minimum supported NumPy 2.0.2 and
+SciPy 1.14.1 reproduced every canonical matrix and complete numerical-system
+identity obtained with the newer validation environment. The
+[reproduction receipt](../data/releases/ns-cohort-v2-preparation-reproduction.json)
+records all 49 matches. This repeats source decoding and input preparation;
+ordinary public preparation reuses the frozen qualification evidence and does
+not rerun expensive reference factorizations.
 
-All 122 automated tests pass. They include loading and scoring both published
-references from the built wheel outside the checkout, with each registered
-reference scoring exactly 1.0 against itself. Ruff checks pass, and regenerating
-the original v1 split manifests leaves their bytes unchanged.
+All 167 automated tests pass. They cover the selector against independent
+exhaustive and distance calculations, release-to-selection bindings,
+qualification, complete venue reports, and loading public resources from a
+built wheel outside the checkout.
+Both registered FLASH references score exactly 1.0 against themselves. The
+original v1 split manifests and earlier frozen family releases retain their
+identities. Ruff checks pass.
 
 To repeat the public development evaluation from a checkout:
 
 ```bash
+uv pip install -e '.[dev,qualification]'
 python -m pytest
 linear-solver-bench dataset prepare \
-  --release ns-mesh-pilot-dev --output data/prepared/ns-dev
+  --release ns-mesh-cohort-v2-dev --output data/prepared/ns-dev
 modal run modal_app.py --source submissions/gmres_amg.c \
   --cases data/prepared/ns-dev --output results/ns-dev.json \
   --score-output results/ns-dev-score.json

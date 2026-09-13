@@ -1,4 +1,28 @@
-# Frozen FLASH replay reference
+# Frozen validation and reference artifacts
+
+## NS cohort v2 validation
+
+`ns-cohort-v2-dev-validation.json` and
+`ns-cohort-v2-ranked-validation.json` contain complete coverage evaluation
+reports for the fixed public GMRES+AMG example. They bind the selected releases,
+fresh prepared inputs, runtime, resource limits, and every individual outcome.
+They are coverage examples; NS scoring does not use their elapsed times as a
+speedup reference. Candidate failures and timeouts remain in each report.
+
+`ns-cohort-v2-preparation-reproduction.json` records exact matrix and complete
+system identity agreement for all 49 fresh workloads under the minimum
+supported NumPy 2.0.2 and SciPy 1.14.1 versions. Only source acquisition and
+manufactured-input preparation were repeated for that check.
+
+`ns-cohort-v2-offline-reference-attempts.json` records the large-case offline
+reference attempts, including failed or cancelled attempts on unchanged inputs.
+These use separate qualification budgets and are not candidate timing results.
+
+See the [cohort review](../../docs/NS_COHORT_V2.md) for selection, qualification
+and remaining representation gaps, and
+[pilot validation](../../docs/PILOT_VALIDATION.md) for the measured results.
+
+## FLASH replay reference
 
 `flash-replay-dev-reference.json` and `flash-replay-ranked-reference.json`
 contain the complete qualification reports and frozen timings for the pilot.

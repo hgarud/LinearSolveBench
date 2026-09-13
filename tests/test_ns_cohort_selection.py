@@ -326,7 +326,9 @@ def test_three_opposite_split_constraints_form_an_infeasible_odd_cycle(
 ):
     inventory = make_inventory(constant=True)
     for group_indices, tag in (
-        ((0, 1), "edge-a"), ((1, 2), "edge-b"), ((0, 2), "edge-c")
+        ((0, 1), "edge-a"),
+        ((1, 2), "edge-b"),
+        ((0, 2), "edge-c"),
     ):
         for i in group_indices:
             inventory["cases"][i]["application_tags"].append(tag)

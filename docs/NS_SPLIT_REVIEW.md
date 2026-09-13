@@ -5,12 +5,13 @@ This is the historical review of `ns-mesh-pilot`. The
 source screening, qualification status, and remaining limitations. The frozen
 43-case inventory and the findings below remain unchanged for reproducibility.
 
-Status: **the current 11-development/32-ranked partition is provisional for
+Historical status: **the 11-development/32-ranked partition is provisional for
 representativeness**. Its 43 workloads remain numerically qualified and its full
 Modal execution remains validated. Those checks establish feasible accuracy
 requirements and working evaluation; they do not establish that development
 feedback covers the scientific and numerical regimes encountered in ranking.
-The representative-split requirement is not yet satisfied.
+That partition does not satisfy the representative-split requirement; the
+replacement cohort's declared coverage and limitations are reviewed separately.
 
 This review uses the frozen manifests, the
 [matrix-property audit](analysis/ns-split-audit.json), and the

@@ -1,16 +1,17 @@
 # First pilot: NS mesh coverage and FLASH replay
 
-Status: implementation and execution validated; NS split representativeness
-remains provisional, updated 13 September 2026. NS has 43
-qualified cases split into 11 development and 32 ranked cases, all evaluated in
-the official Modal venue. FLASH has 344 publicly downloadable captures and a
-fixed public reference that passes every case in that venue. Releases, runtime,
-and replay calibration identities are frozen. The checks and scientific scope
-below document completed implementation and validation. The current 11/32 NS
-partition does not yet satisfy representative development coverage. Its
-[split review](NS_SPLIT_REVIEW.md) defines the gaps and replacement requirements;
-counts may change and new independent groups may be added. Existing frozen
-releases remain reproducible. Future tracks remain separate work.
+Status: family implementation, numerical qualification, and complete venue
+validation are complete, updated 13 September 2026.
+NS cohort v2 freezes 49 operators in 19-development/30-ranked splits, selected
+by a documented matrix-only policy with disjoint provenance groups. The
+[cohort review](NS_COHORT_V2.md) records the sources, hard coverage criteria,
+selection, and remaining single-source joint gaps. All 49 fresh workloads are
+qualified; complete venue runs give 11/19 development and 14/30 ranked passes,
+with two preserved timeouts and no retries. The historical 43-case
+NS release remains reproducible. FLASH has 344 publicly downloadable captures
+and a fixed public reference that passes every case in the official venue;
+its release, runtime, and replay calibration identities are frozen. Future
+tracks remain separate work.
 
 ## Implementation snapshot
 
@@ -18,22 +19,37 @@ releases remain reproducible. Future tracks remain separate work.
 | --- | --- | --- |
 | Family and execution contracts | Two explicit pairs; `ns_mesh_pde` alias; schema-v2 identities; one execution per case; registered split digests and fixed venue | Version changed inputs, contracts, and venues |
 | Numerical verification | Fixed NS gates, FLASH residual/backward gates, explicit reference semantics, stable ratios, JSON-safe diagnostics, v1 compatibility | Retain qualification and identity checks for later releases |
-| NS coverage | All 43 qualified SuiteSparse workloads prepare and verify; full Modal execution gives 10/11 development and 14/32 ranked passes for the public GMRES+AMG solver; current split representativeness is provisional | Review and replace the split with independent support for ranked regimes; acquire groups as needed; freeze and qualify a new release |
+| NS coverage | Cohort v2 contains 49 qualified cases in 19/30 splits; complete venue runs give 11/19 and 14/30, retaining both timeouts | Retain explicit singleton joint limitations and revalidate changed releases |
 | FLASH inputs | 344 standalone archives published on Hugging Face; commit-pinned manifests; captured arrays verified; fresh installed public download succeeds | Preserve immutable bytes and provenance split boundaries |
 | FLASH reference and scores | Fixed public `gmres_amg.c` passes all 344 Modal cases; registered single-execution timings and weighted scoring | Requalify when reference, inputs, runtime, or venue changes |
 | Execution and distribution | Full Modal split runs; hard resource limits; fresh wheel/sdist builds, isolated installed resources, downloads, offline reuse, and native compilation | Repeat package/content and venue checks for each release |
 
-The NS release `ns-mesh-pilot` contains 43 matrices in 21 provenance groups,
-with 11 development cases in four groups and 32 ranked cases in 17 groups.
-Dimensions range from 240 to 1,489,752. Qualification uses one fixed
-higher-precision refinement after sparse LU for 41 cases and exact
-row-diagonal-dominance certificates for two large cases. Every frozen workload
-meets the unchanged tenfold qualification margins. This is a declared pilot
-corpus, not an exhaustive scientific family inventory. The earlier two-case
-`ns-mesh-dev-pilot` remains a separate integration check; the generic v1
-inventory remains a separate benchmark.
+The replacement `ns-mesh-cohort-v2` selects 49 matrices in 24 groups, with 19
+development cases in nine groups and 30 ranked cases in 15 groups. Dimensions
+range from 240 to 1,602,111. Shared known application, spatial-method, size,
+structural, and multiply-supported method-by-size regimes occur on both sides.
+Semiconductor devices and boundary elements are development-only because each
+has one source group. The ranked medium-sized finite-volume case has no
+development case in that same joint regime; this and other singleton joint
+limitations remain explicit. These facts establish the declared coverage
+policy, not an exhaustive or universally representative scientific inventory.
 
-The full NS Modal check completed every case once without crashes, timeouts,
+The historical `ns-mesh-pilot` contains 43 matrices in 21 groups with 11/32
+cases. Its qualification uses one fixed higher-precision refinement after
+sparse LU for 41 cases and exact dominance certificates for two. Every frozen
+workload meets the unchanged tenfold margins. Cohort v2 independently meets the
+same margins on fresh targets, using 46 refined-LU witnesses, one PyAMG/GMRES
+witness with inexact refinement, and two exact dominance certificates. The earlier two-case
+`ns-mesh-dev-pilot` remains an integration check; the generic v1 inventory is a
+separate benchmark.
+
+The complete cohort v2 Modal check executed all 49 cases exactly once. The public
+GMRES+AMG candidate passes 11/19 development and 14/30 ranked cases. CoupCons3D
+and Goodwin_095 reach the 90-second limit and remain in the results; there are
+no crashes, infrastructure failures, or retries. Transport's 1,602,111-row
+system passes in 5.81 seconds within 4 GiB.
+
+The historical 43-case NS Modal check completed every case once without crashes, timeouts,
 infrastructure failures, or retries. Both matrices with over a million unknowns
 passed within 4 GiB. A partial solved-case count is a valid coverage result;
 NS coverage does not require discovery of an all-case performance reference.
@@ -105,7 +121,7 @@ serialized matrix and RHS, regardless of the candidate's internal algorithm.
 
 | Input or required metric | NS mesh coverage | FLASH replay |
 | --- | --- | --- |
-| Scientific admission | Real, materially nonsymmetric primary systems with verified mesh/PDE provenance and numerical qualification | Valid captured scalar magnetic-diffusion systems with qualified capture evidence |
+| Scientific admission | Real, materially nonsymmetric original PDE discretization operators with verified mesh/PDE provenance and numerical qualification | Valid captured scalar magnetic-diffusion systems with qualified capture evidence |
 | RHS | One Rademacher manufactured target per matrix at unit RMS; `b = fl(A x_target)` | Preserve captured `b` |
 | Initial guess | Zero | Preserve captured `x0` |
 | Relative residual `\|\|b-Ax\|\|2 / \|\|b\|\|2` | Diagnostic | `<= tau * (1 + 1e-6)` |
@@ -146,12 +162,23 @@ the acceptance limits. This preparation adds no candidate evaluation processes.
 
 Implemented qualification methods distinguish their evidence explicitly. Sparse
 LU can perform one fixed higher-precision residual correction using the same
-factors; its measured result remains empirical. An alternate strict row-diagonal
+factors; its measured result remains empirical. A fixed equilibrated GMRES/ILU
+reference with exactly two higher-precision corrections is another empirical
+feasibility method, evaluated against the original stored system. Large-case
+offline qualification may use 32 GiB and one hour; candidate limits remain
+4 GiB and 90 seconds. An alternate strict row-diagonal
 dominance path accumulates coefficients and RHS formation residuals exactly as
 binary64 integers and certifies a bound on stored-system forward discrepancy.
 It separately checks measured target-witness metrics at the tenfold limits and
 also requires the certified forward bound to meet that margin. It does not claim
 that those measured floating-point metrics are themselves interval bounds.
+
+The admitted Transport witness uses a versioned PyAMG/GMRES reference with
+initial relative tolerance `1e-13` and two correction solves at `1e-2`, with
+zero absolute tolerance. The four final qualification gates are unchanged.
+The [attempt history](../data/releases/ns-cohort-v2-offline-reference-attempts.json)
+preserves earlier failures and the stopped v1 attempt; it does not establish
+a Transport-specific floating-point accuracy floor.
 
 For FLASH, retain raw componentwise diagnostics even when weak rows make them
 large; do not introduce row floors or reject on that diagnostic. Define a zero
@@ -299,12 +326,14 @@ these exposure boundaries, but do not require full-trajectory capture,
 publication, or execution for the replay pilot. Publicly downloadable inputs
 cannot be claimed to be hidden merely because reference vectors are private.
 
-All 43 NS sources are downloadable and numerically qualified, and public
-preparation has verified every frozen workload. FLASH assets are publicly
-downloadable with immutable commit identities and frozen manifests. NS coverage
-can become available independently if replay reference qualification is
-delayed. A pilot claiming both tracks complete requires both working public
-data paths and a qualified reference in the declared comparison venue.
+All 49 selected NS sources have verified original public archives and reproduce
+the same numerical systems with the minimum supported NumPy/SciPy versions.
+Fresh cohort v2 qualification has passed all 49 fixed workloads.
+The historical 43-case release has complete
+qualification and preparation evidence. FLASH assets are publicly
+downloadable with immutable commit identities and frozen manifests. Both pilot
+tracks have working public data paths and complete venue validation; FLASH
+also has a qualified reference in the declared comparison venue.
 
 Construct new public manifests and qualification reports through explicit
 allowlisted exports. Exclude private package imports, repository paths/names,
@@ -326,11 +355,11 @@ are redistributable. [FLASH license agreement](https://flash.rochester.edu/site/
 
 | Step | Status | Completed evidence |
 | --- | --- | --- |
-| 1. Freeze contracts and inventory | Implemented; declared inventories qualified | Two pairs and public schemas are explicit. NS has 43 qualified cases in disjoint 11/32 splits. FLASH has 344 cases in published 96/248 splits. |
-| 2. Deliver NS coverage end to end | Implemented for the full pilot | All 43 public sources prepare and verify; bound qualification evidence, one fresh process per case, failure-preserving reports, and calibration-free scoring are available. |
+| 1. Freeze contracts and inventory | Implemented; replacement NS selection frozen | Two pairs and public schemas are explicit. NS cohort v2 selects 49 cases in disjoint 19/30 splits. FLASH has 344 cases in published 96/248 splits. |
+| 2. Deliver NS coverage end to end | Implemented; 49/49 fresh workloads qualified | Cohort v2 retains every original operator and adds six. All 49 meet the unchanged tenfold margins and reproduce with minimum supported dependencies. |
 | 3. Deliver FLASH replay end to end | Implemented; public assets published | Captured arrays round-trip unchanged across 344 archives; both manifests pin an immutable Hugging Face commit. |
 | 4. Complete replay qualification and scoring | Complete | One fixed public solver passes every case and control in both Modal splits; complete reports and registered timings are frozen. |
-| 5. Validate corpus and venue | Complete | All 43 NS and 344 FLASH cases execute in the declared venue; the largest NS cases fit 4 GiB. |
+| 5. Validate corpus and venue | Complete | Cohort v2 gives 11/19 development and 14/30 ranked with two preserved 90-second timeouts, no retries, and no crashes or infrastructure failures. FLASH and historical NS runs remain complete. |
 | 6. Validate distribution and publish | Implemented and checked | Fresh wheel/sdist builds, isolated installation, installed trusted manifests, public downloads, offline reuse, and native compilation pass; public data and reference artifacts have frozen identities. |
 
 Begin with NS coverage, then FLASH replay. Keep numerical-reference quality
@@ -358,7 +387,7 @@ Implemented NS development commands:
 
 ```bash
 linear-solver-bench dataset families
-linear-solver-bench dataset prepare --release ns-mesh-pilot-dev \
+linear-solver-bench dataset prepare --release ns-mesh-cohort-v2-dev \
   --output data/prepared/ns-mesh-dev
 linear-solver-bench run submissions/starter.c \
   --runtime build/runtime --cases data/prepared/ns-mesh-dev \
@@ -387,11 +416,16 @@ report/weight/reference identity binding, and Modal transport using a test
 sandbox. Native development checks and public-array round trips complement
 those tests. A mocked sandbox is not evidence of a full official venue run.
 
-Completed pilot validation includes:
+Completed release validation includes:
 
-1. All 43 qualified NS workloads prepared from public sources and executed once
+1. All 43 qualified `ns-mesh-pilot` workloads prepared from public sources and executed once
    in the official venue. The public GMRES+AMG solver passes 10/11 development
    and 14/32 ranked cases, with both large atmospheric matrices fitting 4 GiB.
+   These are historical release results. Cohort v2 has 49 freshly qualified
+   workloads and complete venue runs giving 11/19 development and 14/30 ranked,
+   with both 90-second timeouts retained and no retries. All 49 numerical
+   preparations reproduce exactly under NumPy 2.0.2/SciPy 1.14.1. See
+   [NS_COHORT_V2.md](NS_COHORT_V2.md) for the separate release evidence.
 2. The fixed public replay reference passes all 96 development and all 248
    ranked cases, including controls. Complete reports, single-execution timings,
    published split digests, and the runtime identity are frozen and registered.

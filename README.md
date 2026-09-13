@@ -26,12 +26,13 @@ From a checkout:
 
 ```bash
 uv venv --python 3.12
+source .venv/bin/activate
 uv pip install -e '.[dev]'
 linear-solver-bench dataset families
-linear-solver-bench dataset summary --release ns-mesh-pilot-dev
-linear-solver-bench dataset list --release ns-mesh-pilot-dev
+linear-solver-bench dataset summary --release ns-mesh-cohort-v2-dev
+linear-solver-bench dataset list --release ns-mesh-cohort-v2-dev
 linear-solver-bench dataset prepare \
-  --release ns-mesh-pilot-dev --output data/prepared/ns-dev
+  --release ns-mesh-cohort-v2-dev --output data/prepared/ns-dev
 linear-solver-bench runtime build --output build/runtime
 linear-solver-bench candidate validate submissions/starter.c --runtime build/runtime
 linear-solver-bench run submissions/starter.c \
@@ -40,28 +41,32 @@ linear-solver-bench run submissions/starter.c \
 linear-solver-bench score results/ns-dev.json
 ```
 
-The NS pilot contains 43 qualified SuiteSparse mesh/PDE matrices: 11 development
-cases and 32 ranked cases, separated by provenance groups. Every matrix has one
-freshly qualified deterministic manufactured right-hand side. Qualification uses 41
-independent sparse-LU solves with one higher-precision refinement each, plus two
-strict row-dominance certificates. All meet the unchanged tenfold qualification
-margins. This is a declared pilot corpus, not an exhaustive inventory of NS mesh
-problems. The earlier two-case `ns-mesh-dev-pilot` remains a small integration
-check, separate from the main pilot.
+NS cohort v2 contains 49 qualified SuiteSparse mesh/PDE matrices: 19 development
+cases in nine provenance groups and 30 ranked cases in 15 disjoint groups. It retains the
+original 43 matrices and adds six source-reviewed operators. A frozen
+matrix-only policy covers every shared application, spatial method, size band,
+structural regime, and method-by-size combination supported by multiple groups
+on both sides. Semiconductor devices and boundary elements are development-only.
+The [cohort review](docs/NS_COHORT_V2.md) publishes the selection, sources, and
+remaining single-source joint gaps; it does not claim to cover all NS PDE
+problems or equalize solver difficulty.
 
-**The current NS development/ranked split is provisional for
-representativeness.** Development lacks several ranked application,
-discretization, and size regimes. Numerical qualification and execution checks
-remain valid; a representative replacement may change the counts and add
-independent matrix groups. See the [NS split review](docs/NS_SPLIT_REVIEW.md).
+Every fixed workload meets the unchanged tenfold qualification margins, using
+46 refined sparse-LU witnesses, one PyAMG/GMRES witness with inexact refinement,
+and two exact row-dominance certificates. All 49 numerical preparations also
+reproduce with the minimum supported NumPy/SciPy versions. Full Modal runs give
+**11/19 development and 14/30 ranked** for the public GMRES+AMG candidate.
+All 49 cases run once; the two 90-second timeouts remain in the results without
+retry. The 1.6-million-row Transport case passes in 5.81 seconds within 4 GiB.
+Partial coverage is a valid benchmark result and requires no all-case timing
+reference.
 
-A complete Modal check of the public GMRES+AMG solver solved 10/11 development
-cases and 14/32 ranked cases. All 43 cases executed once without crashes,
-timeouts, or infrastructure failures; both matrices with over a million unknowns
-passed within 4 GiB. Partial coverage is a valid benchmark result.
+The historical 43-case `ns-mesh-pilot` remains frozen with its original 11/32
+partition and GMRES+AMG results of 10/11 development and 14/32 ranked. The
+two-case `ns-mesh-dev-pilot` remains a separate integration check.
 
 `--release` accepts an installed manifest name without `.json`, or an existing
-manifest path such as `data/ns-mesh-pilot-dev.json`. Optional `--family` and
+manifest path such as `data/ns-mesh-cohort-v2-dev.json`. Optional `--family` and
 `--track` selectors must agree with that release; `ns_mesh_pde` is an accepted
 alias for `ns-mesh-pde`. The `run` command selects the evaluator from the prepared
 manifest, so it needs no repeated family or track flags.

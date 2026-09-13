@@ -6,17 +6,28 @@ implementation and validation evidence are recorded in
 are implemented in the shared pilot evaluator. SPD, NS performance, and FLASH
 trajectory remain unsupported; their design below is not a pilot launch gate.
 
-The public NS pilot contains 43 qualified matrices in 11 development and 32
-ranked cases. Its declared scope is not an exhaustive family inventory. All 41
-refined-LU workloads and two strict row-dominance certificates meet the unchanged
-tenfold qualification margins. FLASH has 344 published captures in 96-case
-development and 248-case ranked splits, pinned to an immutable Hugging Face
-commit. Its fixed public reference passes all 344 in the official Modal venue,
-with registered timings for both splits. Full NS venue execution produces valid
-10/11 development and 14/32 ranked coverage for the public GMRES+AMG solver,
-including successful solves for both matrices with over a million unknowns
-within 4 GiB. The pilot plan and [validation record](PILOT_VALIDATION.md) document
-the completed data, execution, and distribution checks.
+NS cohort v2 contains 49 qualified matrices in 19-development/30-ranked splits
+under a frozen matrix-only policy, retaining all 43 original cases and adding six
+source-reviewed operators. It satisfies the declared shared application,
+spatial-method, size, structural, and multiply-supported method-by-size coverage
+rules. Single-source joint gaps and development-only semiconductor and boundary
+element categories remain explicit in the [cohort review](NS_COHORT_V2.md).
+This is conditional coverage of a declared pool, not an exhaustive family claim.
+
+Fresh qualification has passed all 49 workloads: 46 refined-LU witnesses, one
+PyAMG/GMRES witness with inexact refinement, and two strict row-dominance
+certificates. Complete venue runs give 11/19 development and 14/30 ranked for
+GMRES+AMG. All 49 cases ran exactly once, with two preserved 90-second timeouts,
+no retries, and no crashes or infrastructure failures. The 1,602,111-row
+Transport case passes in 5.81 seconds within 4 GiB. All 49 numerical preparations
+reproduce with the minimum supported NumPy/SciPy versions. The historical
+`ns-mesh-pilot` retains its original 11/32 split and 10/11, 14/32 venue results.
+
+FLASH has 344 published captures in 96-case development and 248-case ranked
+splits, pinned to an immutable Hugging Face commit. Its fixed public reference
+passes all 344 in the official Modal venue, with registered timings for both
+splits. The pilot plan and [validation record](PILOT_VALIDATION.md) record
+completed checks and each release's scope.
 
 Pilot cases and replay reference qualification each use exactly one fresh
 native process per case. The original v1 benchmark retains three repetitions.
@@ -96,10 +107,13 @@ timed solve, but verification always uses the original serialized `A` and `b`.
 | Public family ID | Scientific scope | RHS and initial guess | Reference |
 | --- | --- | --- | --- |
 | `magnetic_diffusion_flash` | Captured scalar magnetic-diffusion systems from FLASH | Preserve captured `b`, `x0`, and requested tolerance | Independently qualified numerical solution for diagnostics; never label it exact |
-| `ns-mesh-pde` | Real, materially nonsymmetric primary linear systems with verified mesh/PDE provenance | Initially one Rademacher manufactured solution per matrix, at unit RMS; `b = fl(A x_target)`, `x0 = 0` | Manufactured target, accompanied by RHS formation and reference-quality evidence |
+| `ns-mesh-pde` | Real, materially nonsymmetric original PDE discretization operators with verified mesh/PDE provenance and numerical qualification | Initially one Rademacher manufactured solution per matrix, at unit RMS; `b = fl(A x_target)`, `x0 = 0` | Manufactured target, accompanied by RHS formation and reference-quality evidence |
 | `spd-mesh` | Real, exactly symmetric positive-definite mesh operators; describe any initial scalar-PDE cohort restriction explicitly | Rademacher and uniform `[-1,1]` manufactured targets, one draw each; `b = fl(A x_target)`, `x0 = 0` | Manufactured target, accompanied by qualification evidence |
 
 `ns` means nonsymmetric, and does not restrict the family to Navier–Stokes.
+An original PDE operator may come from a source eigenmode problem, with that
+history disclosed and a fresh manufactured linear workload qualified separately;
+this does not permit squaring, shifting, or otherwise replacing the operator.
 SuiteSparse metadata is a discovery aid, not proof of mesh provenance,
 nonsingularity, or positive definiteness. In particular, a positive diagonal
 alone is not an SPD certificate. Require original-matrix symmetry checks and a

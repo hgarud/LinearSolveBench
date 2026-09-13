@@ -6,38 +6,52 @@ A release manifest fixes its family, track, development or ranked split, ordered
 case inventory, scientific admission, numerical identities, and execution and
 scoring contracts. Names alone do not establish scientific qualification.
 
-The NS pilot release `ns-mesh-pilot` contains 43 real mesh/PDE matrices, each
-with one newly qualified manufactured workload:
+The replacement NS release `ns-mesh-cohort-v2` contains 49 qualified real
+mesh/PDE operators. Both releases are frozen and their complete venue runs
+are validated.
 
-| Installed manifest | Split | Cases | Provenance groups | Unknowns |
+| Manifest | Split | Cases | Provenance groups | Unknowns |
 | --- | --- | ---: | ---: | ---: |
-| `ns-mesh-pilot-dev` | Development | 11 | 4 | 317–26,068 |
-| `ns-mesh-pilot-ranked` | Ranked | 32 | 17 | 240–1,489,752 |
+| `ns-mesh-cohort-v2-dev` | Development | 19 | 9 | 317–1,602,111 |
+| `ns-mesh-cohort-v2-ranked` | Ranked | 30 | 15 | 240–1,489,752 |
 
-**This partition is provisional for development-set representativeness.** The
-current development set does not cover several application, discretization,
-size, and numerical structural regimes present in ranking. The
-[NS split review](NS_SPLIT_REVIEW.md) documents the gaps and requirements for a
-replacement. Case counts may change and additional independent groups may be
-needed. Existing numerical qualification, execution results, and frozen
-identities remain valid and reproducible.
+The [cohort review](NS_COHORT_V2.md) documents the source evidence, exhaustive
+group selection, and explicit coverage limits. Every shared application and
+spatial-method category, size band, structural regime, and method-by-size
+combination with multiple supporting groups occurs in both splits. Unknown
+spatial methods do not establish known-method coverage. Semiconductor devices
+and boundary elements have one supporting group each and remain development-only.
+The ranked 40,816-row finite-volume case lacks development support in that same
+size-and-method combination; other single-group combinations are also reported.
+This is conditional coverage of a declared corpus, not a guarantee of equal
+solver difficulty or representation of all nonsymmetric PDE systems.
 
-Groups do not cross the split boundary. The largest operator has 10,319,760
+Groups do not cross the split boundary. The largest operator has 23,487,281
 nonzeros. Both splits use the same numerical gates and execution contract:
 90 seconds per case, two CPU cores, 4 GiB memory, a 5,000-iteration request, and
-relative stopping tolerance `1e-12`. Every case was freshly qualified against
-its frozen target and RHS; gates and numerical inputs were not relaxed to
-obtain passing qualification.
+relative stopping tolerance `1e-12`. Qualification uses fresh targets under
+the new release identity; neither acceptance gates nor targets may be changed
+to obtain passing qualification.
 
-The full inventory has also run in the Modal venue. The public GMRES+AMG solver
-passed 10/11 development and 14/32 ranked cases; every case completed its single
-execution without a crash, timeout, infrastructure failure, or retry. Both
-matrices with over a million unknowns passed within 4 GiB. These results validate
-the execution path and its coverage semantics; they do not turn NS coverage
-into a performance-reference track.
+The complete cohort v2 venue runs give **11/19 development and 14/30 ranked**
+for the public GMRES+AMG candidate. CoupCons3D and Goodwin_095 reached their
+90-second deadlines; both failures were retained without retry. All 49 cases
+ran once, with no infrastructure failures or crashes. The
+[development](../data/releases/ns-cohort-v2-dev-validation.json) and
+[ranked](../data/releases/ns-cohort-v2-ranked-validation.json) validation reports
+record every execution. Transport's 1,602,111-row case passed in 5.81 seconds
+within 4 GiB. Offline qualification may use more resources
+than the candidate contract: large-case admission allows up to 32 GiB and one
+hour without changing the candidate's 4 GiB/90-second budget.
 
-These 43 cases define the public pilot's scientific scope; they are not an
-exhaustive NS mesh inventory. The word NS means nonsymmetric and is not
+The previous `ns-mesh-pilot` remains a historical 43-case release with
+11-development/32-ranked cases in 4/17 groups. All its workloads were qualified
+and executed in Modal; the public GMRES+AMG solver passed 10/11 and 14/32,
+without crashes, timeouts, infrastructure failures, or retries. Those results
+belong to that frozen release, not cohort v2. Its
+[historical split review](NS_SPLIT_REVIEW.md) explains why it was replaced.
+
+The word NS means nonsymmetric and is not
 restricted to Navier–Stokes equations. The existing v1 catalogue's generic
 nonsymmetry screen does not establish mesh/PDE provenance.
 
@@ -62,15 +76,22 @@ keys remain with the operator. The target and `b = fl(A x_target)` are frozen
 in trusted prepared archives. A new draw changes the numerical system identity
 and requires new qualification.
 
-NS qualification distinguishes two kinds of evidence, both tied to the exact
+NS qualification supports three kinds of evidence, each tied to the exact
 stored system and requiring a tenfold margin against the four acceptance gates:
 
-- **41 refined sparse-LU cases.** An independent float64 factorization solution
+- **Refined sparse LU.** An independent float64 factorization solution
   receives exactly one correction using a higher-precision residual and the
   same factors. Extended precision is used when available, otherwise 80-digit
   decimal arithmetic. The final metrics and RHS formation audit are empirical
   numerical evidence, not verified forward-error bounds.
-- **Two strict row-dominance cases.** Exact integer accumulation of binary64
+- **Refined iterative reference.** The admitted Transport workload uses a fixed
+  PyAMG/GMRES method with an initial relative tolerance of `1e-13` and two
+  higher-precision residual corrections solved to relative tolerance `1e-2`.
+  Absolute tolerance remains zero. Metrics use the original matrix, RHS, and
+  target; the four final gates remain unchanged. This is empirical feasibility
+  evidence, not a verified inverse or forward bound. A fixed equilibrated
+  GMRES/ILU reference is also supported, with its own versioned configuration.
+- **Strict row-dominance certificate.** Exact integer accumulation of binary64
   coefficients establishes every row's dominance margin and the exact RHS
   formation residual. Their ratio certifies the exact stored-system solution's
   relative L2 and Linf distance from the manufactured target. Separately,
@@ -78,9 +99,13 @@ stored system and requiring a tenfold margin against the four acceptance gates:
   they are not claimed to be interval bounds or an independent factorization.
   The certified forward bound must also satisfy the tenfold margin.
 
-The two certified forward bounds are below `1.2e-9`, against a required
-qualification ceiling of `1e-6`. The original unrefined LU method remains
-supported for older frozen development evidence. See
+The historical 43-case release used 41 refined sparse-LU witnesses and two
+dominance certificates. Cohort v2 has 46 refined-LU witnesses, one PyAMG/GMRES
+v2 witness, and two dominance certificates. The
+[offline attempt history](../data/releases/ns-cohort-v2-offline-reference-attempts.json)
+preserves failed and stopped reference attempts on the same fixed inputs.
+The original unrefined LU method remains supported for older frozen development
+evidence. See
 [the accuracy contract](SPEC.md#independent-accuracy-checks) for the common
 acceptance gates and the distinction between targets and exact solutions.
 
@@ -151,9 +176,9 @@ solves and does not claim complete-trajectory coverage or rerun the simulation.
 
 ```bash
 linear-solver-bench dataset prepare \
-  --release ns-mesh-pilot-dev --output data/prepared/ns-dev
+  --release ns-mesh-cohort-v2-dev --output data/prepared/ns-dev
 linear-solver-bench dataset prepare \
-  --release ns-mesh-pilot-dev --offline --output data/prepared/ns-dev-offline
+  --release ns-mesh-cohort-v2-dev --offline --output data/prepared/ns-dev-offline
 ```
 
 Preparation validates source identity, safely decodes each source archive, and
@@ -162,6 +187,13 @@ manufactured reference; FLASH pilot archives declare no reference. Candidate
 input payloads contain only numerical solve inputs. Frozen NS qualification is
 reused after verifying its exact numerical identity, so ordinary preparation
 does not repeat offline factorizations.
+
+All 49 newly generated cohort v2 numerical systems reproduced exactly under
+NumPy 2.0.2 and SciPy 1.14.1 on Python 3.12.11, macOS arm64. The
+[preparation reproduction receipt](../data/releases/ns-cohort-v2-preparation-reproduction.json)
+records matching canonical-matrix and numerical-system hashes for every case.
+This is a preparation reproducibility check, independent of solver accuracy or
+candidate venue results.
 
 Downloads use a content-addressed cache with bounded sizes, resumable transfer,
 and hash validation before reuse. `--offline` uses verified cached archives and

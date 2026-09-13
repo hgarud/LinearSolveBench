@@ -8,11 +8,14 @@ candidate code is reused, and each case runs once in a fresh native process.
 
 ## Prepare and run NS coverage
 
-The main NS pilot has 11 development and 32 ranked cases. From a checkout:
+NS cohort v2 contains 19 development and 30 ranked cases in disjoint provenance
+groups. All 49 workloads are qualified, both releases are frozen, and both
+complete venue runs are validated. See the
+[cohort review](NS_COHORT_V2.md) for current status. From a checkout:
 
 ```bash
 linear-solver-bench dataset prepare \
-  --release ns-mesh-pilot-dev --output data/prepared/ns-dev
+  --release ns-mesh-cohort-v2-dev --output data/prepared/ns-dev
 modal run modal_app.py \
   --source submissions/candidate.c --cases data/prepared/ns-dev \
   --official --output results/ns-coverage.json
@@ -23,24 +26,34 @@ Coverage requires no timing reference or calibration. Partial solver coverage
 is a valid result: every expected case remains in the report and solved counts
 determine ranking. All expected cases must be evaluated, even when some fail.
 
-Prepare `ns-mesh-pilot-ranked` with its operator-held key using
+Prepare `ns-mesh-cohort-v2-ranked` with its operator-held key using
 `dataset prepare --rhs-key-file`. The key must match the release's commitment;
 it is not packaged with the benchmark. Changing it changes numerical inputs
 and requires a new release and qualification. Store it outside candidate-visible
-paths and images. The earlier `ns-mesh-dev-pilot` remains a separate two-case
-integration check.
+paths and images. The earlier `ns-mesh-pilot` remains a historical 43-case
+release, and `ns-mesh-dev-pilot` remains a separate two-case integration check.
 
 Frozen NS qualification is reused only after binding it to the exact prepared
-numerical inputs. Normal downloads do not rerun sparse factorizations. The main
-inventory uses 41 empirical refined-LU records and two exact row-dominance
-certificates, each with explicit witness/reference semantics. No candidate
-repetitions are added by offline qualification.
+numerical inputs. Normal downloads do not rerun sparse factorizations. The 49
+qualified cohort v2 workloads use 46 empirical refined-LU records, one
+PyAMG/GMRES v2 record with inexact refinement, and two exact row-dominance
+certificates. The iterative witness uses relative tolerance `1e-13` initially
+and `1e-2` for two correction solves; all final qualification gates are unchanged.
+Each evidence type has explicit witness/reference semantics. No candidate
+repetitions are added by offline qualification. The large-case offline
+qualification budget of 32 GiB and one hour is separate from the candidate's
+4 GiB and 90-second limits.
 
-The full Modal check completed all 43 cases once without crashes, timeouts,
-infrastructure failures, or retries. The public GMRES+AMG solver passed 10/11
-development and 14/32 ranked cases, including both matrices with over a million
-unknowns within 4 GiB. A solver need not pass every NS case to obtain a valid
-official coverage score.
+The complete cohort v2 Modal runs give 11/19 development and 14/30 ranked for
+the public GMRES+AMG solver. CoupCons3D in development and Goodwin_095 in ranked
+reached their 90-second deadlines and remain failed cases, with no retries.
+All 49 cases ran exactly once; there were no crashes or infrastructure failures.
+The [development report](../data/releases/ns-cohort-v2-dev-validation.json) and
+[ranked report](../data/releases/ns-cohort-v2-ranked-validation.json) record
+every execution. Transport's 1,602,111-row case passed in 5.81 seconds within
+4 GiB. A solver need not pass every NS case to obtain a valid official coverage
+score. Historical 10/11-development and 14/32-ranked results belong to
+`ns-mesh-pilot`.
 
 ## Run and score FLASH replay
 

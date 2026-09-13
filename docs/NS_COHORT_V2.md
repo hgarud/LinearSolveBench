@@ -1,6 +1,6 @@
 # NS mesh cohort v2
 
-The replacement release `ns-mesh-cohort-v2` is being prepared from 49 original
+The replacement release `ns-mesh-cohort-v2` contains 49 qualified original
 operators in 24 reviewed provenance groups. It retains all 43 matrices from
 `ns-mesh-pilot` and adds six public SuiteSparse operators. Selection,
 manufactured-workload qualification, and execution validation are separate
@@ -8,9 +8,9 @@ steps; source admission alone does not make this an active benchmark release.
 The original 11-development/32-ranked release remains reproducible, with its
 limitations recorded in the [earlier split review](NS_SPLIT_REVIEW.md).
 
-Current status: 48 of the 49 fixed workloads are qualified. The 30-case ranked
-release is frozen and has completed its venue run; qualification of the
-development Transport workload and the complete development run remain pending.
+Current status: all 49 fixed workloads are qualified, both releases are
+frozen, and both complete venue runs are validated. The public GMRES+AMG
+candidate passes 11/19 development and 14/30 ranked cases.
 
 ## Scientific scope and added sources
 
@@ -173,8 +173,8 @@ neither matrix downloads nor manufactured targets, RHS keys, or solver runs.
 The expected `selection_sha256` is
 `606ca7f230261c72d49287da8d4600ea123707e302928ecff13e3b374d6eb024`.
 
-After both qualified release manifests are frozen, the underlying matrix
-properties and descriptors can also be audited directly from public archives:
+The underlying matrix properties and descriptors can also be audited directly
+from public archives:
 
 ```bash
 python tools/audit_ns_split.py \
@@ -200,13 +200,16 @@ permitted. A failed reference algorithm does not establish that a workload is
 infeasible: another documented reference method may qualify the same fixed
 inputs, with the failed attempt retained.
 
-The 48 completed qualifications comprise 46 independent sparse-LU witnesses
-with one higher-precision residual correction each and two exact
-row-diagonal-dominance certificates. LU witnesses establish empirical
+The 49 completed qualifications comprise 46 independent sparse-LU witnesses
+with one higher-precision residual correction each, one PyAMG-preconditioned
+GMRES witness with two inexact corrections, and two exact
+row-diagonal-dominance certificates. The solver witnesses establish empirical
 feasibility at the tenfold margins; they are not verified forward-error bounds.
 The dominance method separately certifies the exact stored-system solution's
 forward discrepancy and measures verifier metrics at the manufactured target.
-Transport is the one remaining qualification and is not counted as passed.
+All four qualification gates retain their tenfold margins: normwise backward
+error `1e-11`, componentwise backward error `1e-9`, and both target-relative
+forward errors `1e-6`.
 
 Offline qualification has a separate resource budget from candidate evaluation.
 The large-case qualification venue allows up to 32 GiB and one hour; candidate
@@ -216,6 +219,26 @@ stored inputs passed using 8.68 GiB and 268.54 seconds. That is valid offline
 feasibility evidence, not a claim that this reference satisfies the candidate
 budget. Failure receipts remain part of the qualification record. Neither
 the target nor the acceptance gates changed between reference methods.
+
+Transport qualified with the versioned
+`independent-pyamg-sa-gmres-refined-v2` method. It keeps the initial relative
+GMRES tolerance at `1e-13`, uses `1e-2` for each of two correction solves, and
+keeps absolute tolerance zero throughout. The hierarchy and zero initial
+guesses are fixed, and the manufactured target is never a reference-solver
+input. Inexact correction solves are a standard iterative-refinement option;
+the attainable improvement depends on the system and is checked independently
+here. [Carson and Higham, 2018](https://eprints.maths.manchester.ac.uk/2629/1/cahi18.pdf)
+
+Its final normwise and componentwise backward errors were approximately
+`1.11e-16` and `3.31e-16`; L2 and Linf target errors were `2.06e-14` and
+`5.65e-14`. Qualification took 174.38 seconds with 2,471,686,144 bytes peak RSS.
+These are offline reference measurements, not candidate performance results.
+The [public attempt history](../data/releases/ns-cohort-v2-offline-reference-attempts.json)
+also preserves the earlier ILU timeout and the stopped PyAMG v1 attempt, which
+had no final accuracy verdict. The cause of that attempt's slow correction
+convergence was not established; no Transport-specific floating-point accuracy
+floor is claimed. V2 changes the reference algorithm's inner stopping rule,
+without changing the frozen system, cohort membership, or acceptance gates.
 
 All 49 freshly generated numerical systems reproduce exactly with the minimum
 supported NumPy 2.0.2 and SciPy 1.14.1 on Python 3.12.11, macOS arm64. The
@@ -227,14 +250,26 @@ claim reproducibility on every possible platform.
 
 ## Candidate venue validation
 
-The public `gmres_amg.c` candidate passed **14 of 30 ranked cases** in the
-declared Modal venue. Every ranked case received one fresh native execution.
-Goodwin_095 reached the 90-second deadline and remains a failed coverage case;
-it was not retried or removed. There were no infrastructure failures or
-crashes. The [complete ranked report](../data/releases/ns-cohort-v2-ranked-validation.json)
-preserves every outcome and input/runtime identity. Its partial solved count
-is a valid NS coverage result and is not a performance-reference qualification.
+The public `gmres_amg.c` candidate completed both full split evaluations in
+the declared Modal venue:
 
-Transport qualification and the full development venue run remain pending.
-The completed ranked run does not establish that the entire replacement
-release has completed its launch checks.
+| Split | Cases | Passed | Timeouts |
+| --- | ---: | ---: | ---: |
+| Development | 19 | 11 | 1 |
+| Ranked | 30 | 14 | 1 |
+
+All 49 cases received exactly one fresh native execution. CoupCons3D in
+development and Goodwin_095 in ranking reached their 90-second deadlines and
+remain failed coverage cases. Neither was retried or removed. There were no
+crashes, infrastructure failures, or candidate retries. The complete
+[development report](../data/releases/ns-cohort-v2-dev-validation.json) and
+[ranked report](../data/releases/ns-cohort-v2-ranked-validation.json) preserve
+every outcome and input/runtime identity. Both scores meet the registered
+official release and venue requirements.
+
+Transport, with 1,602,111 unknowns, passed in 5.81 seconds of native elapsed
+time, including 2.59 seconds of setup and 3.22 seconds of solving, under the
+normal two-CPU/4-GiB/90-second contract. This is a measured candidate result;
+the offline qualification algorithm and its 174.38-second preparation cost
+are separate. NS ranking uses solved counts, with equal counts tied. These
+partial coverage results do not establish an all-case performance reference.
