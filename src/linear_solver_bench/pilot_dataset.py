@@ -208,9 +208,15 @@ def prepare_release(
             if release["family"] == "ns-mesh-pde":
                 matrix = load_suitesparse(archive, case)
                 system = manufacture_ns(case, release, rhs_key, matrix)
-                qualified = qualify_ns(system)
-                if case["qualification"] is not None:
-                    validate_qualification(case["qualification"], system_digest(system))
+                qualified = case["qualification"]
+                if qualified is None:
+                    qualified = qualify_ns(system)
+                else:
+                    # Qualification belongs to release preparation. Reuse its
+                    # frozen evidence after binding it to these exact inputs;
+                    # ordinary downloads must not repeat large factorizations or
+                    # change prepared identity with platform-dependent metrics.
+                    validate_qualification(qualified, system_digest(system))
             else:
                 system = load_flash(archive, case)
                 qualified = None

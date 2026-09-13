@@ -232,6 +232,31 @@ def test_flash_preserves_warm_start_and_has_no_manufactured_truth(tmp_path):
     assert np.array_equal(restored.public.x0, system.public.x0)
 
 
+def test_frozen_ns_qualification_is_reused_and_bound(tmp_path, monkeypatch):
+    release, cache = make_ns(tmp_path)
+    manifest = tmp_path / "release.json"
+    manifest.write_text(json.dumps(release))
+    draft = prepare_release(manifest, tmp_path / "draft", cache=cache, offline=True)
+    evidence = draft["cases"][0]["qualification"]
+    release["cases"][0]["qualification"] = evidence
+    manifest.write_text(json.dumps(reseal(release)))
+
+    def unexpected_factorization(_):
+        raise AssertionError("frozen releases must not rerun offline qualification")
+
+    monkeypatch.setattr(
+        "linear_solver_bench.pilot_dataset.qualify_ns", unexpected_factorization
+    )
+    prepared = prepare_release(manifest, tmp_path / "frozen", cache=cache, offline=True)
+    assert prepared["cases"][0]["qualification"] == evidence
+    assert prepared["cases"][0]["sha256"] == draft["cases"][0]["sha256"]
+
+    release["cases"][0]["qualification"]["system_sha256"] = "a" * 64
+    manifest.write_text(json.dumps(reseal(release)))
+    with pytest.raises(ValueError, match="different numerical inputs"):
+        prepare_release(manifest, tmp_path / "invalid", cache=cache, offline=True)
+
+
 def test_release_rejects_unsupported_or_untrusted_contracts(tmp_path):
     release, _ = make_ns(tmp_path)
     validate_release(release)
