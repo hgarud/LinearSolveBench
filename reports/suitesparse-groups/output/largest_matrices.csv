@@ -1,0 +1,81 @@
+metric,rank,id,matrix,value,nrows,ncols,nnz,nentries,structure,entry_type,kind
+nrows,1,2804,MAWI/mawi_201512020330,226196185,226196185,226196185,480047894,480047894,symmetric,integer,undirected weighted graph
+nrows,2,2808,GenBank/kmer_V1r,214005017,214005017,214005017,465410904,465410904,symmetric,binary,undirected graph
+nrows,3,2893,Sybrandt/AGATHA_2015,183964077,183964077,183964077,11588725964,11588725964,symmetric,binary,undirected graph
+nrows,4,2805,GenBank/kmer_A2a,170728175,170728175,170728175,360585172,360585172,symmetric,binary,undirected graph
+nrows,5,2806,GenBank/kmer_P1a,139353211,139353211,139353211,297829984,297829984,symmetric,binary,undirected graph
+nrows,6,2856,GAP/GAP-urand,134217728,134217728,134217728,4294966740,4294966740,symmetric,integer,random undirected weighted graph
+nrows,7,2855,GAP/GAP-kron,134217726,134217726,134217726,4223264644,4223264644,symmetric,integer,random undirected weighted graph
+nrows,8,2803,MAWI/mawi_201512020130,128568730,128568730,128568730,270234840,270234840,symmetric,integer,undirected weighted graph
+nrows,9,2449,LAW/webbase-2001,118142155,118142155,118142155,1019903190,1019903190,unsymmetric,binary,directed graph
+nrows,10,2899,FlowIPM22/Spielman_k600,72180402,72180402,72180402,216902404,216902404,symmetric,real,undirected weighted graph
+nrows,11,2802,MAWI/mawi_201512020030,68863315,68863315,68863315,143414960,143414960,symmetric,integer,undirected weighted graph
+nrows,12,2807,GenBank/kmer_U1a,67716231,67716231,67716231,138778562,138778562,symmetric,binary,undirected graph
+nrows,13,2780,SNAP/com-Friendster,65608366,65608366,65608366,3612134270,3612134270,symmetric,binary,undirected graph with communities
+nrows,14,2852,GAP/GAP-twitter,61578415,61578415,61578415,1468364884,1468364884,unsymmetric,integer,directed weighted graph
+nrows,15,2809,GenBank/kmer_V2a,55042369,55042369,55042369,117217600,117217600,symmetric,binary,undirected graph
+nrows,16,2511,DIMACS10/europe_osm,50912018,50912018,50912018,108109320,108109320,symmetric,binary,undirected graph
+nrows,17,2454,LAW/sk-2005,50636154,50636154,50636154,1949412601,1949412601,unsymmetric,binary,directed graph
+nrows,18,2853,GAP/GAP-web,50636151,50636151,50636151,1930292948,1930292948,unsymmetric,integer,directed weighted graph
+nrows,19,2898,FlowIPM22/Spielman_k500,41792002,41792002,41792002,125627004,125627004,symmetric,real,undirected weighted graph
+nrows,20,2796,SNAP/twitter7,41652230,41652230,41652230,1468365182,1468365182,unsymmetric,binary,directed graph
+ncols,1,2804,MAWI/mawi_201512020330,226196185,226196185,226196185,480047894,480047894,symmetric,integer,undirected weighted graph
+ncols,2,2808,GenBank/kmer_V1r,214005017,214005017,214005017,465410904,465410904,symmetric,binary,undirected graph
+ncols,3,2893,Sybrandt/AGATHA_2015,183964077,183964077,183964077,11588725964,11588725964,symmetric,binary,undirected graph
+ncols,4,2805,GenBank/kmer_A2a,170728175,170728175,170728175,360585172,360585172,symmetric,binary,undirected graph
+ncols,5,2806,GenBank/kmer_P1a,139353211,139353211,139353211,297829984,297829984,symmetric,binary,undirected graph
+ncols,6,2856,GAP/GAP-urand,134217728,134217728,134217728,4294966740,4294966740,symmetric,integer,random undirected weighted graph
+ncols,7,2855,GAP/GAP-kron,134217726,134217726,134217726,4223264644,4223264644,symmetric,integer,random undirected weighted graph
+ncols,8,2803,MAWI/mawi_201512020130,128568730,128568730,128568730,270234840,270234840,symmetric,integer,undirected weighted graph
+ncols,9,2449,LAW/webbase-2001,118142155,118142155,118142155,1019903190,1019903190,unsymmetric,binary,directed graph
+ncols,10,2899,FlowIPM22/Spielman_k600,72180402,72180402,72180402,216902404,216902404,symmetric,real,undirected weighted graph
+ncols,11,2802,MAWI/mawi_201512020030,68863315,68863315,68863315,143414960,143414960,symmetric,integer,undirected weighted graph
+ncols,12,2807,GenBank/kmer_U1a,67716231,67716231,67716231,138778562,138778562,symmetric,binary,undirected graph
+ncols,13,2780,SNAP/com-Friendster,65608366,65608366,65608366,3612134270,3612134270,symmetric,binary,undirected graph with communities
+ncols,14,2852,GAP/GAP-twitter,61578415,61578415,61578415,1468364884,1468364884,unsymmetric,integer,directed weighted graph
+ncols,15,2809,GenBank/kmer_V2a,55042369,55042369,55042369,117217600,117217600,symmetric,binary,undirected graph
+ncols,16,2511,DIMACS10/europe_osm,50912018,50912018,50912018,108109320,108109320,symmetric,binary,undirected graph
+ncols,17,2454,LAW/sk-2005,50636154,50636154,50636154,1949412601,1949412601,unsymmetric,binary,directed graph
+ncols,18,2853,GAP/GAP-web,50636151,50636151,50636151,1930292948,1930292948,unsymmetric,integer,directed weighted graph
+ncols,19,2898,FlowIPM22/Spielman_k500,41792002,41792002,41792002,125627004,125627004,symmetric,real,undirected weighted graph
+ncols,20,2796,SNAP/twitter7,41652230,41652230,41652230,1468365182,1468365182,unsymmetric,binary,directed graph
+nnz,1,2893,Sybrandt/AGATHA_2015,11588725964,183964077,183964077,11588725964,11588725964,symmetric,binary,undirected graph
+nnz,2,2810,Sybrandt/MOLIERE_2016,6669254694,30239687,30239687,6669254694,6677301366,symmetric,real,undirected weighted graph
+nnz,3,2856,GAP/GAP-urand,4294966740,134217728,134217728,4294966740,4294966740,symmetric,integer,random undirected weighted graph
+nnz,4,2855,GAP/GAP-kron,4223264644,134217726,134217726,4223264644,4223264644,symmetric,integer,random undirected weighted graph
+nnz,5,2780,SNAP/com-Friendster,3612134270,65608366,65608366,3612134270,3612134270,symmetric,binary,undirected graph with communities
+nnz,6,2776,Mycielski/mycielskian20,2710370560,786431,786431,2710370560,2710370560,symmetric,binary,undirected graph
+nnz,7,2454,LAW/sk-2005,1949412601,50636154,50636154,1949412601,1949412601,unsymmetric,binary,directed graph
+nnz,8,2853,GAP/GAP-web,1930292948,50636151,50636151,1930292948,1930292948,unsymmetric,integer,directed weighted graph
+nnz,9,2796,SNAP/twitter7,1468365182,41652230,41652230,1468365182,1468365182,unsymmetric,binary,directed graph
+nnz,10,2852,GAP/GAP-twitter,1468364884,61578415,61578415,1468364884,1468364884,unsymmetric,integer,directed weighted graph
+nnz,11,2452,LAW/it-2004,1150725436,41291594,41291594,1150725436,1150725436,unsymmetric,binary,directed graph
+nnz,12,2449,LAW/webbase-2001,1019903190,118142155,118142155,1019903190,1019903190,unsymmetric,binary,directed graph
+nnz,13,2455,LAW/uk-2005,936364282,39459925,39459925,936364282,936364282,unsymmetric,binary,directed graph
+nnz,14,2775,Mycielski/mycielskian19,903194710,393215,393215,903194710,903194710,symmetric,binary,undirected graph
+nnz,15,1905,Schenk/nlpkkt240,760648352,27993600,27993600,760648352,774472352,symmetric,real,optimization problem
+nnz,16,2453,LAW/arabic-2005,639999458,22744080,22744080,639999458,639999458,unsymmetric,binary,directed graph
+nnz,17,2804,MAWI/mawi_201512020330,480047894,226196185,226196185,480047894,480047894,symmetric,integer,undirected weighted graph
+nnz,18,2808,GenBank/kmer_V1r,465410904,214005017,214005017,465410904,465410904,symmetric,binary,undirected graph
+nnz,19,1904,Schenk/nlpkkt200,440225632,16240000,16240000,440225632,448225632,symmetric,real,optimization problem
+nnz,20,2805,GenBank/kmer_A2a,360585172,170728175,170728175,360585172,360585172,symmetric,binary,undirected graph
+nentries,1,2893,Sybrandt/AGATHA_2015,11588725964,183964077,183964077,11588725964,11588725964,symmetric,binary,undirected graph
+nentries,2,2810,Sybrandt/MOLIERE_2016,6677301366,30239687,30239687,6669254694,6677301366,symmetric,real,undirected weighted graph
+nentries,3,2856,GAP/GAP-urand,4294966740,134217728,134217728,4294966740,4294966740,symmetric,integer,random undirected weighted graph
+nentries,4,2855,GAP/GAP-kron,4223264644,134217726,134217726,4223264644,4223264644,symmetric,integer,random undirected weighted graph
+nentries,5,2780,SNAP/com-Friendster,3612134270,65608366,65608366,3612134270,3612134270,symmetric,binary,undirected graph with communities
+nentries,6,2776,Mycielski/mycielskian20,2710370560,786431,786431,2710370560,2710370560,symmetric,binary,undirected graph
+nentries,7,2454,LAW/sk-2005,1949412601,50636154,50636154,1949412601,1949412601,unsymmetric,binary,directed graph
+nentries,8,2853,GAP/GAP-web,1930292948,50636151,50636151,1930292948,1930292948,unsymmetric,integer,directed weighted graph
+nentries,9,2796,SNAP/twitter7,1468365182,41652230,41652230,1468365182,1468365182,unsymmetric,binary,directed graph
+nentries,10,2852,GAP/GAP-twitter,1468364884,61578415,61578415,1468364884,1468364884,unsymmetric,integer,directed weighted graph
+nentries,11,2452,LAW/it-2004,1150725436,41291594,41291594,1150725436,1150725436,unsymmetric,binary,directed graph
+nentries,12,2449,LAW/webbase-2001,1019903190,118142155,118142155,1019903190,1019903190,unsymmetric,binary,directed graph
+nentries,13,2455,LAW/uk-2005,936364282,39459925,39459925,936364282,936364282,unsymmetric,binary,directed graph
+nentries,14,2775,Mycielski/mycielskian19,903194710,393215,393215,903194710,903194710,symmetric,binary,undirected graph
+nentries,15,1905,Schenk/nlpkkt240,774472352,27993600,27993600,760648352,774472352,symmetric,real,optimization problem
+nentries,16,2453,LAW/arabic-2005,639999458,22744080,22744080,639999458,639999458,unsymmetric,binary,directed graph
+nentries,17,2804,MAWI/mawi_201512020330,480047894,226196185,226196185,480047894,480047894,symmetric,integer,undirected weighted graph
+nentries,18,2808,GenBank/kmer_V1r,465410904,214005017,214005017,465410904,465410904,symmetric,binary,undirected graph
+nentries,19,1904,Schenk/nlpkkt200,448225632,16240000,16240000,440225632,448225632,symmetric,real,optimization problem
+nentries,20,2805,GenBank/kmer_A2a,360585172,170728175,170728175,360585172,360585172,symmetric,binary,undirected graph

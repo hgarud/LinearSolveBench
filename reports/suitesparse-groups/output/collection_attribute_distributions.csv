@@ -1,0 +1,124 @@
+attribute,value,count,share
+shape,rectangular,678,0.23347107
+shape,square,2226,0.76652893
+website_structure,Hermitian,3,0.00103306
+website_structure,rectangular,678,0.23347107
+website_structure,skew-symmetric,2,0.00068871
+website_structure,symmetric,1201,0.41356749
+website_structure,unsymmetric,1020,0.35123967
+entry_type,binary,601,0.20695592
+entry_type,complex,49,0.01687328
+entry_type,integer,522,0.17975207
+entry_type,real,1732,0.59641873
+numeric_domain_isReal_flag,complex,49,0.01687328
+numeric_domain_isReal_flag,real_or_noncomplex,2855,0.98312672
+binary_isBinary_flag,binary,601,0.20695592
+binary_isBinary_flag,not_binary,2303,0.79304408
+exact_symmetry_class,exact_numerical_or_hermitian,1196,0.41184573
+exact_symmetry_class,partially_pattern_symmetric,768,0.26446281
+exact_symmetry_class,pattern_symmetric_only,222,0.07644628
+exact_symmetry_class,pattern_unsymmetric,40,0.0137741
+exact_symmetry_class,rectangular,678,0.23347107
+positive_definite,no,2664,0.91735537
+positive_definite,yes,240,0.08264463
+is_2d3d,0,2005,0.690427
+is_2d3d,1,899,0.309573
+structural_full_rank,false,212,0.07300275
+structural_full_rank,missing,532,0.18319559
+structural_full_rank,true,2160,0.74380165
+kind,2D/3D problem,119,0.04097796
+kind,2D/3D problem sequence,4,0.00137741
+kind,acoustics problem,12,0.00413223
+kind,biochemical network,3,0.00103306
+kind,bipartite graph,4,0.00137741
+kind,chemical oceanography problem,1,0.00034435
+kind,chemical process simulation problem,68,0.02341598
+kind,chemical process simulation problem sequence,2,0.00068871
+kind,circuit simulation matrix,1,0.00034435
+kind,circuit simulation problem,68,0.02341598
+kind,circuit simulation problem sequence,8,0.00275482
+kind,combinatorial problem,299,0.10296143
+kind,computational chemistry problem,2,0.00068871
+kind,computational fluid dynamics,11,0.00378788
+kind,computational fluid dynamics problem,136,0.04683196
+kind,computational fluid dynamics problem sequence,7,0.00241047
+kind,computer graphics/vision problem,15,0.00516529
+kind,computer vision problem,2,0.00068871
+kind,counter-example problem,11,0.00378788
+kind,data analytics problem,1,0.00034435
+kind,directed graph,83,0.02858127
+kind,directed graph with communities,2,0.00068871
+kind,directed multigraph,12,0.00413223
+kind,directed temporal multigraph,8,0.00275482
+kind,directed weighted graph,46,0.01584022
+kind,directed weighted graph sequence,1,0.00034435
+kind,directed weighted random graph,1,0.00034435
+kind,directed weighted temporal graph,2,0.00068871
+kind,directed weighted temporal multigraph,1,0.00034435
+kind,duplicate 2D/3D problem,1,0.00034435
+kind,duplicate acoustics problem,1,0.00034435
+kind,duplicate computational fluid dynamics problem,1,0.00034435
+kind,duplicate economic problem,1,0.00034435
+kind,duplicate electromagnetics problem,1,0.00034435
+kind,duplicate materials problem,2,0.00068871
+kind,duplicate model reduction problem,10,0.00344353
+kind,duplicate optimization problem,1,0.00034435
+kind,duplicate structural problem,12,0.00413223
+kind,duplicate thermal problem,1,0.00034435
+kind,duplicate undirected random graph,12,0.00413223
+kind,economic problem,70,0.02410468
+kind,eigenvalue/model reduction problem,35,0.01205234
+kind,electromagnetics problem,52,0.01790634
+kind,frequency-domain circuit simulation problem,4,0.00137741
+kind,least squares problem,26,0.00895317
+kind,linear programming problem,317,0.10915978
+kind,linear programming problem sequence,25,0.00860882
+kind,materials problem,26,0.00895317
+kind,model reduction problem,37,0.01274105
+kind,optimal control problem,91,0.03133609
+kind,optimization problem,111,0.03822314
+kind,optimization problem sequence,8,0.00275482
+kind,other problem,4,0.00137741
+kind,power network problem,66,0.02272727
+kind,power network problem sequence,3,0.00103306
+kind,random 2D/3D problem,2,0.00068871
+kind,random undirected graph,3,0.00103306
+kind,random undirected weighted graph,2,0.00068871
+kind,random unweighted graph,15,0.00516529
+kind,robotics problem,3,0.00103306
+kind,semiconductor device problem,25,0.00860882
+kind,semiconductor device problem sequence,5,0.00172176
+kind,semiconductor process problem,6,0.00206612
+kind,statistical/mathematical problem,10,0.00344353
+kind,structural problem,279,0.09607438
+kind,structural problem sequence,3,0.00103306
+kind,subsequent 2D/3D problem,10,0.00344353
+kind,subsequent circuit simulation problem,182,0.06267218
+kind,subsequent computational fluid dynamics problem,30,0.01033058
+kind,subsequent optimization problem,18,0.00619835
+kind,subsequent power network problem,1,0.00034435
+kind,subsequent semiconductor device problem,13,0.00447658
+kind,subsequent structural problem,8,0.00275482
+kind,subsequent theoretical/quantum chemistry problem,25,0.00860882
+kind,term/document graph,1,0.00034435
+kind,theoretical/quantum chemistry problem,35,0.01205234
+kind,theoretical/quantum chemistry problem sequence,1,0.00034435
+kind,thermal problem,30,0.01033058
+kind,tomography problem,1,0.00034435
+kind,undirected bipartite graph,2,0.00068871
+kind,undirected graph,129,0.04442149
+kind,undirected graph sequence,9,0.00309917
+kind,undirected graph with communities,6,0.00206612
+kind,undirected multigraph,11,0.00378788
+kind,undirected random graph,32,0.01101928
+kind,undirected weighted graph,121,0.04166667
+kind,undirected weighted graph sequence,1,0.00034435
+kind,undirected weighted random graph,33,0.01136364
+kind,weighted bipartite graph,2,0.00068871
+kind,weighted directed graph,1,0.00034435
+kind,weighted undirected graph,1,0.00034435
+size_band_by_max_dimension,100k_to_1m,358,0.12327824
+size_band_by_max_dimension,10k_to_100k,769,0.26480716
+size_band_by_max_dimension,1k_to_10k,948,0.32644628
+size_band_by_max_dimension,ge_1m,163,0.05612948
+size_band_by_max_dimension,lt_1k,666,0.22933884

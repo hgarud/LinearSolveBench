@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: "If you use this benchmark, please cite this software and the source matrices."
+title: "LinearSolverBench"
+type: software
+version: 0.1.0
+date-released: 2026-08-29
+authors:
+  - name: Autodidakt
+license: Apache-2.0
+references:
+  - type: article
+    title: "The University of Florida Sparse Matrix Collection"
+    authors:
+      - family-names: Davis
+        given-names: Timothy A.
+      - family-names: Hu
+        given-names: Yifan
+    journal: ACM Transactions on Mathematical Software
+    volume: 38
+    issue: 1
+    year: 2011
+    doi: 10.1145/2049662.2049663
+  - type: article
+    title: "The SuiteSparse Matrix Collection Website Interface"
+    authors:
+      - family-names: Kolodziej
+        given-names: Scott P.
+    journal: Journal of Open Source Software
+    volume: 4
+    issue: 35
+    year: 2019
+    doi: 10.21105/joss.01244

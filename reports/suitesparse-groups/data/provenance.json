@@ -1,0 +1,34 @@
+{
+  "retrieved_on": "2026-09-02",
+  "retrieval_timezone": "America/Los_Angeles",
+  "files": {
+    "ssstats.csv": {
+      "url": "https://sparse.tamu.edu/files/ssstats.csv",
+      "sha256": "9bc797ab989331afbc9e0e51236d9145c2ac7f76c0913e9677ae07c4913a2aad",
+      "bytes": 254328,
+      "embedded_revision": "31-Oct-2023 18:12:37",
+      "http_last_modified": "Thu, 02 Nov 2023 22:07:25 GMT",
+      "http_etag": "c0a17979013144c0b0cf643a0be2566e"
+    },
+    "ss_index.mat": {
+      "url": "https://sparse.tamu.edu/files/ss_index.mat",
+      "sha256": "f040a883a523c4621c5986aa66c39eeaa21bcae79c45596e953e7ea5e7ccbdb4",
+      "bytes": 164169,
+      "http_last_modified": "Thu, 02 Nov 2023 22:07:25 GMT",
+      "http_etag": "73085697a647ec01c968810fd913c655"
+    }
+  },
+  "website_metadata": {
+    "repository": "https://github.com/ScottKolo/suitesparse-matrix-collection-website",
+    "commit": "0316f796684820b319a8601110e1ce51617c9ee0",
+    "selected_fields_captured_in": "../output/matrix_metadata.csv",
+    "selected_fields": [
+      "rb_type",
+      "structure",
+      "positive_definite",
+      "cholesky_candidate",
+      "structural_full_rank",
+      "website_kind"
+    ]
+  }
+}

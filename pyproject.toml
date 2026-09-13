@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "linear-solver-bench"
+version = "0.1.0"
+description = "A benchmark for AI-written HYPRE linear solvers"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+authors = [{name = "Autodidakt"}]
+dependencies = [
+  "numpy>=2.0",
+  "scipy>=1.14",
+]
+
+[project.optional-dependencies]
+modal = ["modal==1.5.5"]
+test = ["pytest>=8.3", "pytest-cov>=6.0"]
+dev = ["linear-solver-bench[modal,test]", "ruff>=0.9"]
+
+[project.scripts]
+linear-solver-bench = "linear_solver_bench.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+linear_solver_bench = ["py.typed"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.format]
+# This file's exact bytes are bound into data/qualification.json.
+exclude = ["src/linear_solver_bench/qualification.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

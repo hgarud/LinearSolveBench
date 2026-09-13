@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  python:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e '.[test]' ruff
+      - run: ruff format --check .
+      - run: ruff check .
+      - run: pytest
+      - run: python tools/freeze_manifests.py
+      - run: git diff --exit-code -- data/dev-v1.json data/ranked-v1.json
+
+  native-smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: sudo apt-get update && sudo apt-get install -y ninja-build
+      - run: python -m pip install -e .
+      - run: linear-solver-bench runtime build --output build/runtime --jobs 2
+      - run: linear-solver-bench candidate validate submissions/starter.c --runtime build/runtime

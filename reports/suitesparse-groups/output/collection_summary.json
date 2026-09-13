@@ -1,0 +1,76 @@
+{
+  "collection": {
+    "declared_matrix_count": 2904,
+    "explicit_zero_count_total": 259828688,
+    "group_count": 203,
+    "group_size": {
+      "groups_lt_5": 114,
+      "max": 292,
+      "mean": 14.305418719211822,
+      "median": 4,
+      "min": 1,
+      "singleton_groups": 51
+    },
+    "matrices_with_explicit_zeros": 432,
+    "ncols": {
+      "max": 226196185,
+      "median": 6139.5,
+      "min": 2
+    },
+    "nentries": {
+      "max": 11588725964,
+      "median": 57235,
+      "min": 1
+    },
+    "nnz": {
+      "max": 11588725964,
+      "median": 57092,
+      "min": 1
+    },
+    "nrows": {
+      "max": 226196185,
+      "median": 4942.5,
+      "min": 1
+    },
+    "numerical_symmetry": {
+      "max": 1.0,
+      "median": 0.4398776250567098,
+      "min": 0.0
+    },
+    "numerical_symmetry_missing_count": 0,
+    "parsed_matrix_count": 2904,
+    "pattern_symmetry": {
+      "max": 1.0,
+      "median": 0.992887429995702,
+      "min": 0.0
+    },
+    "pattern_symmetry_missing_count": 0,
+    "ssstats_distinct_kind_count": 91,
+    "ssstats_vs_website_kind_mismatch_count": 4,
+    "website_distinct_kind_count": 90
+  },
+  "definitions_and_cautions": {
+    "categorical_diversity_score": "Unofficial descriptive metric: the mean fraction outside the modal category across shape, website structure, entry type, exact symmetry class, positive-definite status, and problem kind.",
+    "diversity_label": "Unofficial screening rule. Groups with fewer than five matrices are not classified; heterogeneous means at least three attributes have a modal share below 90%; homogeneous means none do.",
+    "entry_type": "The website's mutually exclusive Rutherford-Boeing entry-type label: real, complex, integer, or binary. In the ssstats flags, integer and binary matrices are also real/non-complex; isBinary is a separate flag.",
+    "group": "A provenance/source label, typically a person, organization, or earlier collection; it is not a homogeneity guarantee.",
+    "kind_source_discrepancy": "Group statistics use the ssstats.csv kind. Four Chevron matrices are 'other problem' in ssstats.csv but '2D/3D problem' in the website repository; see kind_source_mismatches.csv.",
+    "nentries": "All stored pattern entries, equal to nnz plus explicit zeros supplied by the matrix author.",
+    "nnz": "Numerically nonzero entries in A; explicit stored zeros are excluded.",
+    "numerical_symmetry": "Matched conjugate off-diagonal values divided by all off-diagonal entries; this measures Hermitian symmetry and rectangular matrices are assigned 0.",
+    "pattern_symmetry": "Matched off-diagonal structural entries divided by all off-diagonal entries; rectangular matrices are assigned 0.",
+    "posdef_index": "1 known positive definite; 0 known not positive definite; -1 symmetric/Hermitian with unknown definiteness. No -1 values occur in this snapshot."
+  },
+  "source": {
+    "ss_index_url": "https://sparse.tamu.edu/files/ss_index.mat",
+    "ssstats_revision_embedded": "31-Oct-2023 18:12:37",
+    "ssstats_url": "https://sparse.tamu.edu/files/ssstats.csv",
+    "website_metadata": {
+      "available": true,
+      "checkout": "/private/tmp/ssweb.o4KLNI",
+      "commit": "0316f796684820b319a8601110e1ce51617c9ee0",
+      "metadata_records": 2904,
+      "repository": "https://github.com/ScottKolo/suitesparse-matrix-collection-website"
+    }
+  }
+}

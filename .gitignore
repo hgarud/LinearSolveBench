@@ -1,0 +1,17 @@
+.venv/
+.uv-cache/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+build/
+dist/
+results/
+workspace/
+secrets/
+data/prepared/
+data/downloads/
+.env
+.DS_Store
