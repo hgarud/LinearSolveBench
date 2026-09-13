@@ -8,6 +8,9 @@ from dataclasses import dataclass
 import numpy as np
 from scipy import sparse
 
+NATIVE_INDEX_MAX = int(np.iinfo(np.int32).max)
+REFERENCE_KINDS = frozenset({"manufactured", "numerical", "none"})
+
 
 def _readonly_1d(value: object, dtype: object, name: str) -> np.ndarray:
     raw = np.asarray(value)
@@ -27,8 +30,8 @@ class CsrMatrix:
     values: np.ndarray
 
     def __post_init__(self) -> None:
-        if type(self.n) is not int or self.n <= 0:
-            raise ValueError("n must be a positive integer")
+        if type(self.n) is not int or not 0 < self.n <= NATIVE_INDEX_MAX:
+            raise ValueError("n must be a positive integer within native int32 bounds")
         rows = _readonly_1d(self.row_offsets, np.uint64, "row_offsets")
         columns = _readonly_1d(self.column_indices, np.uint32, "column_indices")
         values = _readonly_1d(self.values, np.float64, "values")
@@ -38,13 +41,17 @@ class CsrMatrix:
             raise ValueError("row_offsets must be monotone")
         if int(rows[-1]) != values.size or columns.size != values.size:
             raise ValueError("CSR arrays disagree on nnz")
+        if values.size > NATIVE_INDEX_MAX:
+            raise ValueError("nnz exceeds native int32 bounds")
         if columns.size and int(columns.max()) >= self.n:
             raise ValueError("column index lies outside the matrix")
         if not np.all(np.isfinite(values)):
             raise ValueError("matrix values must be finite")
         for row in range(self.n):
             start, stop = int(rows[row]), int(rows[row + 1])
-            if np.any(columns[start + 1 : stop] <= columns[start : stop - 1]):
+            if stop - start > 1 and np.any(
+                columns[start + 1 : stop] <= columns[start : stop - 1]
+            ):
                 raise ValueError("column indices must be strictly sorted in each row")
         object.__setattr__(self, "row_offsets", rows)
         object.__setattr__(self, "column_indices", columns)
@@ -60,7 +67,36 @@ class CsrMatrix:
             raise ValueError("matrix must be sparse and two-dimensional")
         if matrix.shape[0] != matrix.shape[1]:
             raise ValueError("matrix must be square")
-        csr = sparse.csr_matrix(matrix, dtype=np.float64, copy=True)
+        if not 0 < matrix.shape[0] <= NATIVE_INDEX_MAX:
+            raise ValueError("matrix dimension exceeds native int32 bounds")
+        if matrix.nnz > NATIVE_INDEX_MAX:
+            raise ValueError("nnz exceeds native int32 bounds")
+        # Validate before converting sparse formats or narrowing native indices.
+        source = matrix.copy()
+        if hasattr(source, "check_format"):
+            source.check_format(full_check=True)
+        source = source.tocoo()
+        values = source.data
+        if values.dtype.kind not in "fiu" or not np.all(np.isfinite(values)):
+            raise ValueError("matrix values must be finite real numbers")
+        with np.errstate(over="ignore", invalid="ignore"):
+            converted = values.astype(np.float64)
+        if not np.all(np.isfinite(converted)):
+            raise ValueError("matrix values cannot be represented in float64")
+        if values.dtype.kind in "iu":
+            # Integer-to-float comparisons would coerce the integer and hide loss.
+            large = values > 2**53
+            if values.dtype.kind == "i":
+                large |= values < -(2**53)
+            exact = all(int(value) == int(float(value)) for value in values[large])
+        else:
+            exact = bool(np.all(converted.astype(values.dtype) == values))
+        if not exact:
+            raise ValueError("matrix conversion to float64 would lose precision")
+        # Sum duplicate coordinates only after conversion, avoiding integer wrap.
+        csr = sparse.coo_matrix(
+            (converted, (source.row, source.col)), shape=source.shape
+        ).tocsr()
         csr.sum_duplicates()
         csr.eliminate_zeros()
         csr.sort_indices()
@@ -113,13 +149,22 @@ class MatrixInput:
 class EvaluationSystem:
     case_id: str
     public: MatrixInput
-    x_star: np.ndarray
+    x_star: np.ndarray | None = None
+    reference_kind: str = "manufactured"
 
     def __post_init__(self) -> None:
         if not self.case_id or not self.case_id.isascii():
             raise ValueError("case_id must be nonempty ASCII")
         if not isinstance(self.public, MatrixInput):
             raise TypeError("public must be MatrixInput")
+        if self.reference_kind not in REFERENCE_KINDS:
+            raise ValueError("unknown reference_kind")
+        if self.reference_kind == "none":
+            if self.x_star is not None:
+                raise ValueError("reference_kind 'none' must not contain x_star")
+            return
+        if self.x_star is None:
+            raise ValueError(f"{self.reference_kind} reference requires x_star")
         truth = _readonly_1d(self.x_star, np.float64, "x_star")
         if truth.shape != (self.public.matrix.n,) or not np.all(np.isfinite(truth)):
             raise ValueError("x_star must be finite and match the matrix")
