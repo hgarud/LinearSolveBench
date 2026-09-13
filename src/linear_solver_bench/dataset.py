@@ -21,7 +21,7 @@ from scipy.io import mmread
 
 from .archive import decode_system, encode_system
 from .models import CsrMatrix, EvaluationSystem, MatrixInput
-from .paths import data_dir
+from .paths import cache_dir, data_dir
 
 CATALOGUE_SHA256 = "8226ebe538dcd0590d1415a2057da8df5e332d5b51886654a3d9a0c0181b92cd"
 QUALIFICATION_SHA256 = (
@@ -319,7 +319,7 @@ def prepare_split(
     output = pathlib.Path(output).resolve()
     if output.exists() and (not output.is_dir() or any(output.iterdir())):
         raise ValueError("prepared output directory must be absent or empty")
-    cache_root = pathlib.Path(cache or data_dir() / "downloads").resolve()
+    cache_root = pathlib.Path(cache or cache_dir() / "downloads").resolve()
     if cache_root == output or output in cache_root.parents:
         raise ValueError("download cache must be outside the prepared output")
     output.parent.mkdir(parents=True, exist_ok=True)
