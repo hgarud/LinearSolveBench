@@ -1496,9 +1496,43 @@
       "matrix_id": 2822,
       "provenance_group": "goodwin-flow-transport",
       "uncertainties": []
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "citations": [
+        {
+          "archive_sha256": "9ea3b3f8d4bf7ba5a27f1aeea1528ffd60c20e02a0de806fbd6abb83c308f394",
+          "archive_url": "https://sparse.tamu.edu/MM/Goodwin/Goodwin_095.tar.gz",
+          "kind": "public_primary_source",
+          "locator": "Matrix-specific title and author notes, confirmed in the original Matrix Market archive",
+          "member": "Goodwin_095/Goodwin_095.mtx",
+          "url": "https://sparse.tamu.edu/Goodwin/Goodwin_095"
+        },
+        {
+          "kind": "public_primary_source",
+          "locator": "2018 finite-element Navier-Stokes/transport source family",
+          "url": "https://sparse.tamu.edu/Goodwin"
+        }
+      ],
+      "discretization_candidates": [],
+      "discretization_status": "confirmed",
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "evidence_summary": "The matrix-specific author notes identify a finite-element discretization of Navier-Stokes and related transport equations on various geometries.",
+      "full_name": "Goodwin/Goodwin_095",
+      "matrix_id": 2825,
+      "operator_origin": "source PDE discretization",
+      "provenance_group": "goodwin-flow-transport",
+      "time_discretization_tags": [],
+      "uncertainties": [
+        "This larger case belongs to the existing Goodwin source group; it does not introduce a new independent provenance group."
+      ]
     }
   ],
-  "matrix_count": 47,
+  "matrix_count": 48,
   "policy_notes": [
     "Descriptors use original public operator metadata and author descriptions, without candidate solver outputs or split assignments.",
     "Application tags are coarse physical-model descriptions, not solver difficulty classes.",
@@ -1700,8 +1734,10 @@
     },
     {
       "citations": [
+        "https://sparse.tamu.edu/Goodwin",
         "https://sparse.tamu.edu/Goodwin/Goodwin_010",
         "https://sparse.tamu.edu/Goodwin/Goodwin_040",
+        "https://sparse.tamu.edu/Goodwin/Goodwin_095",
         "https://sparse.tamu.edu/Goodwin/goodwin"
       ],
       "independence_uncertainties": [
@@ -1710,12 +1746,14 @@
       "known_evidence": [
         "Original title explicitly identifies a finite-element fluid-mechanics problem.",
         "Original titles explicitly identify finite-element Navier-Stokes and transport equations.",
-        "Original titles explicitly identify finite-element Navier-Stokes and transport equations."
+        "Original titles explicitly identify finite-element Navier-Stokes and transport equations.",
+        "The matrix-specific author notes identify a finite-element discretization of Navier-Stokes and related transport equations on various geometries."
       ],
       "matrix_ids": [
         446,
         2817,
-        2822
+        2822,
+        2825
       ],
       "provenance_group": "goodwin-flow-transport",
       "rationale": "The selected matrices form the published Goodwin finite-element flow/transport family across source releases and geometries."

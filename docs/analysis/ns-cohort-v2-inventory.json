@@ -987,10 +987,31 @@
       "name": "Goodwin/Goodwin_040",
       "nnz": 561677,
       "provenance_group": "goodwin-flow-transport"
+    },
+    {
+      "application_tags": [
+        "fluid_flow_transport"
+      ],
+      "discretization_tags": [
+        "finite_element"
+      ],
+      "features": {
+        "log10_n": 5.000160659238178,
+        "log10_nnz_per_row": 1.5085125888558688,
+        "relative_nonsymmetry": 0.629939069098434,
+        "weakly_diagonally_dominant_row_fraction": 0.015204374381478853,
+        "zero_diagonal_fraction": 0.2706398632505973
+      },
+      "matrix_id": 2825,
+      "matrix_sha256": "4496d2658d33586fa1894735f341ec31e777c99399c6820f0f0a0e2dcd617e2b",
+      "n": 100037,
+      "name": "Goodwin/Goodwin_095",
+      "nnz": 3226066,
+      "provenance_group": "goodwin-flow-transport"
     }
   ],
-  "descriptor_sha256": "44b6fac8c02f74a509b97ffbffcb204e2d523406e479405a416958182d5fc2c3",
-  "inventory_sha256": "9ffb220992eb543bb91719ea07e604032d28a019e27103529935e593c4a2f3f4",
+  "descriptor_sha256": "83cdd7a56e8245acc984adb89bbadcc4f37e280ae98e2f68b699bc0ade43ae88",
+  "inventory_sha256": "0028644b8785958df1739aafb9c0322378892c812d354bd19befb16efbd1f2c0",
   "kind": "ns-cohort-source-inventory",
   "schema_version": 1,
   "sources": [
@@ -1463,6 +1484,16 @@
       "matrix_sha256": "a19e76b0377fd73d3228fe6ebb83e8f0dd5278baa2b46e443404fdc841dd3581",
       "name": "Goodwin_040",
       "url": "https://sparse.tamu.edu/MM/Goodwin/Goodwin_040.tar.gz"
+    },
+    {
+      "archive_bytes": 16592108,
+      "archive_sha256": "9ea3b3f8d4bf7ba5a27f1aeea1528ffd60c20e02a0de806fbd6abb83c308f394",
+      "group": "Goodwin",
+      "kind": "suitesparse",
+      "matrix_id": 2825,
+      "matrix_sha256": "4496d2658d33586fa1894735f341ec31e777c99399c6820f0f0a0e2dcd617e2b",
+      "name": "Goodwin_095",
+      "url": "https://sparse.tamu.edu/MM/Goodwin/Goodwin_095.tar.gz"
     }
   ]
 }

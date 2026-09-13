@@ -1,0 +1,26 @@
+{
+  "kind": "linear-solver-bench-ns-source-screening",
+  "manifest_sha256": "9478b1540be57432cc2f6d480ea68c76f61186dbb7f37139eddbd45c3043f635",
+  "records": [
+    {
+      "archive_bytes": 34619774,
+      "archive_sha256": "8081649d168c1fbcad725252b9f5649f2c065f4c73a46c63d3b1c0c543f1fbb7",
+      "archive_url": "https://sparse.tamu.edu/MM/Botonakis/FEM_3D_thermal2.tar.gz",
+      "decision": "exclude-from-ns-input-pool",
+      "full_name": "Botonakis/FEM_3D_thermal2",
+      "material_nonsymmetry_threshold": 1e-12,
+      "matrix_id": 1852,
+      "matrix_market_header": "%%MatrixMarket matrix coordinate real general",
+      "matrix_sha256": "17e9657b2d691dc25a7ae7485eb57955b75390a91be1c34c402c9446e77f7bb5",
+      "n": 147900,
+      "nnz": 3489300,
+      "reason": "The canonical original operator differs from its transpose only at roundoff scale and fails the fixed material-nonsymmetry admission threshold. The collection nonsymmetric label is insufficient numerical evidence.",
+      "relative_frobenius_asymmetry": 4.0771788263848566e-17,
+      "relative_max_asymmetry": 1.1102230246251565e-16,
+      "source_url": "https://sparse.tamu.edu/Botonakis/FEM_3D_thermal2"
+    }
+  ],
+  "review_date": "2026-09-13",
+  "schema_version": 1,
+  "scope": "Source admission screening before cohort selection and manufactured targets. No candidate solver outputs were used."
+}
