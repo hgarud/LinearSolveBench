@@ -126,13 +126,32 @@ def _source(value: object, family: str) -> None:
 
 
 def validate_qualification(value: object, system_sha256: str | None = None) -> None:
+    dominance = (
+        isinstance(value, dict)
+        and value.get("method") == "strict-row-diagonal-dominance-v1"
+    )
+    keys = {
+        "method",
+        "qualified",
+        "system_sha256",
+        "metrics",
+        "formation",
+        "uncertainty",
+    }
+    if dominance:
+        keys.add("certificate")
     evidence = strict_object(
         value,
-        {"method", "qualified", "system_sha256", "metrics", "formation", "uncertainty"},
+        keys,
         "NS qualification",
     )
     if (
-        evidence["method"] != "independent-sparse-lu-v1"
+        evidence["method"]
+        not in {
+            "independent-sparse-lu-v1",
+            "independent-sparse-lu-refined-v1",
+            "strict-row-diagonal-dominance-v1",
+        }
         or evidence["qualified"] is not True
     ):
         raise ValueError(
@@ -152,17 +171,66 @@ def validate_qualification(value: object, system_sha256: str | None = None) -> N
         {"method", "relative_linf_residual", "verified_forward_bound"},
         "RHS formation",
     )
-    if formation["method"] != "extended-precision-residual-v1":
+    expected_method = (
+        "exact-binary64-residual-v1" if dominance else "extended-precision-residual-v1"
+    )
+    if formation["method"] != expected_method:
         raise ValueError("unknown RHS formation evidence")
     finite_number(
         formation["relative_linf_residual"], "formation residual", positive=False
     )
-    if formation["verified_forward_bound"] is not None:
+    if dominance:
+        _validate_dominance_certificate(evidence)
+    elif formation["verified_forward_bound"] is not None:
         raise ValueError(
             "empirical reference evidence cannot claim a verified forward bound"
         )
-    if evidence["uncertainty"] != "empirical-feasibility-only":
+    if not dominance and evidence["uncertainty"] != "empirical-feasibility-only":
         raise ValueError("qualification must state its empirical uncertainty")
+
+
+def _validate_dominance_certificate(evidence: dict) -> None:
+    from fractions import Fraction
+
+    certificate = strict_object(
+        evidence["certificate"],
+        {
+            "arithmetic",
+            "witness",
+            "metric_evaluation",
+            "minimum_row_margin",
+            "maximum_formation_error",
+        },
+        "row dominance certificate",
+    )
+    if (
+        certificate["arithmetic"] != "exact-binary64-integer-v1"
+        or certificate["witness"] != "manufactured-target"
+        or certificate["metric_evaluation"] != "binary64"
+        or evidence["uncertainty"] != "verified-stored-system-forward-bound"
+    ):
+        raise ValueError("unknown dominance certificate or witness semantics")
+    margin = finite_number(certificate["minimum_row_margin"], "row dominance margin")
+    error = finite_number(
+        certificate["maximum_formation_error"], "formation error bound", positive=False
+    )
+    forward = finite_number(
+        evidence["formation"]["verified_forward_bound"],
+        "verified forward bound",
+        positive=False,
+    )
+    if Fraction(forward) * Fraction(margin) < Fraction(error):
+        raise ValueError("verified forward bound understates the dominance certificate")
+    if forward > min(
+        QUALIFICATION_LIMITS["relative_l2_forward_error"],
+        QUALIFICATION_LIMITS["relative_linf_forward_error"],
+    ):
+        raise ValueError("verified forward bound lacks the tenfold margin")
+    for name in ("relative_l2_forward_error", "relative_linf_forward_error"):
+        if evidence["metrics"][name] != 0.0:
+            raise ValueError(
+                "manufactured-target witness must have zero measured forward error"
+            )
 
 
 def validate_release(value: object, *, official: bool = False) -> dict:

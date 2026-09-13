@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import hmac
+import math
 from collections.abc import Mapping
 from decimal import Decimal, localcontext
 
@@ -134,18 +135,81 @@ def manufacture_ns(
     )
 
 
-def qualify_ns(system: EvaluationSystem) -> dict:
+def _extended_residual(
+    matrix: CsrMatrix, rhs: np.ndarray, vector: np.ndarray
+) -> np.ndarray:
+    """Evaluate b-Ax with extra precision; this is not interval arithmetic."""
+    residual = np.empty(matrix.n, dtype=np.longdouble)
+    if np.finfo(np.longdouble).eps < np.finfo(np.float64).eps:
+        extended_rhs = rhs.astype(np.longdouble)
+        extended_vector = vector.astype(np.longdouble)
+        for row in range(matrix.n):
+            start, stop = int(matrix.row_offsets[row]), int(matrix.row_offsets[row + 1])
+            dot = np.sum(
+                matrix.values[start:stop].astype(np.longdouble)
+                * extended_vector[matrix.column_indices[start:stop]],
+                dtype=np.longdouble,
+            )
+            residual[row] = extended_rhs[row] - dot
+    else:
+        # Decimal.from_float preserves the binary64 operands exactly; products
+        # and sums then use 80 decimal digits. The result remains empirical
+        # higher-precision evidence, not an outward-rounded certificate.
+        decimal_vector = [Decimal.from_float(float(value)) for value in vector]
+        with localcontext() as context:
+            context.prec = 80
+            for row in range(matrix.n):
+                start, stop = (
+                    int(matrix.row_offsets[row]),
+                    int(matrix.row_offsets[row + 1]),
+                )
+                dot = sum(
+                    (
+                        Decimal.from_float(float(value)) * decimal_vector[column]
+                        for value, column in zip(
+                            matrix.values[start:stop],
+                            matrix.column_indices[start:stop],
+                            strict=True,
+                        )
+                    ),
+                    Decimal(0),
+                )
+                residual[row] = np.longdouble(
+                    str(Decimal.from_float(float(rhs[row])) - dot)
+                )
+    return residual
+
+
+def qualify_ns(system: EvaluationSystem, *, refine: bool = False) -> dict:
     """Establish empirical feasibility against every gate with a tenfold margin.
 
     Sparse LU is an offline reference, not the timing reference or a condition
-    certificate. Extended-precision residuals audit RHS formation; their size
-    alone does not certify forward error for an ill-conditioned system.
+    certificate. refine=True always performs exactly one correction using an
+    extended-precision residual and the same LU factors, then checks the result.
+    It never changes the target, matrix, RHS, or tolerances. The distinct method
+    ID records that fixed procedure. RHS formation is independently audited with
+    the same higher-precision evaluator; this does not certify forward error.
     """
+    if type(refine) is not bool:
+        raise ValueError("refine must be a boolean")
     if system.x_star is None or system.reference_kind != "manufactured":
         raise ValueError("NS qualification requires the manufactured target")
+    matrix = system.public.matrix
     try:
-        factor = splu(system.public.matrix.to_scipy().tocsc())
+        factor = splu(matrix.to_scipy().tocsc())
         reference = factor.solve(system.public.b)
+        if not np.all(np.isfinite(reference)):
+            raise ValueError("independent reference solution is not finite")
+        if refine:
+            residual = _extended_residual(matrix, system.public.b, reference)
+            with np.errstate(over="ignore", invalid="ignore"):
+                correction_rhs = np.asarray(residual, dtype=np.float64)
+            if not np.all(np.isfinite(correction_rhs)):
+                raise ValueError("refinement residual is not finite float64")
+            with np.errstate(over="ignore", invalid="ignore"):
+                reference = reference + factor.solve(correction_rhs)
+            if not np.all(np.isfinite(reference)):
+                raise ValueError("refined reference solution is not finite")
         result = accuracy_metrics(system, reference)
     except (RuntimeError, ValueError, FloatingPointError) as exc:
         raise ValueError(
@@ -157,50 +221,18 @@ def qualify_ns(system: EvaluationSystem) -> dict:
         if value is None:
             raise ValueError(f"independent NS qualification produced invalid {name}")
         metrics[name] = float(value)
-    # Evaluate row dot products with the platform's extended floating-point
-    # type. A platform without extra precision cannot provide this evidence.
-    matrix = system.public.matrix
-    extended = np.finfo(np.longdouble).eps < np.finfo(np.float64).eps
-    rhs = system.public.b.astype(np.longdouble)
-    truth = system.x_star.astype(np.longdouble)
-    maximum = np.longdouble(0)
-    for row in range(matrix.n):
-        start, stop = int(matrix.row_offsets[row]), int(matrix.row_offsets[row + 1])
-        if extended:
-            dot = np.sum(
-                matrix.values[start:stop].astype(np.longdouble)
-                * truth[matrix.column_indices[start:stop]],
-                dtype=np.longdouble,
-            )
-            difference = abs(rhs[row] - dot)
-        else:
-            # On platforms where longdouble equals float64, use portable decimal
-            # accumulation. This is empirical higher-precision evidence, not an
-            # interval bound; that distinction is explicit in the result.
-            with localcontext() as context:
-                context.prec = 80
-                dot = sum(
-                    (
-                        Decimal.from_float(float(value))
-                        * Decimal.from_float(float(system.x_star[column]))
-                        for value, column in zip(
-                            matrix.values[start:stop],
-                            matrix.column_indices[start:stop],
-                            strict=True,
-                        )
-                    ),
-                    Decimal(0),
-                )
-                difference = np.longdouble(
-                    str(abs(Decimal.from_float(float(system.public.b[row])) - dot))
-                )
-        maximum = max(maximum, difference)
-    norm_b = np.max(np.abs(rhs), initial=np.longdouble(0))
+    formation = _extended_residual(matrix, system.public.b, system.x_star)
+    maximum = np.max(np.abs(formation), initial=np.longdouble(0))
+    norm_b = np.max(
+        np.abs(system.public.b.astype(np.longdouble)), initial=np.longdouble(0)
+    )
     relative = (
         float(maximum / norm_b) if norm_b else (0.0 if maximum == 0 else float("inf"))
     )
     evidence = {
-        "method": "independent-sparse-lu-v1",
+        "method": "independent-sparse-lu-refined-v1"
+        if refine
+        else "independent-sparse-lu-v1",
         "qualified": True,
         "system_sha256": system_digest(system),
         "metrics": metrics,
@@ -210,6 +242,133 @@ def qualify_ns(system: EvaluationSystem) -> dict:
             "verified_forward_bound": None,
         },
         "uncertainty": "empirical-feasibility-only",
+    }
+    validate_qualification(evidence, system_digest(system))
+    return evidence
+
+
+def _binary64_units(value: float) -> int:
+    """Represent a finite binary64 number exactly in units of 2**-1074."""
+    numerator, denominator = float(value).as_integer_ratio()
+    return numerator << (1074 - (denominator.bit_length() - 1))
+
+
+def _rounded_ratio(numerator: int, denominator: int, *, upward: bool) -> float:
+    """Round an exact nonnegative rational outwards, checking the direction."""
+    if numerator < 0 or denominator <= 0:
+        raise ValueError("certificate ratio requires a nonnegative finite value")
+    try:
+        value = numerator / denominator
+    except OverflowError as exc:
+        raise ValueError("certificate bound cannot be represented in float64") from exc
+    if not math.isfinite(value):
+        raise ValueError("certificate bound cannot be represented in float64")
+    rounded_numerator, rounded_denominator = value.as_integer_ratio()
+    comparison = rounded_numerator * denominator - numerator * rounded_denominator
+    if (upward and comparison < 0) or (not upward and comparison > 0):
+        value = math.nextafter(value, math.inf if upward else -math.inf)
+    if not math.isfinite(value):
+        raise ValueError("certificate bound cannot be represented in float64")
+    bounded_numerator, bounded_denominator = value.as_integer_ratio()
+    check = bounded_numerator * denominator - numerator * bounded_denominator
+    if (upward and check < 0) or (not upward and check > 0):
+        raise ValueError("could not round certificate bound in the required direction")
+    return value
+
+
+def qualify_ns_dominance(system: EvaluationSystem) -> dict:
+    """Certify stored-system consistency for a strictly row-dominant NS case.
+
+    Every coefficient is an exact integer multiple of 2**-1074. With a +/-1
+    manufactured target, row dot products and formation residuals are therefore
+    accumulated exactly using integers, including subnormal coefficients.
+
+    Let d = min_i (|a_ii| - sum_{j != i}|a_ij|) > 0 and e = b - A x_target.
+    Taking the largest component of any vector proves ||A y||inf >= d||y||inf.
+    Thus A is invertible and ||A^-1||inf <= 1/d (the row-dominance bound):
+    https://doi.org/10.1016/0024-3795(75)90112-3
+    The exact stored-system solution differs from x_target by at most
+    ||e||inf/d in Linf. Since ||x_target||inf=1 and ||x_target||2=sqrt(n), the
+    same bound covers both relative forward discrepancies.
+
+    Required metric values below are *measured* by the public binary64 verifier
+    at x_target, an explicit feasible witness. They are not verified rounding
+    bounds for the verifier's floating-point operations or an independent LU
+    solve. The separate exact-arithmetic certificate proves stored-system
+    forward consistency. Both witness metrics and that bound need a tenfold
+    margin. This offline path does not make x_target available to candidates.
+    """
+    target = system.x_star
+    if (
+        system.reference_kind != "manufactured"
+        or target is None
+        or not np.all((target == 1.0) | (target == -1.0))
+    ):
+        raise ValueError("dominance qualification requires a Rademacher target")
+    matrix = system.public.matrix
+    minimum_margin = None
+    maximum_error = maximum_rhs = 0
+    for row in range(matrix.n):
+        start, stop = int(matrix.row_offsets[row]), int(matrix.row_offsets[row + 1])
+        diagonal = row_sum = dot = 0
+        for column, value in zip(
+            matrix.column_indices[start:stop], matrix.values[start:stop], strict=True
+        ):
+            integer = _binary64_units(value)
+            row_sum += abs(integer)
+            dot += integer if target[column] > 0 else -integer
+            if column == row:
+                diagonal = abs(integer)
+        margin = 2 * diagonal - row_sum
+        if margin <= 0:
+            raise ValueError(
+                f"matrix is not strictly row diagonally dominant at row {row}"
+            )
+        minimum_margin = (
+            margin if minimum_margin is None else min(minimum_margin, margin)
+        )
+        rhs = _binary64_units(system.public.b[row])
+        maximum_error = max(maximum_error, abs(rhs - dot))
+        maximum_rhs = max(maximum_rhs, abs(rhs))
+    margin_lower = _rounded_ratio(minimum_margin, 1 << 1074, upward=False)
+    error_upper = _rounded_ratio(maximum_error, 1 << 1074, upward=True)
+    # Build the reported bound from the outward-rounded summaries as well, so
+    # their exact rational relation can be checked without loading the matrix.
+    forward_bound = _rounded_ratio(
+        _binary64_units(error_upper), _binary64_units(margin_lower), upward=True
+    )
+    relative_formation = (
+        _rounded_ratio(maximum_error, maximum_rhs, upward=True)
+        if maximum_rhs
+        else 0.0
+        if maximum_error == 0
+        else math.inf
+    )
+    observed = accuracy_metrics(system, target)
+    metrics = {}
+    for name in QUALIFICATION_LIMITS:
+        value = getattr(observed, name)
+        if value is None:
+            raise ValueError(f"dominance witness produced invalid {name}")
+        metrics[name] = float(value)
+    evidence = {
+        "method": "strict-row-diagonal-dominance-v1",
+        "qualified": True,
+        "system_sha256": system_digest(system),
+        "metrics": metrics,
+        "formation": {
+            "method": "exact-binary64-residual-v1",
+            "relative_linf_residual": relative_formation,
+            "verified_forward_bound": forward_bound,
+        },
+        "certificate": {
+            "arithmetic": "exact-binary64-integer-v1",
+            "witness": "manufactured-target",
+            "metric_evaluation": "binary64",
+            "minimum_row_margin": margin_lower,
+            "maximum_formation_error": error_upper,
+        },
+        "uncertainty": "verified-stored-system-forward-bound",
     }
     validate_qualification(evidence, system_digest(system))
     return evidence
