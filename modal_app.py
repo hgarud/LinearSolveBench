@@ -16,6 +16,7 @@ import json
 import math
 import pathlib
 import time
+import zlib
 from collections.abc import Iterable, Mapping
 
 import modal
@@ -41,6 +42,36 @@ BASE_IMAGE = (
 REMOTE_BENCHMARK = "/opt/LinearSolverBench"
 REMOTE_RUNTIME = "/opt/lsb-runtime"
 MAXIMUM_SANDBOX_LIFETIME_S = 24 * 60 * 60
+
+# Decompress only the current public input, then replace this process with the
+# native driver. Transport and preparation remain outside the driver's timer.
+# Bound both total output and each temporary buffer by trusted client sizes.
+_PILOT_INPUT_ERROR = "linear-solver-bench input preparation failed:"
+_PILOT_INPUT_EXEC = r"""
+import os
+import sys
+import zlib
+
+try:
+    remaining = int(sys.argv[1])
+    decoder = zlib.decompressobj()
+    with open(sys.argv[2], "rb") as source, open(sys.argv[4], "wb") as target:
+        while chunk := source.read(1024 * 1024):
+            while chunk:
+                decoded = decoder.decompress(chunk, min(1024 * 1024, remaining + 1))
+                if len(decoded) > remaining or decoder.unused_data:
+                    raise ValueError("compressed input exceeds its declared size")
+                target.write(decoded)
+                remaining -= len(decoded)
+                chunk = decoder.unconsumed_tail
+        if remaining or not decoder.eof:
+            raise ValueError("compressed input is incomplete")
+    os.unlink(sys.argv[2])
+    os.execv(sys.argv[3], sys.argv[3:])
+except (OSError, ValueError, zlib.error) as error:
+    print("linear-solver-bench input preparation failed:", error, file=sys.stderr)
+    sys.exit(125)
+"""
 
 app = modal.App(APP_NAME)
 image = (
@@ -92,13 +123,24 @@ def _pilot_case_executor(sandbox):
         case_root = f"/work/cases/{case_number:04d}"
         case_number += 1
         input_path = f"{case_root}/input.bin"
+        compressed_path = f"{case_root}/input.bin.zlib"
         output_path = f"{case_root}/output.bin"
         # write_bytes creates parents. Targets and evaluator archives stay local.
-        sandbox.filesystem.write_bytes(encode_input(system.public), input_path)
+        payload = encode_input(system.public)
+        input_size = len(payload)
+        compressed = zlib.compress(payload, level=1)
+        del payload
+        sandbox.filesystem.write_bytes(compressed, compressed_path)
+        del compressed
         started = time.monotonic()
         try:
             try:
                 process = sandbox.exec(
+                    "python",
+                    "-c",
+                    _PILOT_INPUT_EXEC,
+                    str(input_size),
+                    compressed_path,
                     str(executable),
                     input_path,
                     output_path,
@@ -126,6 +168,8 @@ def _pilot_case_executor(sandbox):
                     None,
                 )
             wall_s = time.monotonic() - started
+            if returncode == 125 and _PILOT_INPUT_ERROR in diagnostics:
+                raise RuntimeError(diagnostics)
             # Modal's process.wait() also represents an exec timeout as -1.
             if returncode in {124, -1}:
                 return RepeatResult(

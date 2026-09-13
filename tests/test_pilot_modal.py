@@ -5,8 +5,10 @@ import importlib.util
 import io
 import json
 import pathlib
+import subprocess
 import sys
 import types
+import zlib
 from dataclasses import replace
 
 import numpy as np
@@ -110,9 +112,10 @@ class FakeFilesystem:
     def write_bytes(self, payload, destination):
         assert not any(name.startswith("/work/cases/") for name in self.files)
         case_index = len(self.transfers)
-        assert payload == encode_input(self.systems[case_index].public)
+        decoded = zlib.decompress(payload)
+        assert decoded == encode_input(self.systems[case_index].public)
         if self.systems[case_index].x_star is not None:
-            assert self.systems[case_index].x_star.tobytes() not in payload
+            assert self.systems[case_index].x_star.tobytes() not in decoded
         self.transfers.append((payload, destination))
         self.files[destination] = payload
 
@@ -165,7 +168,10 @@ class FakeSandbox:
                     }
                 )
             )
-        assert args[0] == "/work/candidate/solver"
+        assert args[:3] == ("python", "-c", self.venue._PILOT_INPUT_EXEC)
+        assert int(args[3]) == len(zlib.decompress(self.filesystem.files[args[4]]))
+        native_args = args[5:]
+        assert native_args[0] == "/work/candidate/solver"
         index = len(self.executions)
         self.executions.append((args, kwargs))
         outcome = self.outcomes[index]
@@ -174,10 +180,10 @@ class FakeSandbox:
         if outcome == "missing":
             return FakeProcess()
         if outcome == "malformed":
-            self.filesystem.files[args[2]] = b"invalid-output"
+            self.filesystem.files[native_args[2]] = b"invalid-output"
             return FakeProcess()
         if outcome == 0:
-            self.filesystem.files[args[2]] = output_bytes(self.systems[index])
+            self.filesystem.files[native_args[2]] = output_bytes(self.systems[index])
         return FakeProcess(returncode=outcome)
 
     def terminate(self):
@@ -302,7 +308,7 @@ def test_pilot_modal_compiles_once_and_keeps_targets_local(
     assert sandbox.creation["block_network"] is True
     assert sandbox.creation["timeout"] == 371
     for args, kwargs in sandbox.executions:
-        assert args[3:] == ("5000", "0.25")
+        assert args[8:] == ("5000", "0.25")
         assert kwargs["timeout"] == 31
     assert sandbox.terminated
     assert report["repetitions"] == 1
@@ -351,6 +357,77 @@ def test_exec_timeout_is_a_candidate_failure(venue_module, prepared_cases, tmp_p
     assert len(sandbox.executions) == 2
     assert report["cases"][0]["execution"]["outcome"] == "timeout"
     assert report["solved_count"] == 1
+
+
+@pytest.mark.parametrize("corruption", [None, "too_large", "truncated", "trailing"])
+def test_compressed_input_exec_is_bounded_and_preserves_bytes(
+    venue_module, tmp_path, corruption
+):
+    # A transport test executable records the exact input and native arguments.
+    # Large repeated bytes exercise multiple bounded decompression buffers.
+    public_bytes = bytes(range(256)) * 9000
+    compressed = zlib.compress(public_bytes, level=1)
+    expected_size = len(public_bytes)
+    if corruption == "too_large":
+        expected_size -= 1
+    elif corruption == "truncated":
+        compressed = compressed[:-1]
+    elif corruption == "trailing":
+        compressed += b"unexpected trailing data"
+    archive = tmp_path / "input.zlib"
+    archive.write_bytes(compressed)
+    input_path = tmp_path / "input.bin"
+    output_path = tmp_path / "output.bin"
+    executable = tmp_path / "transport-test"
+    executable.write_text(
+        f"#!{sys.executable}\n"
+        "import pathlib, sys\n"
+        "assert sys.argv[3:] == ['5000', '90']\n"
+        "pathlib.Path(sys.argv[2]).write_bytes(pathlib.Path(sys.argv[1]).read_bytes())\n"
+    )
+    executable.chmod(0o755)
+    result = subprocess.run(
+        [
+            sys.executable, "-c", venue_module._PILOT_INPUT_EXEC,
+            str(expected_size), str(archive), str(executable),
+            str(input_path), str(output_path), "5000", "90",
+        ],
+        capture_output=True,
+        check=False,
+    )
+    if corruption is None:
+        assert result.returncode == 0, result.stderr.decode()
+        assert output_path.read_bytes() == public_bytes
+        assert not archive.exists()
+    else:
+        assert result.returncode == 125
+        assert venue_module._PILOT_INPUT_ERROR.encode() in result.stderr
+        assert not output_path.exists()
+        assert input_path.stat().st_size <= expected_size
+
+
+def test_input_preparation_failure_invalidates_run(
+    venue_module, prepared_cases, tmp_path, monkeypatch
+):
+    prepared, systems = prepared_cases
+    sandbox = attach_sandbox(venue_module, systems)
+    original_exec = sandbox.exec
+
+    def fail_input(*args, **kwargs):
+        if args[0] == "python":
+            return FakeProcess(
+                returncode=125, stderr=venue_module._PILOT_INPUT_ERROR + " truncated"
+            )
+        return original_exec(*args, **kwargs)
+
+    monkeypatch.setattr(sandbox, "exec", fail_input)
+    with pytest.raises(RuntimeError, match="input preparation failed"):
+        venue_module._evaluate_pilot_sandbox(
+            tmp_path / "policy.c", iter(systems), prepared
+        )
+    assert sandbox.terminated
+    assert len(sandbox.filesystem.transfers) == 1
+    assert sandbox.filesystem.files == {}
 
 
 @pytest.mark.parametrize("failure", ["sandbox", "transport"])
