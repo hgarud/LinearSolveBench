@@ -61,6 +61,26 @@ QUALIFICATION_LIMITS = {
     "relative_l2_forward_error": 1e-6,
     "relative_linf_forward_error": 1e-6,
 }
+ITERATIVE_QUALIFICATION_METHOD = "independent-equilibrated-gmres-ilu-refined-v1"
+# Offline reference configuration, not a candidate stopping rule or timing baseline.
+ITERATIVE_QUALIFICATION_CONFIG = {
+    "equilibration": "max-absolute-row-then-column-v1",
+    "initial_guess": "zero",
+    "preconditioner": "scipy-superlu-ilu",
+    "drop_tol": 1e-4,
+    "fill_factor": 10.0,
+    "drop_rule": "basic,area",
+    "permc_spec": "COLAMD",
+    "diag_pivot_thresh": 1.0,
+    "superlu_equilibration": False,
+    "krylov": "scipy-gmres-left-preconditioned",
+    "restart": 50,
+    "max_restart_cycles": 250,
+    "rtol": 1e-13,
+    "atol": 0.0,
+    "refinement_steps": 2,
+    "refinement_residual": "extended-precision-residual-v1",
+}
 
 
 def strict_object(value: object, keys: set[str], label: str) -> dict:
@@ -161,6 +181,10 @@ def validate_qualification(value: object, system_sha256: str | None = None) -> N
         isinstance(value, dict)
         and value.get("method") == "strict-row-diagonal-dominance-v1"
     )
+    iterative = (
+        isinstance(value, dict)
+        and value.get("method") == ITERATIVE_QUALIFICATION_METHOD
+    )
     keys = {
         "method",
         "qualified",
@@ -171,6 +195,8 @@ def validate_qualification(value: object, system_sha256: str | None = None) -> N
     }
     if dominance:
         keys.add("certificate")
+    if iterative:
+        keys.add("reference_solver")
     evidence = strict_object(
         value,
         keys,
@@ -182,6 +208,7 @@ def validate_qualification(value: object, system_sha256: str | None = None) -> N
             "independent-sparse-lu-v1",
             "independent-sparse-lu-refined-v1",
             "strict-row-diagonal-dominance-v1",
+            ITERATIVE_QUALIFICATION_METHOD,
         }
         or evidence["qualified"] is not True
     ):
@@ -218,6 +245,43 @@ def validate_qualification(value: object, system_sha256: str | None = None) -> N
         )
     if not dominance and evidence["uncertainty"] != "empirical-feasibility-only":
         raise ValueError("qualification must state its empirical uncertainty")
+    if iterative:
+        _validate_iterative_reference(evidence["reference_solver"])
+
+
+def _validate_iterative_reference(value: object) -> None:
+    reference = strict_object(
+        value, {"configuration", "implementation", "solves"}, "iterative reference"
+    )
+    config = strict_object(
+        reference["configuration"],
+        set(ITERATIVE_QUALIFICATION_CONFIG),
+        "iterative reference configuration",
+    )
+    for name, expected in ITERATIVE_QUALIFICATION_CONFIG.items():
+        if type(config[name]) is not type(expected) or config[name] != expected:
+            raise ValueError(
+                "iterative reference configuration does not match its version"
+            )
+    versions = strict_object(
+        reference["implementation"], {"numpy", "scipy"}, "reference implementation"
+    )
+    for version in versions.values():
+        if not isinstance(version, str) or not re.fullmatch(
+            r"[0-9][A-Za-z0-9.+_-]{0,79}", version
+        ):
+            raise ValueError("reference library version must be a short version string")
+    solves = reference["solves"]
+    if not isinstance(solves, list) or len(solves) != 3:
+        raise ValueError("iterative reference requires one solve and two corrections")
+    limit = config["restart"] * config["max_restart_cycles"]
+    for solve in solves:
+        strict_object(solve, {"info", "inner_iterations"}, "reference solve")
+        if type(solve["info"]) is not int or solve["info"] != 0:
+            raise ValueError("each iterative reference solve must converge")
+        iterations = solve["inner_iterations"]
+        if type(iterations) is not int or not 0 <= iterations <= limit:
+            raise ValueError("reference iteration count exceeds the fixed budget")
 
 
 def _validate_dominance_certificate(evidence: dict) -> None:

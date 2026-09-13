@@ -9,10 +9,17 @@ from collections.abc import Mapping
 from decimal import Decimal, localcontext
 
 import numpy as np
-from scipy.sparse.linalg import splu
+import scipy
+from scipy.sparse.linalg import LinearOperator, gmres, spilu, splu
 
 from .dataset import canonical_json
-from .manifests import QUALIFICATION_LIMITS, RHS_SCHEME, validate_qualification
+from .manifests import (
+    ITERATIVE_QUALIFICATION_CONFIG,
+    ITERATIVE_QUALIFICATION_METHOD,
+    QUALIFICATION_LIMITS,
+    RHS_SCHEME,
+    validate_qualification,
+)
 from .models import CsrMatrix, EvaluationSystem, MatrixInput
 from .verify import accuracy_metrics
 
@@ -242,6 +249,137 @@ def qualify_ns(system: EvaluationSystem, *, refine: bool = False) -> dict:
             "verified_forward_bound": None,
         },
         "uncertainty": "empirical-feasibility-only",
+    }
+    validate_qualification(evidence, system_digest(system))
+    return evidence
+
+
+def qualify_ns_iterative(system: EvaluationSystem) -> dict:
+    """Qualify a fixed target with an independent, bounded-fill offline reference.
+
+    The reference solves a row/column-equilibrated system from zero using ILU
+    and GMRES, followed by exactly two extended-residual correction solves.
+    Only the original stored A,b and manufactured target determine acceptance.
+    The target is never a solver input. This is empirical feasibility evidence,
+    without an inverse-norm bound or a candidate performance claim.
+
+    ILU fill controls do not limit every temporary allocation. Operators must
+    run this expensive offline procedure in a process with explicit memory and
+    wall-time limits. Library versions and the complete fixed configuration
+    accompany successful evidence; unsuccessful solves do not admit a case.
+    """
+    if system.x_star is None or system.reference_kind != "manufactured":
+        raise ValueError("NS qualification requires the manufactured target")
+    config = ITERATIVE_QUALIFICATION_CONFIG
+    matrix = system.public.matrix
+    scaled = matrix.to_scipy().copy()
+    row_maximum = np.asarray(abs(scaled).max(axis=1).toarray()).ravel()
+    if np.any(row_maximum == 0):
+        raise ValueError("independent reference cannot equilibrate an empty row")
+    with np.errstate(over="ignore", invalid="ignore", divide="ignore"):
+        row_scale = 1.0 / row_maximum
+        scaled.data *= np.repeat(row_scale, np.diff(scaled.indptr))
+        column_maximum = np.asarray(abs(scaled).max(axis=0).toarray()).ravel()
+        column_scale = 1.0 / column_maximum
+        scaled.data *= column_scale[scaled.indices]
+    if (
+        not np.all(np.isfinite(row_scale))
+        or not np.all(np.isfinite(column_scale))
+        or not np.all(np.isfinite(scaled.data))
+        or np.any(scaled.data == 0)
+    ):
+        raise ValueError(
+            "independent reference equilibration is not finite and nonzero"
+        )
+    try:
+        factor = spilu(
+            scaled.tocsc(),
+            drop_tol=config["drop_tol"],
+            fill_factor=config["fill_factor"],
+            drop_rule=config["drop_rule"],
+            permc_spec=config["permc_spec"],
+            diag_pivot_thresh=config["diag_pivot_thresh"],
+            options={"Equil": config["superlu_equilibration"]},
+        )
+        preconditioner = LinearOperator(scaled.shape, factor.solve, dtype=np.float64)
+        solves = []
+
+        def solve(rhs: np.ndarray) -> np.ndarray:
+            iterations = 0
+
+            def count_iteration(_residual: float) -> None:
+                nonlocal iterations
+                iterations += 1
+
+            with np.errstate(over="ignore", invalid="ignore"):
+                scaled_rhs = row_scale * rhs
+            if not np.all(np.isfinite(scaled_rhs)):
+                raise ValueError("scaled reference RHS is not finite")
+            vector, info = gmres(
+                scaled,
+                scaled_rhs,
+                x0=np.zeros(matrix.n),
+                rtol=config["rtol"],
+                atol=config["atol"],
+                restart=config["restart"],
+                maxiter=config["max_restart_cycles"],
+                M=preconditioner,
+                callback=count_iteration,
+                callback_type="pr_norm",
+            )
+            solves.append({"info": int(info), "inner_iterations": iterations})
+            with np.errstate(over="ignore", invalid="ignore"):
+                vector = column_scale * vector
+            if info != 0 or not np.all(np.isfinite(vector)):
+                raise ValueError("independent GMRES reference did not converge")
+            return vector
+
+        reference = solve(system.public.b)
+        for _ in range(config["refinement_steps"]):
+            with np.errstate(over="ignore", invalid="ignore"):
+                residual = np.asarray(
+                    _extended_residual(matrix, system.public.b, reference),
+                    dtype=np.float64,
+                )
+                reference = reference + solve(residual)
+            if not np.all(np.isfinite(reference)):
+                raise ValueError("refined reference solution is not finite")
+    except (RuntimeError, ValueError, FloatingPointError) as exc:
+        raise ValueError(
+            "independent iterative NS reference could not be computed"
+        ) from exc
+
+    result = accuracy_metrics(system, reference)
+    metrics = {}
+    for name in QUALIFICATION_LIMITS:
+        value = getattr(result, name)
+        if value is None:
+            raise ValueError(f"independent NS qualification produced invalid {name}")
+        metrics[name] = float(value)
+    formation = _extended_residual(matrix, system.public.b, system.x_star)
+    maximum = np.max(np.abs(formation), initial=np.longdouble(0))
+    norm_b = np.max(
+        np.abs(system.public.b.astype(np.longdouble)), initial=np.longdouble(0)
+    )
+    relative = (
+        float(maximum / norm_b) if norm_b else (0.0 if maximum == 0 else float("inf"))
+    )
+    evidence = {
+        "method": ITERATIVE_QUALIFICATION_METHOD,
+        "qualified": True,
+        "system_sha256": system_digest(system),
+        "metrics": metrics,
+        "formation": {
+            "method": "extended-precision-residual-v1",
+            "relative_linf_residual": relative,
+            "verified_forward_bound": None,
+        },
+        "uncertainty": "empirical-feasibility-only",
+        "reference_solver": {
+            "configuration": dict(config),
+            "implementation": {"numpy": np.__version__, "scipy": scipy.__version__},
+            "solves": solves,
+        },
     }
     validate_qualification(evidence, system_digest(system))
     return evidence
