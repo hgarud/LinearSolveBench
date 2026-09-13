@@ -1,18 +1,23 @@
 # Matrix-family roadmap beyond the first pilot
 
-Status: retained design roadmap, updated 13 September 2026. The active pilot
-scope is defined in [FAMILY_SUPPORT_PLAN.md](FAMILY_SUPPORT_PLAN.md): NS mesh
-coverage and FLASH replay only. SPD, NS performance, and FLASH trajectory are
-later phases. The broader architecture, implementation sequence, tests, and
-completion criteria below describe that future work; they are not pilot
-requirements. No additional tracks or datasets are implemented or released by
-this document.
+Status: future-track design roadmap, updated 13 September 2026. The active
+implementation and launch gates are recorded in
+[FAMILY_SUPPORT_PLAN.md](FAMILY_SUPPORT_PLAN.md). NS coverage and FLASH replay
+are implemented in the shared pilot evaluator. SPD, NS performance, and FLASH
+trajectory remain unsupported; their design below is not a pilot launch gate.
 
-The pilot execution policy was subsequently set to exactly one fresh native
-evaluation process per case, including one reference execution per case during
-replay qualification. This supersedes the retained repeated-run proposals below
-for the pilot tracks. Future-track repetition settings must be decided when
-those tracks are implemented, not inherited from this earlier proposal.
+The public NS release currently contains two qualified development cases, not a
+complete scientific inventory or ranked corpus. FLASH has 344 validated exports
+for intended 96-case development and 248-case ranked splits; publication and
+full public timing-reference qualification are in progress. Representative
+reference checks do not establish complete-split or official venue readiness.
+The pilot plan tracks these remaining launch requirements explicitly.
+
+Pilot cases and replay reference qualification each use exactly one fresh
+native process per case. The original v1 benchmark retains three repetitions.
+Any repetition/median proposals below for deferred tracks are provisional and
+must be decided in those tracks' own versioned contracts. They do not change
+implemented pilot execution.
 
 ## Retained broader design
 
@@ -26,7 +31,7 @@ and accuracy contract, with separate evaluation tracks:
 | `ns-mesh-pde` | `performance` | Speedup relative to one frozen solver that solves every case | Awaiting discovery and qualification of that solver |
 | `magnetic_diffusion_flash` | `replay` | Speedup for individual captured time-step solves | A qualified reference under the replay lifecycle |
 | `magnetic_diffusion_flash` | `trajectory` | Speedup over a complete trajectory | A qualified reference under the trajectory lifecycle |
-| `spd-mesh` | Existing single-case design | Previously proposed accuracy and timing results | Qualify independently; no additional tracks requested |
+| `spd-mesh` | Proposed independent-case design | Previously proposed accuracy and timing results | Qualify independently; no additional tracks requested |
 
 Share compiler restrictions, the HYPRE runtime, numerical metrics, and trusted
 verification. Give each track its own scoring and solver-lifecycle contract.
@@ -43,44 +48,42 @@ libraries and independently published data artifacts. Public source files,
 documentation, tests, manifests, packages, and container images must contain
 only material intended for publication.
 
-## 1. What can be reused, and what must change
+## 1. Implemented foundation and remaining extensions
 
-The current repository already provides useful foundations:
+The pilot now provides the shared pieces that later tracks should reuse:
 
-- Canonical float64 CSR arrays, a numerical input protocol, and preservation of
-  an explicit initial guess.
-- A restricted C factory interface, symbol auditing, and a pinned sequential
-  HYPRE build.
-- Native timing of factory creation, setup, and solve; fresh processes for three
-  repetitions; input-mutation checks; verification outside the timed region.
-- Content hashes for datasets, prepared inputs, runtime builds, and reports.
-- Local execution and an official sandbox transport that keeps reference
-  solutions on the trusted operator machine.
+- Strict float64 CSR inputs, preserved initial guesses, native int32 bounds,
+  and separate manufactured/numerical/absent reference semantics.
+- Restricted `solver_create` C interface, symbol auditing, pinned sequential
+  HYPRE, timing of creation/setup/solve, and trusted mutation and accuracy checks.
+- Explicit family/track contracts, release/prepared/report hashes, one native
+  execution per pilot case, and shared local/Modal result construction.
+- Public SuiteSparse and FLASH loaders, deterministic manufactured workloads,
+  resumable verified downloads, offline cache reuse, and case-by-case streaming.
+- Reference-free NS coverage, qualified-reference FLASH replay scoring, package
+  resources, release-aware CLI commands, and per-track candidate documentation.
 
-The following assumptions currently prevent general family support:
-
-| Area | Current behavior | Required change |
+| Area | Implemented pilot behavior | Remaining future work |
 | --- | --- | --- |
-| `dataset.py` | One SuiteSparse source, fixed counts of 350/203/8, fixed v1 digests and one RHS generator | Release manifests, two source loaders, and explicit workload recipes |
-| `models.py`, `archive.py` | Every evaluation system requires `x_star` | Distinguish manufactured targets from numerical references; allow a missing reference only when the contract permits it |
-| `accuracy.py`, `verify.py` | Every acceptance threshold derives from one tolerance | Explicit family contracts with separate solver guidance, required gates, and diagnostics |
-| `runner.py`, `modal_app.py` | One accuracy contract, fixed iteration/deadline assumptions | Shared settings resolved from family, track, and release; explicit case or trajectory lifecycle |
-| `native/src/driver.cpp`, `protocol.py` | One process and solver lifecycle per input | Preserve independent-case mode; add a versioned streaming trajectory session and persistent-state ABI |
-| `scoring.py` | One benchmark identity; every calibration reference must solve every case | Reference-free NS coverage and separately activated speedup tracks requiring a qualified reference |
-| Dataset loading | All prepared systems loaded into a tuple | Validate the manifest once and load one case at a time |
-| Packaging | Resource lookup assumes a repository checkout | Installable package resources and clean-environment validation |
+| Registry and schemas | Two independent-case pairs with strict versioned release identities | Add only requested future tracks and their actual contracts |
+| References and metrics | Required NS targets, optional FLASH references, separate required/diagnostic gates | SPD qualification and any independently justified new accuracy contracts |
+| Dataset preparation | NS/FLASH acquisition, new workload identities, qualification and streaming | Broader NS scientific inventory, SPD inventory, and complete trajectory acquisition |
+| Native execution | One fresh process per pilot case; release iteration requests and deadlines reach execution | Ordered persistent-state trajectory ABI, ownership, and cumulative budgets |
+| Scoring | NS raw coverage and all-pass FLASH replay reference qualification | NS performance activation and complete-trajectory scoring/reference lifecycle |
+| Distribution | Installed resources and wheel/native CI paths | Validate each additional track's public data, package, venue, and release |
 
-The current SuiteSparse metadata screen excludes symmetric matrices and limits
-dimensions to 500–1,000,000. Those filters cannot define either new mesh family.
-The new nonsymmetric mesh selection must use scientific provenance and numerical
-qualification, including valid cases outside that size range when the venue
-supports them.
+The original v1 SuiteSparse screen still has its own counts, digests, and
+500–1,000,000 dimension bounds. Those filters do not define the new mesh
+families. NS and SPD admission must rely on documented scientific provenance
+and numerical qualification, including valid cases outside the old size range
+when their released venue supports them.
 
 ## 2. Family contracts
 
 Preserve the original operator after documented storage canonicalization:
 expand declared Matrix Market symmetry, sum duplicates, remove exact zeros,
-and sort columns. Do not silently scale, transpose, shift, symmetrize, reorder,
+and sort `(column index, value)` pairs within each row. This canonicalizes
+storage without permuting variables. Do not silently scale, transpose, shift, symmetrize, reorder,
 or replace an operator with normal equations during dataset preparation.
 Candidates may implement permitted mathematical transformations inside their
 timed solve, but verification always uses the original serialized `A` and `b`.
@@ -111,7 +114,8 @@ then verify their feasibility before freezing a public release:
 Use the existing definitions of normwise and componentwise backward error in
 `SPEC.md`. All families require valid output shape, finite solution values,
 successful native status, unchanged inputs, and compliance with execution
-budgets. A solution passes a case only when all three repetitions pass.
+budgets. Pilot cases require their single execution to pass. A future track
+must specify its own execution count; no additional repetitions are implied.
 
 For FLASH, small weak rows can make componentwise relative error large even
 when residual accuracy is satisfactory. Preserve the diagnostic value without
@@ -144,17 +148,20 @@ accuracy contract, and public documentation. A track selects the execution
 lifecycle, scoring contract, and reference requirements. Neither should own a
 duplicate compiler, sandbox implementation, or report serializer.
 
-Suggested additions under `src/linear_solver_bench/`:
+Implemented modules under `src/linear_solver_bench/` should be extended where
+the new behavior fits; trajectory execution remains a separate future module:
 
 ```text
-families.py             # Three family IDs and numerical contracts
-tracks.py               # Allowed family/track pairs, lifecycle, scoring, readiness
-manifests.py            # Strict release, case, and asset schemas
+families.py             # Implemented pilot pairs and contracts
+manifests.py            # Implemented strict release, case, and asset schemas
+pilot_dataset.py        # Implemented preparation and streamed case loading
+pilot_runner.py         # Implemented independent-case evaluation
+pilot_scoring.py        # Implemented coverage and replay scoring
 sources/
-    suitesparse.py     # Public acquisition and canonicalization
-    flash.py           # Loader for the published numerical capture format
-workloads.py           # Versioned manufactured-vector generation
-trajectory.py          # Ordered session execution and full-trajectory results
+    suitesparse.py      # Implemented public acquisition and canonicalization
+    flash.py            # Implemented public numerical capture loader
+workloads.py            # Implemented manufactured vectors and NS qualification
+trajectory.py           # Deferred: ordered sessions and whole-trajectory results
 ```
 
 Retain and extend the existing `models.py`, `archive.py`, `dataset.py`,
@@ -198,7 +205,8 @@ its report. The transport layer should only launch work, enforce budgets, and
 return native outputs.
 
 Preserve `solver_create` and the current numerical input protocol where possible:
-they already accept an arbitrary `x0`. Case metadata and references need a new
+they already accept an arbitrary `x0`. The pilot's versioned case metadata and
+references provide the independent-case foundation; future tracks need their own
 trusted archive schema, not extra candidate-visible identifiers. Trajectory
 adds a separate streaming protocol and lifecycle ABI, with public per-step
 numerical settings and explicit ownership rules. Document the family
@@ -373,14 +381,14 @@ Every required step, including such controls, contributes to trajectory time.
 
 ### NS mesh: coverage
 
-Evaluate every case in the frozen NS mesh split, with the same accuracy gates
-used by the performance track. A case counts as solved only if all three fresh
-process repetitions return an accurate solution within the published time,
-memory, and iteration budgets. Count each declared matrix/RHS case once; three
-successful repetitions do not count as three cases.
+The implemented pilot evaluates every case in the frozen NS mesh split once
+in one fresh native process. Count a case as solved only when that execution
+satisfies the fixed accuracy and execution requirements. A future performance
+track must preserve the numerical contract and declare its execution lifecycle
+separately; it must not change existing coverage results.
 
 ```text
-solved_count = sum_i all_repetitions_passed_i
+solved_count = sum_i single_execution_passed_i
 coverage_fraction = solved_count / expected_case_count
 ranking_key = -solved_count
 ```
@@ -457,7 +465,8 @@ Each solve starts with its captured `A,b,x0,tau`, a fresh native process, and a
 new solver object. Time factory creation, setup/preconditioner construction,
 and solve. Destroy the object afterward. No solver state, preconditioner,
 workspace, or candidate solution carries from one replay case to another.
-Use three independent repetitions and the median complete solve time.
+The implemented pilot uses exactly one execution and its complete measured
+solve time, including one execution per case during reference qualification.
 
 Qualify one public reference solver across the replay split under this exact
 lifecycle. A stock GMRES+AMG configuration is a starting candidate for that
@@ -644,10 +653,13 @@ redistributable. Establish the redistribution terms for the numerical dataset
 and its accompanying metadata before publishing it; source-code terms alone
 do not establish the terms for those outputs. [FLASH license agreement](https://flash.rochester.edu/site/flashcode/user_support/flash_ug_devel/node3.html).
 
-## 7. Implementation sequence and acceptance criteria
+## 7. Future implementation sequence and acceptance criteria
 
-Each step should be a small reviewable change. Dataset construction work can
-proceed while the shared evaluator is being extended.
+This retained sequence describes the broader, deferred scope. Several shared
+pieces are already delivered by the pilot, as listed in section 1; extend them
+instead of recreating those changes. The pilot's remaining publication and
+qualification gates are tracked only in the active implementation plan.
+Each additional track should be a small, separately reviewable extension.
 
 | Step | Deliverable | Acceptance criteria |
 | --- | --- | --- |
@@ -662,14 +674,14 @@ proceed while the shared evaluator is being extended.
 | 9. Validate distribution and publish | Documentation, package resources, CI, citations and notices, readiness reporting | Clean checkout/wheel/container runs without sibling repositories; content audit passes; documented coverage/replay/trajectory paths work; missing NS reference is handled clearly |
 | 10. Activate NS performance after discovery | Public all-case reference artifact, complete official qualification, new active track release | Every existing NS case passes every reference repetition; published speedups bind to the frozen reference; coverage data and results remain unchanged |
 
-Begin the first complete vertical slice with a small SPD mesh case: it tests the
-new explicit accuracy contract while using the existing SuiteSparse acquisition
-path. Follow with one nonsymmetric mesh case, then one FLASH warm-start replay.
-Next run a tiny complete trajectory containing repeated and changed matrices
-through a stateful solver and a stateless reference adapter. Finish these
-vertical slices before attempting bulk corpus publication. Implement step 10's
-activation mechanism during step 7; obtaining the real NS reference remains a
-separate, future milestone and does not block implementation readiness.
+After the pilot, a first additional vertical slice can use a small SPD mesh
+case with its own scientific qualification and the existing SuiteSparse loader.
+A trajectory slice then needs a tiny complete sequence with repeated and changed
+matrices, a stateful solver, and a reference adapter. Validate each new track
+before publishing that track's corpus; these extensions do not delay release of
+independent-case pilot data. Implement NS performance's activation mechanism
+when implementing that deferred track. Discovering its real all-case reference
+remains a separate milestone.
 
 Update `README.md`, `SPEC.md`, `DATASET.md`, `OPERATIONS.md`, `benchmark.toml`,
 packaging metadata, and CLI help together. Add three concise family documents,
@@ -723,7 +735,12 @@ track, or silently reinterpret an existing release. The official reference
 qualification command must use the registered official venue; local evidence
 cannot activate an official track.
 
-## 8. Verification needed before completion
+## 8. Verification needed for future-track completion
+
+Existing pilot tests already cover many independent-case numerical, data,
+streaming, report, and scoring checks. The list below describes the broader
+acceptance surface after the additional families and lifecycles are implemented;
+it does not establish that those future checks already run.
 
 - Numerical tests: hand-computed residual/backward/forward errors; a perturbed
   mesh solution failing each required gate; FLASH diagnostic errors that do not
@@ -759,8 +776,8 @@ real-data integration checks separately from the full official-venue sweep.
 The existing CI native job only compiles and audits the starter; extend it to
 execute and independently verify actual solves.
 
-Implementation completion means all three families and the four requested
-tracks have documented public formats, execution contracts, numerical checks,
+Completion of this broader roadmap means all three families and the four
+requested tracks have documented public formats, execution contracts, numerical checks,
 scoring, distribution support, and tested readiness/activation behavior. Dataset
 and leaderboard readiness are tracked separately: NS coverage can open before
 NS performance, and NS performance remains awaiting reference until the real

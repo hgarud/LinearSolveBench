@@ -1,6 +1,122 @@
 # Dataset and provenance
 
-## Source snapshot
+## Pilot releases
+
+A release manifest fixes its family, track, development or ranked split, ordered
+case inventory, scientific admission, numerical identities, and execution and
+scoring contracts. Names alone do not establish scientific qualification.
+
+The initial NS development manifest is `data/ns-mesh-dev-pilot.json`, also
+available as installed manifest ID `ns-mesh-dev-pilot`:
+
+| Matrix | SuiteSparse ID | Unknowns | Nonzeros | Scientific source |
+| --- | ---: | ---: | ---: | --- |
+| `DRIVCAV/cavity01` | 380 | 317 | 7,280 | Driven-cavity flow discretization |
+| `FEMLAB/poisson2D` | 926 | 367 | 2,417 | Finite-element Poisson PDE discretization |
+
+These two cases establish a small development pilot. They do not represent a
+complete NS mesh corpus. The word NS means nonsymmetric and is not restricted
+to Navier–Stokes equations. The existing v1 catalogue's generic nonsymmetry
+screen does not establish mesh/PDE provenance.
+
+Preparation obtains original archives from the
+[SuiteSparse Matrix Collection](https://sparse.tamu.edu/), checking both archive
+and canonical matrix hashes. Each case preserves its public matrix identifier,
+source citation, and scientific admission statement. Sparse storage is
+canonicalized by expanding declared symmetry, summing duplicate coordinates,
+removing exact zeros, and sorting each row's `(column index, value)` pairs.
+Sorting storage pairs does not permute matrix columns or change the operator.
+Lossy numeric conversions, nonfinite entries, and unsupported dimensions are
+rejected. No scaling, transpose, shift, or variable reordering is introduced.
+
+Each matrix receives one deterministic Rademacher target with entries ±1 and
+exactly unit RMS. The versioned HMAC recipe separates draws by release, family,
+canonical matrix, RHS kind, and draw index. Development keys are public; ranked
+keys remain with the operator. The target and `b = fl(A x_target)` are frozen
+in trusted prepared archives. A new draw changes the numerical system identity
+and requires new qualification.
+
+NS qualification requires an independently solved reference to satisfy each
+fixed acceptance limit with a tenfold margin. It also records a residual audit
+of floating-point RHS formation. This is empirical feasibility evidence, not a
+certificate that the manufactured target is the exact stored-system solution.
+Sensitive cases need additional uncertainty analysis before publication; see
+[the accuracy contract](SPEC.md#independent-accuracy-checks).
+
+## FLASH replay downloads
+
+The publication destination is the public, ungated
+[LinearSolveBench dataset on Hugging Face](https://huggingface.co/datasets/hgarud/LinearSolveBench).
+Publication is in progress. The intended inventory contains 344 admitted
+captured systems: 96 development cases and 248 ranked cases, of which 88 are
+correctness controls. Public release manifests must use immutable Hugging Face
+commit URLs and verified file hashes; a destination URL alone is not a frozen
+release.
+
+Every case is a standalone ZIP archive with exactly:
+
+```text
+matrix.npz    # float64 CSR, readable by scipy.sparse.load_npz
+b.npy         # captured float64 right-hand side
+x0.npy        # captured float64 initial guess
+case.json     # public identity, provenance grouping, tolerance, and hashes
+```
+
+Downloading one case requires neither the benchmark package nor FLASH. The
+catalogue maps public case IDs to archive paths, byte sizes, SHA-256 hashes,
+dimensions, source-run and provenance-group IDs, time steps, and within-step
+solve positions. A release assigns scored/control roles and freezes aggregation
+weights. Additional Matrix Market exports and bulk bundles are outside the
+pilot format.
+
+The captured matrix, RHS, initial guess, and relative tolerance are preserved.
+Cases requiring nonzero absolute tolerance are rejected. This four-file pilot
+format contains no reference solution. The numerical verifier can compute
+diagnostics against a separately supplied numerical reference, without treating
+it as exact truth.
+A captured solution's accuracy and an offline reference's accuracy establish
+case feasibility; official replay timing still requires one public solver to
+qualify on every scored case and control under the benchmark venue.
+
+Both development and ranked numerical inputs are public. Related source runs,
+refinements, exact duplicates, and documented near-duplicate relationships must
+remain within the same split. Ranked is an evaluation designation, not a claim
+that those input matrices are hidden. Replay evaluates individual captured
+solves and does not claim complete-trajectory coverage or rerun the simulation.
+
+## Preparation and cache
+
+```bash
+linear-solver-bench dataset prepare \
+  --release ns-mesh-dev-pilot --output data/prepared/ns-dev
+linear-solver-bench dataset prepare \
+  --release ns-mesh-dev-pilot --offline --output data/prepared/ns-dev-offline
+```
+
+Preparation validates source identity, safely decodes each source archive, and
+writes a trusted schema-v2 prepared archive per case. NS archives declare a
+manufactured reference; FLASH pilot archives declare no reference. Candidate
+input payloads contain only numerical solve inputs. Frozen NS qualification is
+reused after verifying its exact numerical identity, so ordinary preparation
+does not repeat offline factorizations.
+
+Downloads use a content-addressed cache with bounded sizes, resumable transfer,
+and hash validation before reuse. `--offline` uses verified cached archives and
+fails clearly for missing or corrupt data. Set `--cache` or
+`LINEAR_SOLVER_BENCH_CACHE` to choose writable storage. Installed package
+resources are read-only inputs and need no checkout for the Python CLI.
+
+`--case CASE_ID` may select a case for a development check. A subset is marked
+incomplete and cannot receive a complete-split score. Local and trusted Modal
+evaluation load prepared cases one at a time to limit evaluator memory.
+
+## Existing SuiteSparse v1 dataset
+
+The following inventory and qualification procedure describe the original v1
+benchmark, not the NS mesh pilot. Its manifests and archive identities remain
+supported without relabeling their scientific scope.
+
+### Source snapshot
 
 The source catalogue is the SuiteSparse Matrix Collection
 [`ss_index.mat`](https://sparse.tamu.edu/files/ss_index.mat); field definitions
@@ -33,7 +149,7 @@ The result contains 350 matrices. `RBtype == "rua"` means real-valued,
 unsymmetric, assembled; the explicit square check remains in the frozen filter
 for readability and replay safety.
 
-## Numerical qualification
+### Numerical qualification
 
 `data/qualification.json` freezes numerical rank and condition evidence for all
 350 matrices. Every matrix is processed by the same method. SuiteSparseQR uses
@@ -74,7 +190,7 @@ modal run qualification_modal.py \
   --output data/qualification-replay.json
 ```
 
-## Matrix transformation
+### Matrix transformation
 
 Preparation downloads `https://sparse.tamu.edu/MM/{Group}/{Name}.tar.gz`,
 verifies the frozen archive digest, safely extracts the Matrix Market member,
@@ -83,10 +199,10 @@ removes exact zeros, and sorts column indices. It performs no reordering,
 scaling, or transposition.
 
 Every prepared case is content-addressed. Ranked right-hand sides are derived
-only during trusted preparation from an operator-held key. The key and exact
-solution are never copied into the candidate sandbox workspace.
+only during trusted preparation from an operator-held key. The key and manufactured
+target are never copied into the candidate sandbox workspace.
 
-## License and attribution
+## Attribution
 
 SuiteSparse matrices are licensed CC BY 4.0. Redistributions must preserve the
 original Matrix Market metadata and matrix-specific citation instructions,

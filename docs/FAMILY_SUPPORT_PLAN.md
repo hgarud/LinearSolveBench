@@ -1,27 +1,58 @@
 # First pilot: NS mesh coverage and FLASH replay
 
-Status: active implementation plan, updated 13 September 2026. This document
-specifies proposed work; it does not claim that these tracks or datasets are
-already implemented or published.
+Status: implementation and release plan, updated 13 September 2026. The shared
+pilot code is implemented. NS has a qualified two-case development release;
+FLASH has a validated numerical inventory and public export. Publication,
+complete reference qualification, and official venue validation remain launch
+gates. The snapshot below distinguishes implemented support from a finished
+scientific benchmark release.
+
+## Implementation snapshot
+
+| Area | Current evidence | Remaining work |
+| --- | --- | --- |
+| Family and execution contracts | Two explicit pairs; `ns_mesh_pde` alias; schema-v2 release/prepared/report identities; one native execution per pilot case | Freeze each published split's exact manifest and venue |
+| Numerical verification | Fixed NS gates, FLASH residual/backward gates, explicit reference semantics, stable ratios, JSON-safe diagnostics, v1 compatibility | Audit sensitive cases when expanding the declared NS inventory |
+| NS coverage | `ns-mesh-dev-pilot`: two public SuiteSparse matrices, manufactured workloads, bound qualification evidence, native evaluation, reference-free coverage | Declare and qualify a scientifically useful pilot inventory and provenance-based ranked split |
+| FLASH inputs | 344 admitted cases exported as standalone archives; original CSR, RHS, and initial-guess bytes verified by the public loader | Finish Hugging Face publication, freeze commit-pinned manifests, verify clean public downloads |
+| FLASH reference and scores | Public `gmres_amg.c` reference candidate; representative checks across 13 source runs; all-pass qualification and weighted scoring implemented | Qualify that fixed solver on every case/control in both declared splits and freeze venue-matched timings |
+| Execution and distribution | Local and Modal case streaming, release settings propagation, hard Modal resource configuration, package resources, CLI/task documentation and regression tests | Complete full-split official venue runs and final checkout/wheel/container/release audit |
+
+The NS development matrices are `DRIVCAV/cavity01` (317 unknowns) and
+`FEMLAB/poisson2D` (367 unknowns). They demonstrate real mesh/PDE inputs and the
+complete coverage path. Two small cases do not establish broad scientific
+coverage, difficult-case behavior, or a ranked NS benchmark. No larger NS
+inventory or ranked release is claimed complete, and the existing generic v1
+inventory must not be used as a substitute.
+
+The intended FLASH splits are 96 development scored cases and 248 ranked cases
+(160 scored, 88 correctness controls). Public inputs cover 13 source runs in 10
+provenance groups. Captured solutions and stored independent numerical references
+pass the public accuracy gates for all 344 cases. This is feasibility evidence,
+not qualification of a public timing solver under the new runtime and venue.
+The destination is the ungated
+[Hugging Face dataset](https://huggingface.co/datasets/hgarud/LinearSolveBench);
+its existence alone does not establish an immutable, reproducible release.
 
 ## Pilot scope
 
-Build exactly two family/track pairs using one independent-case evaluator:
+The implementation supports exactly two family/track pairs through one
+independent-case evaluator:
 
 | Family | Track | Primary result | Timing reference |
 | --- | --- | --- | --- |
 | `ns-mesh-pde` | `coverage` | Number of cases solved accurately within fixed budgets | Not required |
 | `magnetic_diffusion_flash` | `replay` | Speedup on individual captured solves | One frozen reference qualified on the entire replay split |
 
-`ns_mesh_pde` refers to the same NS mesh family. Accept it as a CLI alias if
-needed, but normalize manifests and reports to the public ID `ns-mesh-pde`.
+`ns_mesh_pde` is accepted as a CLI alias. Manifests and reports use the public
+ID `ns-mesh-pde`.
 
 SPD mesh, NS mesh performance, and FLASH trajectory are later phases. Their
 agreed designs remain in [FAMILY_SUPPORT_ROADMAP.md](FAMILY_SUPPORT_ROADMAP.md).
 They do not add pilot implementation or acceptance requirements. In particular,
 the pilot needs no SPD qualification pipeline, trajectory datasets or driver,
 persistent solver ABI, retained-matrix API, or NS performance activation flow.
-The CLI should reject unsupported family/track pairs clearly.
+The CLI rejects unsupported family/track pairs.
 
 Keep family, track, release, accuracy contract, and venue identities explicit
 so later additions can use new versioned contracts. Implement only the two
@@ -52,7 +83,8 @@ vectors, and preparation keys outside the candidate boundary.
 
 Preserve original operators after documented storage canonicalization: expand
 declared Matrix Market symmetry, sum duplicates, remove exact zeros, and sort
-columns. Do not silently scale, transpose, reorder, shift, or replace the
+each row's `(column index, value)` storage pairs. This does not permute matrix
+columns or variables. Do not silently scale, transpose, reorder, shift, or replace the
 operator with another problem during preparation. Verification uses the original
 serialized matrix and RHS, regardless of the candidate's internal algorithm.
 
@@ -165,23 +197,22 @@ mismatches. Infrastructure failure invalidates a run under a fixed retry policy;
 it does not silently shrink the scored set. Keep coverage and replay leaderboards
 separate, with no combined score.
 
-## Small implementation changes
+## Implemented modules
 
-Reuse the existing evaluator and keep family/track choices in a fixed registry.
-Suggested new modules are a small `families.py` or `tracks.py`, strict manifest
-parsing in `manifests.py`, `sources/suitesparse.py`, `sources/flash.py`, and shared
-manufactured-vector preparation in `workloads.py`. Avoid splitting a module
-unless the separation makes the code easier to read.
+The pilot extends the existing evaluator through a fixed registry. The original
+v1 dataset and scoring paths retain their identities and three-repetition
+behavior. No generic plugin framework or future-family runtime is introduced.
 
-| Existing area | Pilot change |
+| Area | Implemented pilot behavior |
 | --- | --- |
-| `dataset.py` | Replace new-release hard-coded counts and SuiteSparse-only preparation with the two public loaders; keep v1 compatibility |
-| `models.py`, `archive.py` | Represent required manufactured targets separately from optional FLASH numerical references; version the trusted archive schema |
-| `accuracy.py`, `verify.py` | Calculate shared metrics once and apply one of the two explicit gate contracts; retain diagnostic-only metrics |
-| `runner.py`, `modal_app.py` | Resolve contract and budgets from the selected release; enforce one execution per pilot case; share outcome verification and report construction |
-| `scoring.py` | Separate reference-free coverage from qualified-reference replay speedup |
-| `cli.py` | Expose the two pairs for list/prepare/run/score; reject incompatible track, release, and reference combinations |
-| `paths.py`, packaging | Make public resources available from a clean install, including a wheel outside the checkout |
+| `families.py`, `manifests.py` | Two supported pairs, strict identities/settings, source and qualification validation, published-release digest checks |
+| `pilot_dataset.py`, `sources/`, `workloads.py` | Public SuiteSparse and FLASH loaders, deterministic manufactured vectors, qualification, resumable verified downloads and offline cache reuse |
+| `models.py`, `archive.py` | Required manufactured targets, optional numerical references, explicit schema-v2 archives, legacy decoding and byte compatibility |
+| `accuracy.py`, `verify.py` | Shared stable metrics with separate NS/FLASH gates and diagnostic handling |
+| `pilot_runner.py`, `runner.py`, `modal_app.py` | One execution per case, shared verification/report construction, release budgets and streamed numerical inputs |
+| `pilot_scoring.py` | Reference-free coverage and all-pass qualified-reference replay speedup with frozen group/run/case weights |
+| `cli.py`, `paths.py`, packaging | Release selection, automatic prepared-schema dispatch, installed resources, public cache locations and CLI documentation |
+| `submissions/gmres_amg.c` | Public reference candidate for qualification; complete-split passing evidence is still required |
 
 Load prepared cases one at a time in local and trusted operator execution.
 Retain a small case specification, family/track contract, optional reference
@@ -242,11 +273,13 @@ these exposure boundaries, but do not require full-trajectory capture,
 publication, or execution for the replay pilot. Publicly downloadable inputs
 cannot be claimed to be hidden merely because reference vectors are private.
 
-The referenced numerical assets still need to be obtained and checked before
-release; this plan does not establish a live download repository.
-NS coverage can become available independently if replay data or reference
-qualification is delayed. A pilot claiming both tracks is complete only when
-both have working public data paths and the replay reference has qualified.
+The NS development sources are downloadable and numerically qualified. FLASH
+assets have been obtained, checked, and exported; immutable public downloads
+and release manifests still need final publication verification. NS coverage
+can become available independently if replay publication or reference
+qualification is delayed. A pilot claiming both tracks complete requires both
+working public data paths and a qualified replay timing reference. A two-case
+NS development release must remain labeled with that limited scope.
 
 Construct new public manifests and qualification reports through explicit
 allowlisted exports. Exclude private package imports, repository paths/names,
@@ -266,14 +299,14 @@ are redistributable. [FLASH license agreement](https://flash.rochester.edu/site/
 
 ## Pilot sequence and acceptance criteria
 
-| Step | Deliverable | Acceptance criteria |
+| Step | Status | Evidence and remaining acceptance criteria |
 | --- | --- | --- |
-| 1. Freeze the pilot contracts and inventory | Exactly two pairs, declared sources/splits, scientific gates, public schemas, asset/rights status | Every proposed case has a disposition; no future-family work is required to proceed |
-| 2. Deliver NS coverage end to end | Public SuiteSparse preparation, manufactured-target checks, fresh-process execution, raw coverage report | One small real case runs; incomplete/malformed inputs fail; multiple-case failures are counted without blocking other cases; no timing reference needed |
-| 3. Deliver FLASH replay end to end | Public numerical loader, captured warm starts, FLASH gates, independent-case report | One small real replay runs; captured arrays are unchanged; diagnostic componentwise/reference errors do not become rejection gates |
-| 4. Complete replay qualification and scoring | Public reference/configuration, all-case qualification, frozen reference timings and weighted speedup | Reference passes every replay case/control; exact scoring examples work; partial candidate success cannot produce an aggregate speedup |
-| 5. Validate the declared pilot corpus and venue | Full pilot qualification, measured time/memory limits, local/official verdict agreement | All admitted workloads have numerical evidence; all budgets are explicit; splits/provenance are checked; reference/candidate resources match |
-| 6. Validate distribution and publish | Two-track instructions/examples, working downloads, package resources, CI and content audit | Clean checkout/wheel/container works without sibling repositories; public users can download and evaluate each track; private material is absent |
+| 1. Freeze contracts and inventory | Contracts implemented; inventory release work remains | Two pairs and public schemas are explicit. NS has only a two-case development inventory; its broader pilot and ranked split remain undeclared. FLASH inventory is fixed for publication. |
+| 2. Deliver NS coverage end to end | Implemented for the development pilot | Real SuiteSparse preparation, bound qualification, one fresh process per case, failure-preserving reports, and calibration-free scoring are available. |
+| 3. Deliver FLASH replay end to end | Loader and evaluator implemented; public path pending publication verification | Captured arrays round-trip unchanged across 344 exports; diagnostic metrics remain diagnostic. Release downloads need immutable commit identities. |
+| 4. Complete replay qualification and scoring | Scoring implemented; full reference qualification pending | Representative reference checks are insufficient: one fixed public solver must pass every expected case and control in each split under the comparison venue. |
+| 5. Validate corpus and venue | Pending full declared-split runs | Complete NS inventory qualification and split review; run the full FLASH reference; measure resource needs and establish local/official verdict agreement. |
+| 6. Validate distribution and publish | Resources, CI paths, and user/task documentation implemented; final release audit pending | Verify downloads from a clean installation and freeze trusted release digests, source/configuration, calibration, packaging, and content audit. |
 
 Begin with NS coverage, then FLASH replay. Keep numerical-reference quality
 separate from performance-reference qualification. Do not wait for an NS
@@ -296,31 +329,54 @@ prompt versions, generation budget, attempt count, feedback access, and artifact
 selection rule in experiment reports. Select final artifacts using development
 feedback before ranked evaluation; model invocation adapters stay optional.
 
-Proposed commands (not implemented yet; filenames and release ID illustrative):
+Implemented NS development commands:
 
 ```bash
 linear-solver-bench dataset families
-linear-solver-bench dataset prepare --release pilot-cpu-v2 \
-  --family ns-mesh-pde --track coverage --split dev \
+linear-solver-bench dataset prepare --release ns-mesh-dev-pilot \
   --output data/prepared/ns-mesh-dev
-linear-solver-bench run submissions/gmres.c --family ns-mesh-pde \
-  --track coverage --runtime build/runtime --cases data/prepared/ns-mesh-dev \
+linear-solver-bench run submissions/starter.c \
+  --runtime build/runtime --cases data/prepared/ns-mesh-dev \
   --output results/ns-coverage.json
-
-linear-solver-bench dataset prepare --release pilot-cpu-v2 \
-  --family magnetic_diffusion_flash --track replay --split dev \
-  --output data/prepared/flash-replay-dev
-linear-solver-bench run submissions/gmres.c \
-  --family magnetic_diffusion_flash --track replay --runtime build/runtime \
-  --cases data/prepared/flash-replay-dev --calibration references/flash-replay.json \
-  --output results/flash-replay.json
+linear-solver-bench score results/ns-coverage.json
 ```
+
+The same CLI accepts a published FLASH manifest by installed name or file path.
+Once that manifest is available, prepare its complete split, evaluate the fixed
+public reference candidate, and run `calibrate` on its passing report. Evaluate
+other candidates under the same runtime and venue, then `score` their reports
+with that calibration. Concrete operator commands are in
+[OPERATIONS.md](OPERATIONS.md). No invented commit or placeholder release ID is
+an official data source.
 
 Require the selected pair to match its verified release, prepared case set,
 accuracy/scoring contracts, and reference artifact. CLI options cannot override
 scientific gates or reinterpret another track's results.
 
 ## Pilot verification and completion
+
+Implemented tests cover required/diagnostic metric separation, malformed and
+rehashed input rejection, reference semantics, deterministic draws, resume/offline
+cache behavior, one-case streaming and object release, failure continuation,
+report/weight/reference identity binding, and Modal transport using a test
+sandbox. Native development checks and public-array round trips complement
+those tests. A mocked sandbox is not evidence of a full official venue run.
+
+The following remain required before claiming a complete public benchmark:
+
+1. Declare the scientifically justified NS pilot inventory and its development
+   and ranked splits; qualify every frozen manufactured workload. Preserve the
+   current two-case set as a clearly labeled development release until then.
+2. Finish FLASH publication, verify the immutable download commit, and freeze
+   both split manifests and exact trusted release digests.
+3. Qualify one fixed public replay reference on all 96 development and all 248
+   ranked cases, including controls, under the declared comparison venue.
+   Freeze complete reports and single-execution timings.
+4. Complete official venue resource and correctness checks for every declared
+   split, then verify the final checkout, wheel, source distribution, container
+   context, and documentation against the release identities.
+
+The acceptance coverage to retain as implementation evolves is:
 
 - Numerical: hand-computed required gates; each NS backward/forward failure;
   FLASH residual failures and non-rejecting diagnostics; nonzero captured warm

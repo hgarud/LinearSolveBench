@@ -53,3 +53,34 @@ estimator_repeats = 3
 estimator_guard_factor = 3.0
 onenormest_t = 4
 onenormest_itmax = 10
+
+# Pilot settings are resolved from each frozen release manifest. The sections
+# above continue to describe the original v1 benchmark.
+[pilot]
+id = "linear-solver-bench-pilot-cpu-v2"
+schema_version = 2
+execution_contract = "independent-case-once-v1"
+repetitions = 1
+settings_source = "release_manifest"
+
+[pilot.ns_mesh]
+family = "ns-mesh-pde"
+track = "coverage"
+accuracy_contract = "ns-mesh-accuracy-v1"
+scoring_contract = "ns-coverage-count-v1"
+development_manifest = "ns-mesh-dev-pilot"
+normwise_backward_limit = 1.0e-10
+componentwise_backward_limit = 1.0e-8
+forward_limit = 1.0e-5
+ranking = "solved_count"
+timing_reference_required = false
+
+[pilot.flash_replay]
+family = "magnetic_diffusion_flash"
+track = "replay"
+accuracy_contract = "flash-replay-accuracy-v1"
+scoring_contract = "flash-replay-speedup-v1"
+dataset_repository = "hgarud/LinearSolveBench"
+relative_residual_slack = 1.0e-6
+ranking = "weighted_geometric_speedup"
+timing_reference_required = true
