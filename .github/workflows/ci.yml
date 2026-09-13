@@ -72,4 +72,6 @@ jobs:
         run: |
           cd "$RUNNER_TEMP"
           linear-solver-bench runtime build --output runtime --jobs 2
+          linear-solver-bench runtime build --output runtime-check --jobs 2
+          python -c 'import json; a=json.load(open("runtime/manifest.json")); b=json.load(open("runtime-check/manifest.json")); assert a == b, "clean runtime builds must be identical"'
           linear-solver-bench candidate validate "$GITHUB_WORKSPACE/submissions/starter.c" --runtime runtime

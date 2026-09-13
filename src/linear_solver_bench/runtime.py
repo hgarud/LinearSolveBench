@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 import pathlib
+import shlex
 import shutil
 import tempfile
 import uuid
@@ -36,8 +37,13 @@ class Runtime:
     nm: str
 
 
-def _run(command: tuple[str, ...], *, timeout_s: float = 900.0) -> str:
-    result = bounded_process(command, timeout_s=timeout_s)
+def _run(
+    command: tuple[str, ...],
+    *,
+    timeout_s: float = 900.0,
+    env: dict[str, str] | None = None,
+) -> str:
+    result = bounded_process(command, timeout_s=timeout_s, env=env)
     if result.returncode != 0:
         output = result.output.decode("utf-8", errors="replace")
         raise RuntimeError(
@@ -132,6 +138,27 @@ def build_runtime(
             tree = _run((tools["git"], "-C", str(source), "rev-parse", "HEAD^{tree}"))
             if commit != HYPRE_COMMIT or tree != HYPRE_TREE:
                 raise RuntimeError("HYPRE source identity mismatch")
+            # HYPRE error paths use __FILE__. Without normalization, random
+            # temporary directories alter the static library and invalidate
+            # an otherwise identical runtime's frozen reference calibration.
+            prefix_map = shlex.quote(
+                f"-ffile-prefix-map={work}=/linear-solver-bench/runtime"
+            )
+            build_env = {
+                **os.environ,
+                "SOURCE_DATE_EPOCH": _run(
+                    (
+                        tools["git"],
+                        "-C",
+                        str(source),
+                        "show",
+                        "-s",
+                        "--format=%ct",
+                        "HEAD",
+                    )
+                ),
+                "ZERO_AR_DATE": "1",
+            }
             _run(
                 (
                     tools["cmake"],
@@ -143,6 +170,8 @@ def build_runtime(
                     "Ninja",
                     f"-DCMAKE_INSTALL_PREFIX={install}",
                     "-DCMAKE_BUILD_TYPE=Release",
+                    f"-DCMAKE_C_FLAGS={prefix_map}",
+                    f"-DCMAKE_CXX_FLAGS={prefix_map}",
                     "-DBUILD_SHARED_LIBS=OFF",
                     "-DHYPRE_ENABLE_MPI=OFF",
                     "-DHYPRE_ENABLE_OPENMP=OFF",
@@ -155,7 +184,8 @@ def build_runtime(
                     "-DHYPRE_ENABLE_MIXEDINT=OFF",
                     "-DHYPRE_BUILD_EXAMPLES=OFF",
                     "-DHYPRE_BUILD_TESTS=OFF",
-                )
+                ),
+                env=build_env,
             )
             _run(
                 (
@@ -166,7 +196,8 @@ def build_runtime(
                     "install",
                     "--parallel",
                     str(jobs),
-                )
+                ),
+                env=build_env,
             )
             libraries = tuple(install.rglob("libHYPRE.a"))
             if len(libraries) != 1:
@@ -192,13 +223,16 @@ def build_runtime(
                     "-O3",
                     "-DNDEBUG",
                     "-fno-omit-frame-pointer",
+                    f"-ffile-prefix-map={native_dir()}=/linear-solver-bench/native",
+                    f"-ffile-prefix-map={staging}=/linear-solver-bench/runtime",
                     "-I",
                     str(staging / "include"),
                     "-c",
                     str(native_dir() / "src" / "driver.cpp"),
                     "-o",
                     str(staging / "trusted" / "driver.o"),
-                )
+                ),
+                env=build_env,
             )
         body = _manifest_body(staging, tools)
         body_json = json.dumps(
