@@ -110,6 +110,7 @@ def run_repeat(
     index: int,
     deadline_s: float,
     maximum_iterations: int = MAXIMUM_ITERATIONS,
+    accuracy_contract_id: str = ACCURACY_CONTRACT_ID,
 ) -> RepeatResult:
     with tempfile.TemporaryDirectory(prefix="lsb-case-") as temporary:
         root = pathlib.Path(temporary)
@@ -186,6 +187,7 @@ def run_repeat(
             driver.solution,
             status=driver.status,
             input_mutated=driver.input_mutated,
+            contract_id=accuracy_contract_id,
         )
         return RepeatResult(
             index,
