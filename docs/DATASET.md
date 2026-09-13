@@ -47,11 +47,24 @@ Sensitive cases need additional uncertainty analysis before publication; see
 
 The publication destination is the public, ungated
 [LinearSolveBench dataset on Hugging Face](https://huggingface.co/datasets/hgarud/LinearSolveBench).
-Publication is in progress. The intended inventory contains 344 admitted
-captured systems: 96 development cases and 248 ranked cases, of which 88 are
-correctness controls. Public release manifests must use immutable Hugging Face
-commit URLs and verified file hashes; a destination URL alone is not a frozen
-release.
+The published inventory contains 344 admitted captured systems: 96 development
+cases and 248 ranked cases, of which 88 are correctness controls. Manifests
+`flash-replay-dev-pilot` and `flash-replay-ranked-pilot` share release identity
+`flash-replay-pilot` and pin dataset commit
+`3da5eda0ce3e85da1808d4b62d28d9111127e354`. Archive and canonical matrix/vector
+hashes are frozen in each manifest.
+
+```bash
+linear-solver-bench dataset prepare \
+  --release flash-replay-dev-pilot --output data/prepared/flash-dev
+```
+
+The captures come from FLASH 4.8 AlWire, driven two-dimensional ZPinch, and
+MagDiff test-problem variants, primarily during startup. There are 13 source
+runs and 10 provenance groups. Dimensions range from 4,224 to 196,608 and
+nonzero counts from 16,420 to 2,153,480. The catalogue documents the limited
+near-duplicate audit: it compares identical canonical sparsity patterns and
+does not claim permutation invariance.
 
 Every case is a standalone ZIP archive with exactly:
 

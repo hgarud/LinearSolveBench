@@ -30,16 +30,16 @@ and qualification. Store it outside candidate-visible paths and images.
 
 ## Qualify and score FLASH replay
 
-These commands apply once a FLASH release manifest is published. The named
-release file and reference source are operator-supplied inputs; the public
-Hugging Face dataset and a passing public timing reference are separate
-publication requirements.
+The public FLASH manifests are `flash-replay-dev-pilot` and
+`flash-replay-ranked-pilot`. The fixed reference implementation is
+`submissions/gmres_amg.c`. Dataset publication and qualification of a timing
+reference on the chosen execution environment are separate steps.
 
 ```bash
 linear-solver-bench dataset prepare \
-  --release releases/flash-ranked.json --output data/prepared/flash-ranked
+  --release flash-replay-ranked-pilot --output data/prepared/flash-ranked
 modal run modal_app.py \
-  --source operator/reference.c --cases data/prepared/flash-ranked \
+  --source submissions/gmres_amg.c --cases data/prepared/flash-ranked \
   --output results/flash-reference.json
 linear-solver-bench calibrate results/flash-reference.json \
   --output operator/flash-calibration.json

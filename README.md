@@ -69,12 +69,16 @@ for trusted release checks, resource limits, and reference calibration.
 
 ## FLASH replay data
 
-FLASH cases are being published to the public
+FLASH cases are available from the public, ungated
 [LinearSolveBench dataset on Hugging Face](https://huggingface.co/datasets/hgarud/LinearSolveBench).
 The planned release contains 96 development cases and 248 ranked cases, including
 88 correctness controls. Each downloadable case contains `matrix.npz`, `b.npy`,
 `x0.npy`, and `case.json`. The numerical inputs retain their captured values;
 using them requires neither FLASH nor access to its source.
+
+The manifests `flash-replay-dev-pilot` and `flash-replay-ranked-pilot` pin dataset
+commit `3da5eda0ce3e85da1808d4b62d28d9111127e354`. Prepare either split with
+`dataset prepare --release <manifest ID> --output <directory>`.
 
 Publication and qualification of a public timing reference are separate steps.
 Use a published, commit-pinned release manifest once available. A replay report
