@@ -1,5 +1,10 @@
 # NS development/ranked split review
 
+This is the historical review of `ns-mesh-pilot`. The
+[cohort v2 review](NS_COHORT_V2.md) records its replacement selection, additional
+source screening, qualification status, and remaining limitations. The frozen
+43-case inventory and the findings below remain unchanged for reproducibility.
+
 Status: **the current 11-development/32-ranked partition is provisional for
 representativeness**. Its 43 workloads remain numerically qualified and its full
 Modal execution remains validated. Those checks establish feasible accuracy
