@@ -24,6 +24,18 @@ RHS_SCHEME = "rademacher-hmac-sha256-v2"
 # A release is added here only after its data and qualification are published.
 PUBLISHED_RELEASES: dict[tuple[str, str, str, str], str] = {
     (
+        "ns-mesh-cohort-v2",
+        "ns-mesh-pde",
+        "coverage",
+        "dev",
+    ): "9927ea72bac431d871b0547b966f9ce78b550ca0d1285c7060cdcb2e3e688ecc",
+    (
+        "ns-mesh-cohort-v2",
+        "ns-mesh-pde",
+        "coverage",
+        "ranked",
+    ): "a86a2d42765364bcadd48fdef22dc2f0900d04e98fe4fe49fe551b84d591ad52",
+    (
         "ns-mesh-dev-pilot",
         "ns-mesh-pde",
         "coverage",

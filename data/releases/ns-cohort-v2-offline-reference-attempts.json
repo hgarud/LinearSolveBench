@@ -1,0 +1,208 @@
+{
+  "cases": [
+    {
+      "attempts": [
+        {
+          "attempt_index": 1,
+          "configuration_source": {
+            "arguments": {},
+            "commit": "6a0aa48d063a4cfdc8292f3fdced8b9c89e33c84",
+            "path": "src/linear_solver_bench/manifests.py",
+            "symbol": "ITERATIVE_QUALIFICATION_CONFIG"
+          },
+          "error": {
+            "category": "incomplete_factorization_breakdown",
+            "description": "The incomplete factors broke down before a reference solve. This does not prove that the original operator is singular."
+          },
+          "limits": {
+            "cpus": 2,
+            "memory_bytes": 34359738368,
+            "retries": 0,
+            "timeout_seconds": 3600
+          },
+          "method": "independent-equilibrated-gmres-ilu-refined-v1",
+          "outcome": "reference_construction_failure",
+          "peak_rss_bytes": 3140866048,
+          "qualification_sha256": null,
+          "wall_seconds": 75.042389158,
+          "wall_time_basis": "worker-measurement"
+        },
+        {
+          "attempt_index": 2,
+          "configuration_source": {
+            "arguments": {
+              "refine": true
+            },
+            "commit": "6a0aa48d063a4cfdc8292f3fdced8b9c89e33c84",
+            "path": "src/linear_solver_bench/workloads.py",
+            "symbol": "qualify_ns"
+          },
+          "error": null,
+          "limits": {
+            "cpus": 2,
+            "memory_bytes": 34359738368,
+            "retries": 0,
+            "timeout_seconds": 3600
+          },
+          "method": "independent-sparse-lu-refined-v1",
+          "outcome": "qualified",
+          "peak_rss_bytes": 9319997440,
+          "qualification_sha256": "5ac6fffc4e7b0f7979d3a80cf2ff94fdecc02f1c36eef52292211d806fb8c6d3",
+          "wall_seconds": 268.541886022,
+          "wall_time_basis": "worker-measurement"
+        }
+      ],
+      "case_id": "ss-2647-rademacher-0",
+      "input_archive_sha256": "c1882d63d2c94d763093734d4e69e463d20538c262fb852f20bdb9e0bf7d3ada",
+      "matrix_id": 2647,
+      "matrix_sha256": "ca8bec7cb0cff6f0166f52b96e31c642b8bf283b358f383e879c714f55abbabc",
+      "split": "dev",
+      "system_sha256": "aa09b0da6997c40e7f7aba5c2059c6f9cb0dcda7aec4bde27102ea917267de15"
+    },
+    {
+      "attempts": [
+        {
+          "attempt_index": 1,
+          "configuration_source": {
+            "arguments": {},
+            "commit": "6a0aa48d063a4cfdc8292f3fdced8b9c89e33c84",
+            "path": "src/linear_solver_bench/manifests.py",
+            "symbol": "ITERATIVE_QUALIFICATION_CONFIG"
+          },
+          "error": {
+            "category": "offline_reference_time_limit",
+            "description": "The first refinement solve did not finish before the fixed deadline; qualification gates were not evaluated."
+          },
+          "last_observed_peak_rss_bytes": 4158009344,
+          "last_observed_worker_seconds": 3540.507292666,
+          "limits": {
+            "cpus": 2,
+            "memory_bytes": 34359738368,
+            "retries": 0,
+            "timeout_seconds": 3600
+          },
+          "method": "independent-equilibrated-gmres-ilu-refined-v1",
+          "outcome": "offline_time_limit",
+          "peak_rss_bytes": null,
+          "qualification_sha256": null,
+          "wall_seconds": 3600.0,
+          "wall_time_basis": "enforced-time-limit"
+        },
+        {
+          "attempt_index": 2,
+          "client_total_wall_seconds": 771.5075580830453,
+          "configuration_source": {
+            "arguments": {},
+            "commit": "e1b77aa58d9f3f5f6f0a0f05d835b06c78b9ac39",
+            "path": "src/linear_solver_bench/manifests.py",
+            "symbol": "PYAMG_QUALIFICATION_CONFIG"
+          },
+          "error": {
+            "category": "operator_cancelled_for_stopping_rule_review",
+            "description": "The operator stopped this attempt during its first correction solve to review a potentially excessive inner stopping requirement. There was no final convergence or accuracy verdict, and the cause of slow correction convergence was not established."
+          },
+          "last_observed_peak_rss_bytes": 2539720704,
+          "last_observed_worker_seconds": 720.480156373,
+          "limits": {
+            "cpus": 2,
+            "memory_bytes": 34359738368,
+            "retries": 0,
+            "timeout_seconds": 3600
+          },
+          "method": "independent-pyamg-sa-gmres-refined-v1",
+          "outcome": "operator_cancelled",
+          "peak_rss_bytes": null,
+          "qualification_sha256": null,
+          "wall_seconds": null,
+          "wall_time_basis": "worker-completion-unavailable"
+        },
+        {
+          "attempt_index": 3,
+          "configuration_source": {
+            "arguments": {},
+            "commit": "db9c6f61022f6aa75da3b512093b8bb8c21385ce",
+            "path": "src/linear_solver_bench/manifests.py",
+            "symbol": "PYAMG_INEXACT_QUALIFICATION_CONFIG"
+          },
+          "error": null,
+          "limits": {
+            "cpus": 2,
+            "memory_bytes": 34359738368,
+            "retries": 0,
+            "timeout_seconds": 3600
+          },
+          "method": "independent-pyamg-sa-gmres-refined-v2",
+          "outcome": "qualified",
+          "peak_rss_bytes": 2471686144,
+          "qualification_sha256": "818ae441d2593a0db6ae15f89a3843410b550de154c00ce410a8adab74b59408",
+          "wall_seconds": 174.37536067,
+          "wall_time_basis": "worker-measurement"
+        }
+      ],
+      "case_id": "ss-2649-rademacher-0",
+      "input_archive_sha256": "d352c485d334072fcc43f85f0748edee4d42ee88bc2156d808a58c4979f07753",
+      "matrix_id": 2649,
+      "matrix_sha256": "d9a4f1d3d74e7fcb653fd37dabf9311d606b909ded878fabc69d7c50e2630678",
+      "split": "dev",
+      "system_sha256": "d1f733e42338333c2587e1fdbca0639ee92d3a13e4779e014348ff3dcc26f364"
+    },
+    {
+      "attempts": [
+        {
+          "attempt_index": 1,
+          "configuration_source": {
+            "arguments": {
+              "refine": true
+            },
+            "commit": "6a0aa48d063a4cfdc8292f3fdced8b9c89e33c84",
+            "path": "src/linear_solver_bench/workloads.py",
+            "symbol": "qualify_ns"
+          },
+          "error": null,
+          "limits": {
+            "cpus": 2,
+            "memory_bytes": 34359738368,
+            "retries": 0,
+            "timeout_seconds": 3600
+          },
+          "method": "independent-sparse-lu-refined-v1",
+          "outcome": "qualified",
+          "peak_rss_bytes": 1694924800,
+          "qualification_sha256": "e2c4bd8f1a597623edf4b870f70c9fa3a04406026ef284433540611a356bb654",
+          "wall_seconds": 43.64114237,
+          "wall_time_basis": "worker-measurement"
+        }
+      ],
+      "case_id": "ss-2815-rademacher-0",
+      "input_archive_sha256": "02a1d48cea31667e36b0941c5d431ab64b27ad3a7c8af914ca5c77976d9dc537",
+      "matrix_id": 2815,
+      "matrix_sha256": "c2444f6a9d18042b655813b41ea648b3446653b852f162882e611461679966d2",
+      "split": "ranked",
+      "system_sha256": "78b5830288582ffbfc767f725d1bef0d3870eaf0d5f03b1e40c405da7dcb910c"
+    }
+  ],
+  "configured_environment": {
+    "numpy": "2.5.1",
+    "pyamg_for_multigrid_method": "5.3.0",
+    "python_series": "3.12",
+    "scipy": "1.18.0"
+  },
+  "family": "ns-mesh-pde",
+  "input_archive_encoding": "Trusted schema-v2 numerical-system NPZ used by the offline worker. Original SuiteSparse archives are separately pinned in the release manifests.",
+  "interpretation": "Every attempt for a case uses the same frozen input arrays and all four tenfold qualification gates. Hashes establish identity, not report authenticity.",
+  "inventory_sha256": "c75a0950928991e9958e6c13e482abab3a2329af6346ad24d7e219e9ee72c5ba",
+  "kind": "linear-solver-bench-offline-reference-attempts",
+  "manifest_sha256": "ad3dae71a34714fb98a067adbd99b1057fdf693b39655a85336bdafd82c404af",
+  "purpose": "Offline numerical qualification; these measurements are not candidate performance results.",
+  "qualification_digest_encoding": "SHA-256 of canonical ASCII JSON, sorted keys, compact separators",
+  "qualification_limits": {
+    "componentwise_backward_error": 1e-09,
+    "normwise_backward_error": 1e-11,
+    "relative_l2_forward_error": 1e-06,
+    "relative_linf_forward_error": 1e-06
+  },
+  "release_id": "ns-mesh-cohort-v2",
+  "schema_version": 1,
+  "selection_sha256": "606ca7f230261c72d49287da8d4600ea123707e302928ecff13e3b374d6eb024",
+  "track": "coverage"
+}
