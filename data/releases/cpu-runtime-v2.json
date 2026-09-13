@@ -1,0 +1,42 @@
+{
+  "build_kind": "sequential-cpu-float64-int32-static",
+  "candidate_factory_export": "solver_create",
+  "files": {
+    "driver_object": {
+      "path": "trusted/driver.o",
+      "sha256": "475dff40d6b8378476332cacf5f906e5f1590371b495c075b34166a0596c5570"
+    },
+    "hypre_library": {
+      "path": "lib/libHYPRE.a",
+      "sha256": "4e474d9dab14564d856e21193a4148e8a0417b8a9e991da3ae541da3ed5e8cca"
+    },
+    "policy_header": {
+      "path": "include/nsl_hypre_solver.h",
+      "sha256": "04219a73af84e14349ee482c0bc486927f73c30c73a0cdf7aeef533763756e1e"
+    }
+  },
+  "hypre_commit": "e0ce7986941ce27111587ee7ea635ef7ca2eca94",
+  "hypre_repository": "https://github.com/hypre-space/hypre.git",
+  "hypre_tree": "c985eacc03d590011ab7652fe6fc4e9b25f1064d",
+  "include_tree_sha256": "9cbae3f8087e1c5651269ecc95ef343b1210af84e3fbcdb82c379e1ff437aa4f",
+  "krylov_primitive_abi": "hypre-native-krylov-solver-v4",
+  "krylov_primitive_surface_sha256": "4524a309eb6503155829c08922e8e7b2db9ea1dc6cc998909a5c6e36808115e7",
+  "manifest_sha256": "4b09e68ce2fc17261c1d776bb01d63ec40f8f92388b9aff95c046f7c1f8bb076",
+  "schema_version": 1,
+  "tool_versions": {
+    "cc": "cc (Debian 14.2.0-19) 14.2.0",
+    "cmake": "cmake version 3.31.6",
+    "cxx": "c++ (Debian 14.2.0-19) 14.2.0",
+    "git": "git version 2.47.3",
+    "ninja": "1.12.1",
+    "nm": "GNU nm (GNU Binutils for Debian) 2.44"
+  },
+  "tools": {
+    "cc": "/usr/bin/cc",
+    "cmake": "/usr/bin/cmake",
+    "cxx": "/usr/bin/c++",
+    "git": "/usr/bin/git",
+    "ninja": "/usr/bin/ninja",
+    "nm": "/usr/bin/nm"
+  }
+}

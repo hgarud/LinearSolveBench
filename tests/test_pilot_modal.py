@@ -388,9 +388,16 @@ def test_compressed_input_exec_is_bounded_and_preserves_bytes(
     executable.chmod(0o755)
     result = subprocess.run(
         [
-            sys.executable, "-c", venue_module._PILOT_INPUT_EXEC,
-            str(expected_size), str(archive), str(executable),
-            str(input_path), str(output_path), "5000", "90",
+            sys.executable,
+            "-c",
+            venue_module._PILOT_INPUT_EXEC,
+            str(expected_size),
+            str(archive),
+            str(executable),
+            str(input_path),
+            str(output_path),
+            "5000",
+            "90",
         ],
         capture_output=True,
         check=False,

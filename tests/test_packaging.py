@@ -130,6 +130,10 @@ def test_archives_include_public_resources_only(distributions):
             "data/ns-mesh-pilot-ranked.json",
             "data/flash-replay-dev-pilot.json",
             "data/flash-replay-ranked-pilot.json",
+            "data/releases/flash-replay-dev-reference.json",
+            "data/releases/flash-replay-ranked-reference.json",
+            "data/releases/cpu-runtime-v2.json",
+            "data/releases/README.md",
             "data/qualification.json",
             "data/qualification-inputs-v1.json",
             "data/NOTICE.md",
@@ -163,11 +167,13 @@ def test_wheel_resources_work_outside_checkout(distributions, tmp_path):
     environment["PYTHONPATH"] = str(wheel)
     script = """
 import pathlib
+import json
 import sys
 import linear_solver_bench
 from linear_solver_bench.dataset import load_split
 from linear_solver_bench.manifests import load_release
 from linear_solver_bench.paths import data_dir, native_dir, repository_root
+from linear_solver_bench.pilot_scoring import score_pilot_report
 assert linear_solver_bench.__file__.startswith(sys.argv[1])
 assert load_split("dev")["case_count"] > 0
 assert (repository_root() / "benchmark.toml").is_file()
@@ -176,6 +182,11 @@ for name in ("ns-mesh-pilot-dev", "ns-mesh-pilot-ranked",
              "flash-replay-dev-pilot", "flash-replay-ranked-pilot"):
     release = load_release(data_dir() / (name + ".json"), official=True)
     assert release["cases"]
+for split in ("dev", "ranked"):
+    reference = json.loads((data_dir() / "releases" /
+        ("flash-replay-" + split + "-reference.json")).read_text())
+    score = score_pilot_report(reference["reference_report"], reference)
+    assert score["official"] and score["speedup"] == 1.0
 assert (native_dir() / "src" / "driver.cpp").is_file()
 assert (native_dir() / "include" / "nsl_hypre_solver.h").is_file()
 assert pathlib.Path.cwd() not in repository_root().parents

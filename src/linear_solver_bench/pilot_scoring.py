@@ -12,7 +12,18 @@ from .families import resolve_track
 # Add an entry only after the complete reference artifact has been published.
 # One frozen calibration is trusted for each release, runtime, and venue.
 # This registry expresses operator policy; it does not authenticate reports.
-PUBLISHED_REPLAY_REFERENCES: dict[tuple[str, str, str], str] = {}
+PUBLISHED_REPLAY_REFERENCES: dict[tuple[str, str, str], str] = {
+    (
+        "02a8e24e667b96029f0c8db627f87c237549778a63f3342a73010e7278876669",
+        "4b09e68ce2fc17261c1d776bb01d63ec40f8f92388b9aff95c046f7c1f8bb076",
+        "modal-sandbox-pilot-cpu-v2",
+    ): "4553a052889aa53cca57aa213329952dc27c33cbb90fc25beaae81946cb02c25",
+    (
+        "1ce0ec20c66123773215543e2d43375104f43113a9416c59fb0e9625a9975b79",
+        "4b09e68ce2fc17261c1d776bb01d63ec40f8f92388b9aff95c046f7c1f8bb076",
+        "modal-sandbox-pilot-cpu-v2",
+    ): "54d05b8d04970ffc885c82ffee41113382740256f2fe491025b8f47b72a6ff72",
+}
 
 
 def _hash(value: object) -> bool:
