@@ -392,6 +392,13 @@ def qualify_ns_pyamg(system: EvaluationSystem) -> dict:
     return qualify(system)
 
 
+def qualify_ns_pyamg_inexact(system: EvaluationSystem) -> dict:
+    """Run the optional v2 reference with fixed inexact inner corrections."""
+    from .reference_pyamg import qualify_ns_pyamg_inexact as qualify
+
+    return qualify(system)
+
+
 def _binary64_units(value: float) -> int:
     """Represent a finite binary64 number exactly in units of 2**-1074."""
     numerator, denominator = float(value).as_integer_ratio()

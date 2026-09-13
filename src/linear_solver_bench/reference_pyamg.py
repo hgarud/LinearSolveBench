@@ -16,12 +16,10 @@ import scipy
 from scipy.sparse.linalg import gmres
 
 from .manifests import (
-    PYAMG_QUALIFICATION_CONFIG as CONFIG,
-)
-from .manifests import (
-    PYAMG_QUALIFICATION_METHOD as METHOD,
-)
-from .manifests import (
+    PYAMG_INEXACT_QUALIFICATION_CONFIG,
+    PYAMG_INEXACT_QUALIFICATION_METHOD,
+    PYAMG_QUALIFICATION_CONFIG,
+    PYAMG_QUALIFICATION_METHOD,
     QUALIFICATION_LIMITS,
     validate_qualification,
 )
@@ -30,6 +28,18 @@ from .workloads import _extended_residual, system_digest
 
 
 def qualify_ns_pyamg(system):
+    """Retain the original v1 method and its exact evidence format."""
+    return _qualify(system, PYAMG_QUALIFICATION_METHOD, PYAMG_QUALIFICATION_CONFIG)
+
+
+def qualify_ns_pyamg_inexact(system):
+    """Use fixed inexact inner corrections; only the final gates admit a case."""
+    return _qualify(
+        system, PYAMG_INEXACT_QUALIFICATION_METHOD, PYAMG_INEXACT_QUALIFICATION_CONFIG
+    )
+
+
+def _qualify(system, method, config):
     try:
         import pyamg
     except ImportError as exc:
@@ -37,7 +47,7 @@ def qualify_ns_pyamg(system):
             "install linear-solver-bench[qualification] for this offline method"
         ) from exc
 
-    if pyamg.__version__ != CONFIG["pyamg_version"]:
+    if pyamg.__version__ != config["pyamg_version"]:
         raise ValueError("the reference requires exactly PyAMG 5.3.0")
     if system.reference_kind != "manufactured" or system.x_star is None:
         raise ValueError("NS qualification requires its manufactured target")
@@ -51,25 +61,25 @@ def qualify_ns_pyamg(system):
         operator,
         B=np.ones((matrix.n, 1)),
         BH=np.ones((matrix.n, 1)),
-        symmetry=CONFIG["symmetry"],
-        strength=tuple(CONFIG["strength"]),
-        aggregate=CONFIG["aggregate"],
-        smooth=tuple(CONFIG["smooth"]),
-        presmoother=tuple(CONFIG["presmoother"]),
-        postsmoother=tuple(CONFIG["postsmoother"]),
-        improve_candidates=CONFIG["improve_candidates"],
-        diagonal_dominance=CONFIG["diagonal_dominance"],
-        max_levels=CONFIG["max_levels"],
-        max_coarse=CONFIG["max_coarse"],
-        coarse_solver=CONFIG["coarse_solver"],
-        keep=CONFIG["keep"],
+        symmetry=config["symmetry"],
+        strength=tuple(config["strength"]),
+        aggregate=config["aggregate"],
+        smooth=tuple(config["smooth"]),
+        presmoother=tuple(config["presmoother"]),
+        postsmoother=tuple(config["postsmoother"]),
+        improve_candidates=config["improve_candidates"],
+        diagonal_dominance=config["diagonal_dominance"],
+        max_levels=config["max_levels"],
+        max_coarse=config["max_coarse"],
+        coarse_solver=config["coarse_solver"],
+        keep=config["keep"],
     )
     # PyAMG 5.3.0 aspreconditioner applies precisely one cycle with a zero guess.
     # The hierarchy and linear cycle are reused unchanged for every GMRES call.
-    preconditioner = hierarchy.aspreconditioner(cycle=CONFIG["preconditioner_cycle"])
+    preconditioner = hierarchy.aspreconditioner(cycle=config["preconditioner_cycle"])
     solves = []
 
-    def solve(rhs):
+    def solve(rhs, rtol):
         if not np.all(np.isfinite(rhs)):
             raise ValueError("reference correction is not finite")
         iterations = 0
@@ -83,25 +93,49 @@ def qualify_ns_pyamg(system):
             rhs,
             x0=np.zeros(matrix.n),
             M=preconditioner,
-            restart=CONFIG["restart"],
-            maxiter=CONFIG["max_restart_cycles"],
-            rtol=CONFIG["rtol"],
-            atol=CONFIG["atol"],
+            restart=config["restart"],
+            maxiter=config["max_restart_cycles"],
+            rtol=rtol,
+            atol=config["atol"],
             callback=count,
             callback_type="pr_norm",
         )
-        solves.append({"info": int(info), "inner_iterations": iterations})
         if info != 0 or not np.all(np.isfinite(answer)):
             raise ValueError("independent PyAMG-GMRES reference did not converge")
+        record = {"info": int(info), "inner_iterations": iterations}
+        if method == PYAMG_INEXACT_QUALIFICATION_METHOD:
+            # Diagnostic recomputation on the original operator, not the
+            # preconditioned callback norm or a convergence guarantee.
+            residual = _extended_residual(matrix, rhs, answer)
+            numerator = np.sqrt(np.sum(residual * residual, dtype=np.longdouble))
+            extended_rhs = rhs.astype(np.longdouble)
+            denominator = np.sqrt(
+                np.sum(extended_rhs * extended_rhs, dtype=np.longdouble)
+            )
+            relative = (
+                float(numerator / denominator)
+                if denominator
+                else (0.0 if numerator == 0 else math.inf)
+            )
+            if not math.isfinite(relative):
+                raise ValueError("reference solve residual diagnostic is not finite")
+            record.update(
+                rtol=rtol,
+                residual_method="extended-precision-residual-v1",
+                relative_l2_residual=relative,
+            )
+        solves.append(record)
         return answer
 
-    reference = solve(system.public.b)
-    for _ in range(CONFIG["refinement_steps"]):
+    reference = solve(system.public.b, config["rtol"])
+    for _ in range(config["refinement_steps"]):
         with np.errstate(over="ignore", invalid="ignore"):
             residual = np.asarray(
                 _extended_residual(matrix, system.public.b, reference), dtype=np.float64
             )
-            reference = reference + solve(residual)
+            reference = reference + solve(
+                residual, config.get("refinement_rtol", config["rtol"])
+            )
         if not np.all(np.isfinite(reference)):
             raise ValueError("refined independent reference is not finite")
     observed = accuracy_metrics(system, reference)
@@ -122,7 +156,7 @@ def qualify_ns_pyamg(system):
     if not math.isfinite(relative):
         raise ValueError("RHS formation diagnostic is not finite")
     evidence = {
-        "method": METHOD,
+        "method": method,
         "qualified": True,
         "system_sha256": system_digest(system),
         "metrics": metrics,
@@ -133,7 +167,7 @@ def qualify_ns_pyamg(system):
         },
         "uncertainty": "empirical-feasibility-only",
         "reference_solver": {
-            "configuration": copy.deepcopy(CONFIG),
+            "configuration": copy.deepcopy(config),
             "implementation": {
                 "numpy": np.__version__,
                 "scipy": scipy.__version__,

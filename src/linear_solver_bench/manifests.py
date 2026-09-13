@@ -7,6 +7,7 @@ unpublished, clearly identified draft releases for preparation and local work.
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import math
@@ -112,6 +113,14 @@ PYAMG_QUALIFICATION_CONFIG = {
 }
 
 
+# Keep v1 evidence reproducible; v2 changes only the two inner correction stops.
+PYAMG_INEXACT_QUALIFICATION_METHOD = "independent-pyamg-sa-gmres-refined-v2"
+PYAMG_INEXACT_QUALIFICATION_CONFIG = {
+    **copy.deepcopy(PYAMG_QUALIFICATION_CONFIG),
+    "refinement_rtol": 1e-2,
+}
+
+
 def strict_object(value: object, keys: set[str], label: str) -> dict:
     if not isinstance(value, dict) or set(value) != keys:
         raise ValueError(f"{label} fields do not match the public schema")
@@ -213,6 +222,7 @@ def validate_qualification(value: object, system_sha256: str | None = None) -> N
     iterative = isinstance(value, dict) and value.get("method") in {
         ITERATIVE_QUALIFICATION_METHOD,
         PYAMG_QUALIFICATION_METHOD,
+        PYAMG_INEXACT_QUALIFICATION_METHOD,
     }
     keys = {
         "method",
@@ -239,6 +249,7 @@ def validate_qualification(value: object, system_sha256: str | None = None) -> N
             "strict-row-diagonal-dominance-v1",
             ITERATIVE_QUALIFICATION_METHOD,
             PYAMG_QUALIFICATION_METHOD,
+            PYAMG_INEXACT_QUALIFICATION_METHOD,
         }
         or evidence["qualified"] is not True
     ):
@@ -295,10 +306,16 @@ def _same_typed_value(value: object, expected: object) -> bool:
 
 
 def _validate_iterative_reference(value: object, method: str) -> None:
-    multigrid = method == PYAMG_QUALIFICATION_METHOD
-    expected = (
-        PYAMG_QUALIFICATION_CONFIG if multigrid else ITERATIVE_QUALIFICATION_CONFIG
-    )
+    inexact = method == PYAMG_INEXACT_QUALIFICATION_METHOD
+    multigrid = method in {
+        PYAMG_QUALIFICATION_METHOD,
+        PYAMG_INEXACT_QUALIFICATION_METHOD,
+    }
+    expected = {
+        PYAMG_QUALIFICATION_METHOD: PYAMG_QUALIFICATION_CONFIG,
+        PYAMG_INEXACT_QUALIFICATION_METHOD: PYAMG_INEXACT_QUALIFICATION_CONFIG,
+        ITERATIVE_QUALIFICATION_METHOD: ITERATIVE_QUALIFICATION_CONFIG,
+    }[method]
     keys = {"configuration", "implementation", "solves"}
     if multigrid:
         keys.add("hierarchy")
@@ -320,8 +337,20 @@ def _validate_iterative_reference(value: object, method: str) -> None:
     if not isinstance(solves, list) or len(solves) != 3:
         raise ValueError("iterative reference requires one solve and two corrections")
     limit = expected["restart"] * expected["max_restart_cycles"]
-    for solve in solves:
-        strict_object(solve, {"info", "inner_iterations"}, "reference solve")
+    for index, solve in enumerate(solves):
+        solve_keys = {"info", "inner_iterations"}
+        if inexact:
+            solve_keys |= {"rtol", "residual_method", "relative_l2_residual"}
+        strict_object(solve, solve_keys, "reference solve")
+        if inexact:
+            rtol = expected["rtol"] if index == 0 else expected["refinement_rtol"]
+            if not _same_typed_value(solve["rtol"], rtol):
+                raise ValueError("reference solve tolerance differs from its version")
+            if solve["residual_method"] != "extended-precision-residual-v1":
+                raise ValueError("unknown reference solve residual diagnostic")
+            finite_number(
+                solve["relative_l2_residual"], "solve residual", positive=False
+            )
         if type(solve["info"]) is not int or solve["info"] != 0:
             raise ValueError("each iterative reference solve must converge")
         iterations = solve["inner_iterations"]

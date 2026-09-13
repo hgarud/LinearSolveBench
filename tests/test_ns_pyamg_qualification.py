@@ -116,3 +116,99 @@ def test_optional_reference_evidence_is_strict(system, change):
         reference["solves"][0]["inner_iterations"] = 12501
     with pytest.raises(ValueError):
         validate_qualification(evidence)
+
+
+def test_inexact_reference_uses_fixed_per_solve_stops_and_diagnostics(
+    system, monkeypatch
+):
+    import linear_solver_bench.reference_pyamg as reference
+    from linear_solver_bench.manifests import PYAMG_INEXACT_QUALIFICATION_METHOD
+    from linear_solver_bench.workloads import qualify_ns_pyamg_inexact
+
+    calls = []
+
+    def observed(*args, **kwargs):
+        np.testing.assert_array_equal(kwargs["x0"], np.zeros(system.public.matrix.n))
+        calls.append((kwargs["rtol"], kwargs["atol"]))
+        return gmres(*args, **kwargs)
+
+    monkeypatch.setattr(reference, "gmres", observed)
+    evidence = qualify_ns_pyamg_inexact(system)
+    assert evidence["method"] == PYAMG_INEXACT_QUALIFICATION_METHOD
+    assert calls == [(1e-13, 0.0), (1e-2, 0.0), (1e-2, 0.0)]
+    solves = evidence["reference_solver"]["solves"]
+    assert [item["rtol"] for item in solves] == [1e-13, 1e-2, 1e-2]
+    for item in solves:
+        assert item["info"] == 0
+        assert item["residual_method"] == "extended-precision-residual-v1"
+        assert np.isfinite(item["relative_l2_residual"])
+    validate_qualification(evidence, system_digest(system))
+
+
+def test_cancellation_dominated_corrections_meet_original_gates():
+    from linear_solver_bench.manifests import QUALIFICATION_LIMITS
+    from linear_solver_bench.verify import accuracy_metrics
+    from linear_solver_bench.workloads import _extended_residual
+
+    # The nearly null direction produces a correction much larger than its RHS.
+    # This is cancellation, not a test that merely scales an identity's RHS down.
+    matrix = CsrMatrix.from_scipy(sparse.csr_matrix([[1.0, -1.0], [-2.0, 2.0 + 1e-6]]))
+    target = np.array([1.0, -1.0])
+    b = matrix.matvec(target)
+    system = EvaluationSystem(
+        "synthetic-correction-cancellation",
+        MatrixInput(matrix, b, np.zeros(2), 1e-12),
+        target,
+    )
+    current = target + 0.01 * np.ones(2)
+    assert accuracy_metrics(system, current).relative_linf_forward_error > 1e-6
+
+    def solve(rhs, rtol):
+        return gmres(
+            matrix.to_scipy(),
+            rhs,
+            x0=np.zeros(2),
+            rtol=rtol,
+            atol=0.0,
+            restart=2,
+            maxiter=5,
+        )
+
+    rhs = np.asarray(_extended_residual(matrix, b, current), dtype=np.float64)
+    _, strict_info = solve(rhs, 1e-13)
+    correction, loose_info = solve(rhs, 1e-2)
+    assert strict_info != 0
+    assert loose_info == 0
+    assert np.linalg.norm(correction) > 1e5 * np.linalg.norm(rhs)
+    achieved = np.linalg.norm(rhs - matrix.matvec(correction)) / np.linalg.norm(rhs)
+    assert 1e-13 < achieved <= 1e-2
+    for _ in range(2):
+        rhs = np.asarray(_extended_residual(matrix, b, current), dtype=np.float64)
+        correction, info = solve(rhs, 1e-2)
+        assert info == 0
+        current += correction
+    metrics = accuracy_metrics(system, current)
+    for name, limit in QUALIFICATION_LIMITS.items():
+        value = getattr(metrics, name)
+        assert value is not None and np.isfinite(value) and value <= limit
+
+
+@pytest.mark.parametrize(
+    "change", ["correction_stop", "solve_stop", "nonfinite_diagnostic", "old_method"]
+)
+def test_inexact_evidence_keeps_configuration_and_diagnostics_strict(system, change):
+    from linear_solver_bench.manifests import PYAMG_QUALIFICATION_METHOD
+    from linear_solver_bench.workloads import qualify_ns_pyamg_inexact
+
+    evidence = qualify_ns_pyamg_inexact(system)
+    reference = evidence["reference_solver"]
+    if change == "correction_stop":
+        reference["configuration"]["refinement_rtol"] = 1e-3
+    elif change == "solve_stop":
+        reference["solves"][1]["rtol"] = 1e-13
+    elif change == "nonfinite_diagnostic":
+        reference["solves"][1]["relative_l2_residual"] = float("nan")
+    else:
+        evidence["method"] = PYAMG_QUALIFICATION_METHOD
+    with pytest.raises(ValueError):
+        validate_qualification(evidence)
