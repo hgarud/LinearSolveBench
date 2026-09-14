@@ -1,5 +1,9 @@
 # Dataset and provenance
 
+For a standalone overview of the current NS release, see the
+[NS Mesh PDE dataset card](NS_DATASET_CARD.md), including access, schema,
+curation, split membership, known gaps, and citation.
+
 ## Pilot releases
 
 A release manifest fixes its family, track, development or ranked split, ordered

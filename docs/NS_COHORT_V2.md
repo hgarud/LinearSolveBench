@@ -1,5 +1,8 @@
 # NS mesh cohort v2
 
+The [dataset card](NS_DATASET_CARD.md) is the reader's guide to this release.
+This review records the detailed source and selection decisions behind it.
+
 The replacement release `ns-mesh-cohort-v2` contains 49 qualified original
 operators in 24 reviewed provenance groups. It retains all 43 matrices from
 `ns-mesh-pilot` and adds six public SuiteSparse operators. Selection,

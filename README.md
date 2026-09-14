@@ -51,6 +51,9 @@ The [cohort review](docs/NS_COHORT_V2.md) publishes the selection, sources, and
 remaining single-source joint gaps; it does not claim to cover all NS PDE
 problems or equalize solver difficulty.
 
+Read the [NS dataset card](docs/NS_DATASET_CARD.md) for download access, data
+format, complete group membership, evaluation rules, limitations, and citation.
+
 Every fixed workload meets the unchanged tenfold qualification margins, using
 46 refined sparse-LU witnesses, one PyAMG/GMRES witness with inexact refinement,
 and two exact row-dominance certificates. All 49 numerical preparations also
