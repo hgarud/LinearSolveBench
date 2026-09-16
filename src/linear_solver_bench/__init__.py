@@ -1,14 +1,6 @@
-"""Trusted infrastructure for LinearSolverBench."""
+"""Public API for LinearSolverBench."""
 
-from .accuracy import ACCURACY_CONTRACT_ID, AccuracyThresholds
-from .models import CsrMatrix, EvaluationSystem, MatrixInput
+from .benchmark import evaluate
 
-__all__ = [
-    "ACCURACY_CONTRACT_ID",
-    "AccuracyThresholds",
-    "CsrMatrix",
-    "EvaluationSystem",
-    "MatrixInput",
-]
-
+__all__ = ["evaluate"]
 __version__ = "0.1.0"

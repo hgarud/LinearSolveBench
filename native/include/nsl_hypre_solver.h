@@ -60,8 +60,7 @@ HYPRE_Int hypre_ParKrylovIdentity(void *vdata, void *A, void *b, void *x);
 
 HYPRE_Int solver_create(HYPRE_Solver *solver,
                         HYPRE_Real    relative_tolerance,
-                        HYPRE_Real    absolute_tolerance,
-                        HYPRE_Int     maximum_iterations);
+                        HYPRE_Real    absolute_tolerance);
 
 #ifdef __cplusplus
 }

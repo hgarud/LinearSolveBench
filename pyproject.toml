@@ -5,22 +5,18 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "linear-solver-bench"
 version = "0.1.0"
-description = "A benchmark for AI-written HYPRE linear solvers"
+description = "A benchmark for C/HYPRE linear solvers"
 readme = "README.md"
 requires-python = ">=3.12"
 license = "Apache-2.0"
-license-files = ["LICENSE"]
-authors = [{name = "Autodidakt"}]
 dependencies = [
   "numpy>=2.0",
   "scipy>=1.14",
 ]
 
 [project.optional-dependencies]
-qualification = ["pyamg==5.3.0"]
 modal = ["modal==1.5.5"]
-test = ["pytest>=8.3", "pytest-cov>=6.0", "build>=1.2", "setuptools>=77"]
-dev = ["linear-solver-bench[modal,test]", "ruff>=0.9"]
+dev = ["linear-solver-bench[modal]", "pytest>=8.3", "ruff>=0.9"]
 
 [project.scripts]
 linear-solver-bench = "linear_solver_bench.cli:main"
@@ -28,20 +24,36 @@ linear-solver-bench = "linear_solver_bench.cli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
-[tool.setuptools.package-data]
-linear_solver_bench = ["py.typed"]
+[tool.setuptools.data-files]
+"share/linear-solver-bench/families/ns_mesh_pde" = [
+  "families/ns_mesh_pde/README.md",
+  "families/ns_mesh_pde/dev.json",
+]
+"share/linear-solver-bench/families/flash" = [
+  "families/flash/README.md",
+  "families/flash/dev.json",
+]
+"share/linear-solver-bench/examples" = ["examples/solver.c"]
+"share/linear-solver-bench/reference" = ["reference/solver.c"]
+"share/linear-solver-bench/native" = [
+  "native/CMakeLists.txt",
+  "native/allowed-symbols.txt",
+]
+"share/linear-solver-bench/native/include" = [
+  "native/include/LICENSE-HYPRE-MIT",
+  "native/include/NOTICE-HYPRE",
+  "native/include/nsl_hypre_solver.h",
+]
+"share/linear-solver-bench/native/src" = ["native/src/driver.cpp"]
 
 [tool.pytest.ini_options]
 addopts = "-q"
 testpaths = ["tests"]
+pythonpath = ["src"]
 
 [tool.ruff]
 line-length = 88
 target-version = "py312"
-
-[tool.ruff.format]
-# This file's exact bytes are bound into data/qualification.json.
-exclude = ["src/linear_solver_bench/qualification.py"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]

@@ -1,49 +1,40 @@
-"""The two supported pilot tracks and their fixed scientific contracts."""
+"""The benchmark's two explicit numerical families."""
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
-class TrackContract:
-    family: str
-    track: str
-    accuracy_contract_id: str
-    scoring_contract_id: str
-    execution_contract_id: str = "independent-case-once-v1"
-    repetitions: int = 1
-
-    @property
-    def contracts(self) -> dict[str, str]:
-        return {
-            "accuracy": self.accuracy_contract_id,
-            "execution": self.execution_contract_id,
-            "scoring": self.scoring_contract_id,
-        }
+class Family:
+    selector: str
+    id: str
+    manifest: str
+    accuracy_contract: str
 
 
-TRACKS = (
-    TrackContract(
-        "ns-mesh-pde", "coverage", "ns-mesh-accuracy-v1", "ns-coverage-count-v1"
-    ),
-    TrackContract(
-        "magnetic_diffusion_flash",
-        "replay",
-        "flash-replay-accuracy-v1",
-        "flash-replay-speedup-v1",
-    ),
+NS_MESH_PDE = Family(
+    selector="ns_mesh_pde",
+    id="ns-mesh-pde",
+    manifest="ns_mesh_pde/dev.json",
+    accuracy_contract="ns-mesh-accuracy-v1",
 )
 
+FLASH = Family(
+    selector="flash",
+    id="magnetic_diffusion_flash",
+    manifest="flash/dev.json",
+    accuracy_contract="flash-replay-accuracy-v1",
+)
 
-def resolve_track(family: str, track: str) -> TrackContract:
-    canonical = "ns-mesh-pde" if family == "ns_mesh_pde" else family
-    for contract in TRACKS:
-        if (contract.family, contract.track) == (canonical, track):
-            return contract
-    supported = ", ".join(f"{item.family}/{item.track}" for item in TRACKS)
-    raise ValueError(f"unsupported family/track {family}/{track}; choose {supported}")
+_FAMILIES = {family.selector: family for family in (NS_MESH_PDE, FLASH)}
 
 
-def family_listing() -> list[dict[str, object]]:
-    return [asdict(contract) for contract in TRACKS]
+def resolve_family(selector: str) -> Family:
+    """Return one of the two benchmark families by its public selector."""
+    try:
+        return _FAMILIES[selector]
+    except KeyError as exc:
+        raise ValueError(
+            f"unsupported family {selector!r}; choose ns_mesh_pde or flash"
+        ) from exc

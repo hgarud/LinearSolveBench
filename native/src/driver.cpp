@@ -19,13 +19,11 @@
 #include <string>
 #include <vector>
 
-#include <sys/time.h>
 #include <unistd.h>
 
 extern "C" HYPRE_Int solver_create(HYPRE_Solver* solver,
                                    HYPRE_Real relative_tolerance,
-                                   HYPRE_Real absolute_tolerance,
-                                   HYPRE_Int maximum_iterations);
+                                   HYPRE_Real absolute_tolerance);
 
 namespace {
 
@@ -36,11 +34,6 @@ constexpr std::uint32_t kProtocolVersion = 1;
 volatile std::sig_atomic_t g_phase = 0;
 
 void fatal_signal_handler(int signal_number) {
-    if (signal_number == SIGALRM) {
-        constexpr char message[] = "LSB_TIMING_TIMEOUT\n";
-        static_cast<void>(::write(STDERR_FILENO, message, sizeof(message) - 1));
-        ::_exit(124);
-    }
     const char* message = "LSB_FATAL_PHASE=unknown\n";
     switch (g_phase) {
         case 1: message = "LSB_FATAL_PHASE=read_input\n"; break;
@@ -154,42 +147,6 @@ Input read_input(const std::string& path) {
         throw std::runtime_error("nonfinite input vector");
     }
     return input;
-}
-
-int positive_int(const char* text) {
-    std::size_t consumed = 0;
-    const long value = std::stol(text, &consumed);
-    if (text[consumed] != '\0' || value <= 0 ||
-        value > std::numeric_limits<HYPRE_Int>::max()) {
-        throw std::runtime_error("invalid maximum iteration count");
-    }
-    return static_cast<int>(value);
-}
-
-double positive_double(const char* text) {
-    std::size_t consumed = 0;
-    const double value = std::stod(text, &consumed);
-    if (text[consumed] != '\0' || !std::isfinite(value) || value <= 0.0) {
-        throw std::runtime_error("invalid timing limit");
-    }
-    return value;
-}
-
-void set_timing_limit(double seconds) {
-    struct itimerval timer {};
-    const auto microseconds = static_cast<std::uint64_t>(std::ceil(seconds * 1e6));
-    timer.it_value.tv_sec = static_cast<time_t>(microseconds / 1000000U);
-    timer.it_value.tv_usec = static_cast<suseconds_t>(microseconds % 1000000U);
-    if (::setitimer(ITIMER_REAL, &timer, nullptr) != 0) {
-        throw std::runtime_error("cannot arm timing limit");
-    }
-}
-
-void clear_timing_limit() {
-    struct itimerval timer {};
-    if (::setitimer(ITIMER_REAL, &timer, nullptr) != 0) {
-        throw std::runtime_error("cannot clear timing limit");
-    }
 }
 
 void check(HYPRE_Int status, const char* operation) {
@@ -322,14 +279,12 @@ struct SolveResult {
     bool input_mutated = false;
 };
 
-SolveResult solve(const Input& input, HypreObjects& objects,
-                  HYPRE_Int maximum_iterations, double timing_limit_s) {
+SolveResult solve(const Input& input, HypreObjects& objects) {
     HYPRE_Solver solver = nullptr;
     HYPRE_Int status = 0;
-    set_timing_limit(timing_limit_s);
     const auto start = std::chrono::steady_clock::now();
     g_phase = 4;
-    status |= solver_create(&solver, input.tolerance, 0.0, maximum_iterations);
+    status |= solver_create(&solver, input.tolerance, 0.0);
     const auto create_stop = std::chrono::steady_clock::now();
     auto setup_stop = create_stop;
     if (status == 0 && solver != nullptr) {
@@ -348,7 +303,6 @@ SolveResult solve(const Input& input, HypreObjects& objects,
         }
     }
     const auto stop = std::chrono::steady_clock::now();
-    clear_timing_limit();
 
     SolveResult result;
     result.elapsed_ns = static_cast<std::uint64_t>(
@@ -402,18 +356,15 @@ void write_output(const std::string& path, const SolveResult& result) {
 }  // namespace
 
 int main(int argc, char** argv) {
-    if (argc != 5) {
-        std::cerr << "usage: lsb_driver INPUT OUTPUT MAX_ITERATIONS TIME_LIMIT_S\n";
+    if (argc != 3) {
+        std::cerr << "usage: lsb_driver INPUT OUTPUT\n";
         return 2;
     }
     HypreObjects objects;
     bool initialized = false;
     std::signal(SIGSEGV, fatal_signal_handler);
     std::signal(SIGABRT, fatal_signal_handler);
-    std::signal(SIGALRM, fatal_signal_handler);
     try {
-        const int maximum_iterations = positive_int(argv[3]);
-        const double timing_limit_s = positive_double(argv[4]);
         g_phase = 1;
         const Input input = read_input(argv[1]);
         g_phase = 2;
@@ -421,7 +372,7 @@ int main(int argc, char** argv) {
         initialized = true;
         g_phase = 3;
         objects = create_objects(input);
-        const SolveResult result = solve(input, objects, maximum_iterations, timing_limit_s);
+        const SolveResult result = solve(input, objects);
         g_phase = 9;
         write_output(argv[2], result);
         g_phase = 10;
