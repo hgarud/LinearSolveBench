@@ -1,0 +1,10 @@
+.venv/
+.ruff_cache/
+__pycache__/
+*.egg-info/
+build/
+dist/
+results/
+.cache/
+.env
+.DS_Store

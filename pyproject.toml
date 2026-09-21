@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "linear-solver-bench"
+version = "0.1.0"
+description = "A benchmark for C/HYPRE linear solvers"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "Apache-2.0"
+dependencies = [
+  "modal==1.5.5",
+  "numpy>=2.0",
+  "ruff>=0.9",
+  "scipy>=1.14",
+]
+
+[project.scripts]
+linear-solver-bench = "linear_solver_bench.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.data-files]
+"share/linear-solver-bench/families/ns_mesh_pde" = [
+  "families/ns_mesh_pde/README.md",
+  "families/ns_mesh_pde/dev.json",
+]
+"share/linear-solver-bench/families/magnetic_diffusion_flash" = [
+  "families/magnetic_diffusion_flash/README.md",
+  "families/magnetic_diffusion_flash/dev.json",
+]
+"share/linear-solver-bench/reference" = ["reference/solver.c"]
+"share/linear-solver-bench/native" = [
+  "native/CMakeLists.txt",
+  "native/allowed-symbols.txt",
+]
+"share/linear-solver-bench/native/include" = [
+  "native/include/LICENSE-HYPRE-MIT",
+  "native/include/NOTICE-HYPRE",
+  "native/include/nsl_hypre_solver.h",
+]
+"share/linear-solver-bench/native/src" = ["native/src/driver.cpp"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
