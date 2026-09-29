@@ -1,7 +1,8 @@
 #include "HYPRE_parcsr_ls.h"
 
 /*
-   A HYPRE GMRES(200), preconditioned by ILUT solver to measure speedup against.
+   Fixed FLASH reference: GMRES(50) + BoomerAMG with the website's numerical
+   settings and captured tolerance, without its 1,000-iteration cutoff.
 */
 
 typedef struct
@@ -24,7 +25,7 @@ reference_destroy_objects(reference_Solver *data)
    }
    if (data->amg != NULL)
    {
-      error |= HYPRE_ILUDestroy(data->amg);
+      error |= HYPRE_BoomerAMGDestroy(data->amg);
       data->amg = NULL;
    }
    data->base.is_setup = 0;
@@ -62,32 +63,42 @@ reference_setup(HYPRE_Solver solver, HYPRE_Matrix matrix,
    }
    error = reference_destroy_objects(data);
    error |= HYPRE_ParCSRMatrixGetComm(par_matrix, &communicator);
-   error |= HYPRE_ILUCreate(&data->amg);
+   error |= HYPRE_BoomerAMGCreate(&data->amg);
    if (error != 0)
    {
       reference_destroy_objects(data);
       return error;
    }
 
-   error |= HYPRE_ILUSetType(data->amg, 1);
-   error |= HYPRE_ILUSetLocalReordering(data->amg, 1);
-   error |= HYPRE_ILUSetMaxIter(data->amg, 1);
-   error |= HYPRE_ILUSetMaxNnzPerRow(data->amg, 1000);
-   error |= HYPRE_ILUSetDropThreshold(data->amg, 1.0e-4);
-   error |= HYPRE_ILUSetTol(data->amg, 0.0);
+   error |= HYPRE_BoomerAMGSetPrintLevel(data->amg, 0);
+   error |= HYPRE_BoomerAMGSetCoarsenType(data->amg, 10);
+   error |= HYPRE_BoomerAMGSetInterpType(data->amg, 6);
+   error |= HYPRE_BoomerAMGSetRelaxType(data->amg, 6);
+   error |= HYPRE_BoomerAMGSetNumSweeps(data->amg, 1);
+   error |= HYPRE_BoomerAMGSetMaxLevels(data->amg, 25);
+   error |= HYPRE_BoomerAMGSetStrongThreshold(data->amg, 0.25);
+   /* Explicitly retain the pinned HYPRE defaults used during discovery. */
+   error |= HYPRE_BoomerAMGSetPMaxElmts(data->amg, 4);
+   error |= HYPRE_BoomerAMGSetTruncFactor(data->amg, 0.0);
+   error |= HYPRE_BoomerAMGSetTol(data->amg, 0.0);
+   error |= HYPRE_BoomerAMGSetMaxIter(data->amg, 1);
 
    error |= HYPRE_ParCSRGMRESCreate(communicator, &data->gmres);
    if (error == 0)
    {
-      error |= HYPRE_ParCSRGMRESSetKDim(data->gmres, 200);
-      error |= HYPRE_ParCSRGMRESSetMaxIter(data->gmres, 10000);
+      error |= HYPRE_ParCSRGMRESSetKDim(data->gmres, 50);
+      /* HYPRE has no unlimited sentinel. The runtime timeout is the practical
+         limit; disable residual-history allocation proportional to max_iter. */
+      error |= HYPRE_ParCSRGMRESSetMaxIter(data->gmres, HYPRE_INT_MAX);
       error |= HYPRE_ParCSRGMRESSetTol(
          data->gmres, data->relative_tolerance);
       error |= HYPRE_ParCSRGMRESSetAbsoluteTol(
          data->gmres, data->absolute_tolerance);
+      error |= HYPRE_ParCSRGMRESSetLogging(data->gmres, 0);
+      error |= HYPRE_ParCSRGMRESSetPrintLevel(data->gmres, 0);
       error |= HYPRE_ParCSRGMRESSetPrecond(
-         data->gmres, HYPRE_ILUSolve,
-         HYPRE_ILUSetup, data->amg);
+         data->gmres, HYPRE_BoomerAMGSolve,
+         HYPRE_BoomerAMGSetup, data->amg);
    }
    if (error == 0)
    {
@@ -122,7 +133,6 @@ solver_create(HYPRE_Solver *solver, HYPRE_Real relative_tolerance,
               HYPRE_Real absolute_tolerance)
 {
    reference_Solver *data;
-   HYPRE_Real target;
    if (solver == NULL || !isfinite((double) relative_tolerance) ||
        !isfinite((double) absolute_tolerance) ||
        relative_tolerance < 0.0 || absolute_tolerance < 0.0)
@@ -136,8 +146,7 @@ solver_create(HYPRE_Solver *solver, HYPRE_Real relative_tolerance,
    {
       return HYPRE_ERROR_GENERIC;
    }
-   target = 0.1 * relative_tolerance;
-   data->relative_tolerance = target < 1.0e-12 ? target : 1.0e-12;
+   data->relative_tolerance = relative_tolerance;
    data->absolute_tolerance = absolute_tolerance;
    data->base.setup = reference_setup;
    data->base.solve = reference_solve;

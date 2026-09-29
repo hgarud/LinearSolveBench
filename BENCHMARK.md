@@ -66,8 +66,11 @@ Timing measures solver creation, setup, and solve. It excludes
 compilation, input loading, transport, destruction, and numerical verification.
 For magnetic diffusion, the reference is measured again for every candidate in each new sandbox to make sure the timing is comparable.
 
-The complete magnetic diffusion score is the geometric mean of per-case
-speedups.
+The complete magnetic diffusion score is raw runtime speedup over all 96 cases:
+
+```text
+runtime_speedup = sum(reference_seconds) / sum(candidate_seconds)
+```
 
 
 ## Accuracy

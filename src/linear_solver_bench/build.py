@@ -40,6 +40,7 @@ HYPRE_COMMIT = "e0ce7986941ce27111587ee7ea635ef7ca2eca94"
 HYPRE_TREE = "c985eacc03d590011ab7652fe6fc4e9b25f1064d"
 BUILD_KIND = "sequential-cpu-float64-int32-static"
 CANDIDATE_ABI = "hypre-native-krylov-solver-v5"
+COMPILER_POLICY_ID = "hypre-c17-trusted-math-v1"
 
 MAX_SOURCE_BYTES = 65_536
 FACTORY_EXPORT = "solver_create"
@@ -48,9 +49,9 @@ RUN_TIMEOUT_SECONDS = 600.0
 REPOSITORY_ROOT = asset_root("native")
 NATIVE_DIR = REPOSITORY_ROOT / "native"
 REFERENCE_SOURCE = REPOSITORY_ROOT / "reference" / "solver.c"
-REFERENCE_ID = "hypre-gmres-ilut-v1"
+REFERENCE_ID = "hypre-gmres50-boomeramg-unbounded-v1"
 REFERENCE_SOURCE_SHA256 = (
-    "b9314e7f2346b84df153e7dbc1b48fcca88fe7cf6770715da092b211112c8785"
+    "da8611f345f1ebd178a385aa50457e891faf5f198ea5c3f377b5c29dd486d34e"
 )
 
 _REFERENCE_SYMBOLS = {
@@ -63,6 +64,9 @@ _REFERENCE_SYMBOLS = {
     "HYPRE_ParCSRGMRESSetTol",
     "HYPRE_ParCSRGMRESSetAbsoluteTol",
     "HYPRE_ParCSRGMRESSetPrecond",
+    "HYPRE_ParCSRGMRESSetLogging",
+    "HYPRE_ParCSRGMRESSetPrintLevel",
+    "HYPRE_BoomerAMGSetPrintLevel",
 }
 
 _INCLUDE = re.compile(
@@ -70,6 +74,15 @@ _INCLUDE = re.compile(
     re.MULTILINE,
 )
 _INCLUDE_DIRECTIVE = re.compile(r"^[ \t]*#[ \t]*include\b.*$", re.MULTILINE)
+_C_IDENTIFIER = re.compile(r"[A-Za-z_][A-Za-z_0-9]*\Z")
+# GCC and Clang can emit these helpers even in strict C17 mode.
+_MATH_COMPILER_HELPERS = {
+    "sincos",
+    "sincosf",
+    "sincosl",
+    "__sincos_stret",
+    "__sincosf_stret",
+}
 
 
 class BuildError(RuntimeError):
@@ -458,6 +471,59 @@ def _normalize(symbol: str, allowed: set[str]) -> str:
     return symbol
 
 
+def _math_header_symbols(symbols: set[str], work: Path, cc: str) -> set[str]:
+    """Match frontier0's admission of trusted C17 math.h declarations.
+
+    Candidate code, include paths, and the forced HYPRE header must never enter
+    this probe: their declarations cannot expand the permitted external symbols.
+    """
+    names = {
+        name
+        for symbol in symbols
+        for name in (symbol, symbol.removeprefix("_"))
+        if _C_IDENTIFIER.fullmatch(name)
+    }
+    admitted = names & _MATH_COMPILER_HELPERS
+    pending = names - admitted
+
+    def declared(candidates: set[str]) -> bool:
+        probe = work / "math_header_probe.c"
+        probe.write_text(
+            "#include <math.h>\n"
+            + "".join(
+                f'_Static_assert(sizeof(&{name}) > 0, "math declaration");\n'
+                for name in sorted(candidates)
+            ),
+            encoding="utf-8",
+        )
+        try:
+            result = subprocess.run(
+                (cc, "-std=c17", "-x", "c", "-fsyntax-only", str(probe)),
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                check=False,
+                timeout=60,
+            )
+        except subprocess.TimeoutExpired as exc:
+            raise BuildError(
+                "candidate symbol audit", "math header audit timed out"
+            ) from exc
+        return result.returncode == 0
+
+    if pending:
+        # Batch the usual Mach-O and ELF spellings before probing mixed or
+        # rejected names individually, just as in the discovery compiler.
+        for group in ({symbol.removeprefix("_") for symbol in symbols}, symbols):
+            candidates = group & pending
+            if candidates and declared(candidates):
+                admitted.update(candidates)
+                break
+        else:
+            admitted.update(name for name in sorted(pending) if declared({name}))
+    return admitted
+
+
 def _build_solver(
     source: Path,
     output: Path,
@@ -520,6 +586,7 @@ def _build_solver(
             {
                 "_GLOBAL_OFFSET_TABLE_",
                 "__stack_chk_fail",
+                "__stack_chk_guard",
                 "memcpy",
                 "memmove",
                 "memset",
@@ -527,18 +594,22 @@ def _build_solver(
             }
         )
         allowed.update(additional_symbols or ())
-        undefined = {
-            _normalize(symbol, allowed)
-            for symbol in _symbols(
-                _run(
-                    (nm, "-u", str(candidate_object)),
-                    timeout=30,
-                    error_type=BuildError,
-                    stage="candidate symbol audit",
-                ),
-                undefined=True,
-            )
+        raw_undefined = _symbols(
+            _run(
+                (nm, "-u", str(candidate_object)),
+                timeout=30,
+                error_type=BuildError,
+                stage="candidate symbol audit",
+            ),
+            undefined=True,
+        )
+        unknown = {
+            symbol
+            for symbol in raw_undefined
+            if _normalize(symbol, allowed) not in allowed
         }
+        allowed.update(_math_header_symbols(unknown, work, cc))
+        undefined = {_normalize(symbol, allowed) for symbol in raw_undefined}
         forbidden = sorted(undefined - allowed)
         if forbidden:
             raise BuildError(
@@ -614,7 +685,10 @@ def build_solvers(
 
 
 def build_identities(builds: dict[str, SolverBuild], runtime: Runtime) -> dict:
-    identities = {"runtime_sha256": runtime.manifest_sha256}
+    identities = {
+        "runtime_sha256": runtime.manifest_sha256,
+        "compiler_policy": COMPILER_POLICY_ID,
+    }
     for role, build in builds.items():
         identities[role] = {
             "source_sha256": build.source_sha256,

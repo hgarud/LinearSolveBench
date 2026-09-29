@@ -27,7 +27,7 @@ MAGNETIC_DIFFUSION_FLASH = Family(
     id="magnetic_diffusion_flash",
     manifest="magnetic_diffusion_flash/dev.json",
     accuracy_contract="flash-replay-accuracy-v1",
-    scoring_contract="reference-speedup-v1",
+    scoring_contract="reference-total-runtime-speedup-v2",
 )
 
 _FAMILIES = {

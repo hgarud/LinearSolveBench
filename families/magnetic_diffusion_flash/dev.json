@@ -2980,7 +2980,7 @@
   "contracts": {
     "accuracy": "flash-replay-accuracy-v1",
     "execution": "independent-case-unbounded-v1",
-    "scoring": "reference-speedup-v1"
+    "scoring": "reference-total-runtime-speedup-v2"
   },
   "execution": {
     "cpus": 2,
@@ -2989,7 +2989,7 @@
   },
   "family": "magnetic_diffusion_flash",
   "kind": "linear-solver-bench-release",
-  "manifest_sha256": "682dc94680a0b3d5f190928d2e4e438d5e4bb44b94e3a9b35f48da033536bc14",
+  "manifest_sha256": "60144a24b328434aa66b334ab069783ddc78c1445c1f5c1daf1e2bf06249b186",
   "release_id": "magdiff-flash",
   "rhs": null,
   "schema_version": 3,

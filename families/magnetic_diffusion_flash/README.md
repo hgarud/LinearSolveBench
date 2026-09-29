@@ -8,4 +8,5 @@ with 108,364 to 1,245,184 nonzeros.
 
 [`dev.json`](dev.json) is the complete public development set.
 Every case in the set is identified by its unique SHA-256.
-A candidate's score is the geometric-mean of speedups over all the cases, provided it solves them completely.
+The speedup is the sum of reference times divided by the sum of
+candidate times over all 96 cases.

@@ -23,8 +23,19 @@ def default_cache() -> pathlib.Path:
     return pathlib.Path.home() / ".cache" / "linear-solver-bench"
 
 
-def _geometric_mean(values: list[float]) -> float:
-    return math.exp(sum(math.log(value) for value in values) / len(values))
+def _total_seconds(rows: list[dict[str, object]], field: str) -> float:
+    """Sum verified timings without dropping cases or admitting invalid values."""
+    values = [row[field] for row in rows]
+    if any(
+        type(value) not in (int, float) or not math.isfinite(value) or value <= 0
+        for value in values
+    ):
+        raise ValueError(f"passing cases require positive finite {field}")
+    try:
+        total = math.fsum(values)
+    except OverflowError as exc:
+        raise ValueError(f"{field} total is not finite") from exc
+    return total
 
 
 def _reference_result(
@@ -91,15 +102,25 @@ def _report(
             "evaluated_cases": len(scored_rows),
             "total_cases": total,
         }
-        aggregate = None
+        schema_version = 1
+        speedup_summary = {"geometric_mean_speedup": None}
     else:
-        speedups = [row["speedup"] for row in scored_rows if row["speedup"] is not None]
-        aggregate = (
-            _geometric_mean(speedups) if complete and all_passed and speedups else None
-        )
+        aggregate = reference_total = candidate_total = None
+        if complete and all_passed and scored_rows:
+            reference_total = _total_seconds(scored_rows, "reference_seconds")
+            candidate_total = _total_seconds(scored_rows, "candidate_seconds")
+            aggregate = reference_total / candidate_total
+            if not math.isfinite(aggregate) or aggregate <= 0:
+                raise ValueError("runtime speedup must be positive and finite")
         score = {"metric": scoring_contract, "value": aggregate}
+        schema_version = 2
+        speedup_summary = {
+            "runtime_speedup": aggregate,
+            "total_reference_seconds": reference_total,
+            "total_candidate_seconds": candidate_total,
+        }
     return {
-        "schema_version": 1,
+        "schema_version": schema_version,
         "benchmark": "linear-solver-bench",
         "official": complete
         and identities.get("venue", {}).get("id") == "modal-cpu-v1",
@@ -110,7 +131,7 @@ def _report(
         "complete": complete,
         "all_passed": all_passed,
         "score": score,
-        "geometric_mean_speedup": aggregate,
+        **speedup_summary,
         **dict(identities),
         "cases": rows,
     }

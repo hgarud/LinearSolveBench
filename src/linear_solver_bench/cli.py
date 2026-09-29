@@ -76,7 +76,7 @@ def _run(args: argparse.Namespace) -> int:
                 f"(full dev set: {score['total_cases']})"
             )
     elif score["value"] is not None:
-        print(f"Geometric mean speedup: {score['value']:.3f}x")
+        print(f"Runtime speedup: {score['value']:.3f}x")
     print(f"Report: {args.output}")
     return 0 if report["family"] == "ns-mesh-pde" or report["all_passed"] else 1
 
